@@ -15,5 +15,6 @@ Make sure no impossible states can occur according to the Magnum Sal rules.
 Postpone creating domain classes as long as possible, purely rely on the `EventStream` instead.
 
 ## Tips
-Start with starting a game with at least two players.  
+Start with starting a game with at least two players. Assume that the setup has been completed.  
+Don't start with the town actions.  
 Try to stall creating domain classes until you've implemented the _chain rule_.
