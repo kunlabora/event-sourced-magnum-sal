@@ -31,6 +31,20 @@ class MagnumSalTest {
         assertThat(eventStream).containsExactly(player1)
     }
 
+    //TODO To expand to 5th player at a later time
+    @Test
+    internal fun `addPlayer | Cannot add a third player`() {
+        val player1 = PlayerJoined("Tim", Black)
+        val player2 = PlayerJoined("Bruno", White)
+
+        magnumSal.addPlayer("Tim", Black)
+        magnumSal.addPlayer("Bruno", White)
+        assertThatExceptionOfType(IllegalTransitionException::class.java)
+                .isThrownBy { magnumSal.addPlayer("Nele", Orange) }
+
+        assertThat(eventStream).containsExactly(player1, player2)
+    }
+
     @Test
     fun `determinePlayOrder | Cannot determine a player order when only one player joined`() {
         val player1 = PlayerJoined("Tim", Black)

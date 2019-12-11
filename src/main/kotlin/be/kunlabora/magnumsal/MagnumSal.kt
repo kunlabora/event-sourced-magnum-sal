@@ -8,6 +8,9 @@ class MagnumSal(private val eventStream: EventStream) {
         transitionRequires("Two players cannot choose the same color") {
             color !in eventStream.filterIsInstance<PlayerJoined>().map { it.color }
         }
+        transitionRequires("Magnum Sal currently can only be played with 2 players") {
+            eventStream.filterIsInstance<PlayerJoined>().count() <= 1
+        }
         eventStream.push(PlayerJoined(name, color))
     }
 
