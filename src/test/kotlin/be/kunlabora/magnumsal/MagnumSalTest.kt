@@ -82,9 +82,20 @@ class MagnumSalTest {
         assertThat(eventStream).contains(PlayerOrderDetermined(White,Black))
     }
 
-    private fun setupGameWithTwoPlayers() {
+    @Test
+    fun `placeWorkerInMine | Can place a worker in Shaft 1`() {
+        setupGameWithTwoPlayers().withPlayerOrder(White, Black)
+
+        magnumSal.placeWorkerInMine(White, "shaft[1]")
+
+        assertThat(eventStream).contains(MinerPlaced(White,"shaft[1]"))
+    }
+
+    //TODO move to TestBuilder
+    private fun setupGameWithTwoPlayers(): MagnumSal {
         magnumSal.addPlayer("Tim", Black)
         magnumSal.addPlayer("Bruno", White)
+        return magnumSal
     }
 
 }

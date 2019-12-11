@@ -26,7 +26,13 @@ class MagnumSal(private val eventStream: EventStream) {
         }
         eventStream.push(PlayerOrderDetermined(player1, player2))
     }
+
+    fun placeWorkerInMine(player: PlayerColor, position: Position) {
+        eventStream.push(MinerPlaced(player,position))
+    }
 }
+
+typealias Position = String
 
 sealed class PlayerColor {
     object Black: PlayerColor()
