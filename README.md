@@ -17,3 +17,15 @@ Postpone creating domain classes as long as possible, purely rely on the `EventS
 ## Tips
 Start with starting a game with at least two players.  
 Try to stall creating domain classes until you've implemented the _chain rule_.
+
+# Learnings!
+Thin line between making data classes with specific rules, and not creating domain objects.  
+Value objects are ok to immediately write? Because they don't depend on that much state?
+
+Kotlin has a nice feature called _lazy getters_ that can just delegate to functions on the EventStream:
+```kotlin
+private val players
+        get() = eventStream.filterIsInstance<PlayerJoined>()
+```
+
+Depending on the use case you can postpone creating state for a veeeeery long time. We added a good use case to the kata's main page.
