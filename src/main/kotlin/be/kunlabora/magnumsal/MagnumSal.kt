@@ -5,6 +5,9 @@ import be.kunlabora.magnumsal.exception.transitionRequires
 
 class MagnumSal(private val eventStream: EventStream) {
     fun addPlayer(name: String, color: PlayerColor) {
+        transitionRequires("Two players cannot choose the same color") {
+            color !in eventStream.filterIsInstance<PlayerJoined>().map { it.color }
+        }
         eventStream.push(PlayerJoined(name, color))
     }
 

@@ -21,8 +21,18 @@ class MagnumSalTest {
     }
 
     @Test
+    internal fun `addPlayer | Cannot add two players with the same color`() {
+        val player1 = PlayerJoined("Tim", Black)
+
+        magnumSal.addPlayer("Tim", Black)
+        assertThatExceptionOfType(IllegalTransitionException::class.java)
+                .isThrownBy { magnumSal.addPlayer("Bruno", Black) }
+
+        assertThat(eventStream).containsExactly(player1)
+    }
+
+    @Test
     fun `determinePlayOrder | Cannot determine a player order when only one player joined`() {
-        val eventStream = eventStream
         val player1 = PlayerJoined("Tim", Black)
 
         magnumSal.addPlayer("Tim", Black)
@@ -34,7 +44,6 @@ class MagnumSalTest {
 
     @Test
     fun `determinePlayOrder | Cannot determine a player order with colors that players didn't choose`() {
-        val eventStream = eventStream
         val player1 = PlayerJoined("Tim", Black)
         val player2 = PlayerJoined("Bruno", White)
 
@@ -48,7 +57,6 @@ class MagnumSalTest {
 
     @Test
     fun `determinePlayOrder | Cannot determine a player order with two same colors`() {
-        val eventStream = eventStream
         val player1 = PlayerJoined("Tim", Black)
         val player2 = PlayerJoined("Bruno", White)
 
