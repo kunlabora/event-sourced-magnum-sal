@@ -4,12 +4,25 @@ import be.kunlabora.magnumsal.Event.*
 import be.kunlabora.magnumsal.exception.transitionRequires
 
 class MagnumSal(private val eventStream: EventStream) {
+
+    private val players
+        get() = eventStream.filterIsInstance<PlayerJoined>()
+
+    private val amountOfPlayers
+        get() = players.count()
+
+    private val firstPlayer
+        get() = eventStream.filterIsInstance<PlayerOrderDetermined>().single().player1
+
+    private val playerActions
+        get() = eventStream.filterIsInstance<MinerPlaced>()
+
     fun addPlayer(name: String, color: PlayerColor) {
         transitionRequires("the same color not to have been picked already") {
-            color !in eventStream.filterIsInstance<PlayerJoined>().map { it.color }
+            color !in players.map { it.color }
         }
         transitionRequires("a maximum of one player to have joined") {
-            eventStream.filterIsInstance<PlayerJoined>().count() <= 1
+            amountOfPlayers <= 1
         }
         eventStream.push(PlayerJoined(name, color))
     }
@@ -18,11 +31,11 @@ class MagnumSal(private val eventStream: EventStream) {
     fun determinePlayOrder(player1: PlayerColor, player2: PlayerColor) {
         require(player1 != player2) { "Play order can only be determined with different PlayerColors" }
         transitionRequires("at least 2 players") {
-            eventStream.filterIsInstance<PlayerJoined>().count() >= 2
+            amountOfPlayers >= 2
         }
         transitionRequires("player colors to have been picked") {
-            player1 in eventStream.filterIsInstance<PlayerJoined>().map { it.color }
-                    && player2 in eventStream.filterIsInstance<PlayerJoined>().map { it.color }
+            player1 in players.map { it.color }
+                    && player2 in players.map { it.color }
         }
         eventStream.push(PlayerOrderDetermined(player1, player2))
     }
@@ -38,9 +51,9 @@ class MagnumSal(private val eventStream: EventStream) {
     }
 
     private fun itIsTheTurnOfPlayer(player: PlayerColor): Boolean {
-        val isFirstPlayer = eventStream.filterIsInstance<PlayerOrderDetermined>().single().player1 == player
-        val playerActionsCount = eventStream.filterIsInstance<MinerPlaced>().filter { it.player == player }.count()
-        val opponentActionsCount = eventStream.filterIsInstance<MinerPlaced>().filter { it.player != player }.count()
+        val isFirstPlayer = firstPlayer == player
+        val playerActionsCount = playerActions.filter { it.player == player }.count()
+        val opponentActionsCount = playerActions.filter { it.player != player }.count()
 
         return (isFirstPlayer && opponentActionsCount == playerActionsCount)
                 || (!isFirstPlayer && opponentActionsCount > playerActionsCount)
@@ -50,7 +63,7 @@ class MagnumSal(private val eventStream: EventStream) {
             (currentMineShaftPosition.index == 1)
 
     private fun aMinerWasPlacedAt(position: MineShaftPosition) =
-            (position in eventStream.filterIsInstance<MinerPlaced>().map { it.mineShaftPosition })
+            (position in playerActions.map { it.mineShaftPosition })
 
     fun removeWorkerFromMine(player: PlayerColor, mineShaftPosition: MineShaftPosition) {
         transitionRequires("the chain not to be broken") {
@@ -62,8 +75,9 @@ class MagnumSal(private val eventStream: EventStream) {
 
 data class MineShaftPosition(val index: Int) {
     init {
-        require(index in 1..6) {"Mine shaft is only 6 deep"}
+        require(index in 1..6) { "Mine shaft is only 6 deep" }
     }
+
     fun previous(): MineShaftPosition {
         return MineShaftPosition(index - 1)
     }

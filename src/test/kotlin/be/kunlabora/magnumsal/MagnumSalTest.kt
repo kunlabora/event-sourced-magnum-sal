@@ -221,6 +221,11 @@ class MagnumSalTest {
 
             assertThat(eventStream).doesNotContain(MinerRemoved(White, MineShaftPosition(1)))
         }
+
+        @Test
+        internal fun `cannot remove worker if it's not your turn`() {
+
+        }
     }
 
     @Nested
