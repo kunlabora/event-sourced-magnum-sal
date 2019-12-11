@@ -58,40 +58,33 @@ class MagnumSalTest {
 
     @Test
     fun `determinePlayOrder | Cannot determine a player order with colors that players didn't choose`() {
-        val player1 = PlayerJoined("Tim", Black)
-        val player2 = PlayerJoined("Bruno", White)
-
-        magnumSal.addPlayer("Tim", Black)
-        magnumSal.addPlayer("Bruno", White)
+        setupGameWithTwoPlayers()
         assertThatExceptionOfType(IllegalTransitionException::class.java)
                 .isThrownBy { magnumSal.determinePlayOrder(Orange, Black) }
 
-        assertThat(eventStream).containsExactly(player1, player2)
+        assertThat(eventStream).filteredOn { it is PlayerOrderDetermined }.isEmpty()
     }
 
     @Test
     fun `determinePlayOrder | Cannot determine a player order with two same colors`() {
-        val player1 = PlayerJoined("Tim", Black)
-        val player2 = PlayerJoined("Bruno", White)
-
-        magnumSal.addPlayer("Tim", Black)
-        magnumSal.addPlayer("Bruno", White)
+        setupGameWithTwoPlayers()
         assertThatExceptionOfType(IllegalArgumentException::class.java)
                 .isThrownBy { magnumSal.determinePlayOrder(Black, Black) }
 
-        assertThat(eventStream).containsExactly(player1, player2)
+        assertThat(eventStream).filteredOn { it is PlayerOrderDetermined }.isEmpty()
     }
 
     @Test
     fun `determinePlayOrder | Can determine a player order when at least two players joined`() {
-        val player1 = PlayerJoined("Tim", Black)
-        val player2 = PlayerJoined("Bruno", White)
-
-        magnumSal.addPlayer("Tim", Black)
-        magnumSal.addPlayer("Bruno", White)
+        setupGameWithTwoPlayers()
         magnumSal.determinePlayOrder(White, Black)
 
-        assertThat(eventStream).containsExactly(player1, player2, DeterminedPlayerOrder(White,Black))
+        assertThat(eventStream).contains(PlayerOrderDetermined(White,Black))
+    }
+
+    private fun setupGameWithTwoPlayers() {
+        magnumSal.addPlayer("Tim", Black)
+        magnumSal.addPlayer("Bruno", White)
     }
 
 }

@@ -10,6 +10,6 @@ data class EventStream(private val _events: MutableList<Event> = emptyList<Event
 }
 
 sealed class Event {
-    data class DeterminedPlayerOrder(val player1: PlayerColor, val player2: PlayerColor) : Event()
+    data class PlayerOrderDetermined(val player1: PlayerColor, val player2: PlayerColor) : Event()
     data class PlayerJoined(val name: String, val color: PlayerColor) : Event()
 }

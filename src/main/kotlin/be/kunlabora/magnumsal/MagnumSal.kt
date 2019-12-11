@@ -24,7 +24,7 @@ class MagnumSal(private val eventStream: EventStream) {
             player1 in eventStream.filterIsInstance<PlayerJoined>().map { it.color }
                     && player2 in eventStream.filterIsInstance<PlayerJoined>().map { it.color }
         }
-        eventStream.push(DeterminedPlayerOrder(player1, player2))
+        eventStream.push(PlayerOrderDetermined(player1, player2))
     }
 }
 
