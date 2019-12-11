@@ -54,6 +54,9 @@ class MagnumSal(private val eventStream: EventStream) {
 }
 
 data class MineShaftPosition(val index: Int) {
+    init {
+        require(index in 1..6) {"Mine shaft is only 6 deep"}
+    }
     fun previous(): MineShaftPosition {
         return MineShaftPosition(index - 1)
     }

@@ -145,10 +145,73 @@ class MagnumSalTest {
             assertThat(eventStream).contains(MinerPlaced(Black, MineShaftPosition(1)))
         }
 
+        @Test
+        fun `Second player can place a worker in shaft 2`() {
+            val magnumSal = setupMagnumSalWithTwoPlayers()
+                    .withPlayerOrder(White, Black)
+            magnumSal.placeWorkerInMine(White, MineShaftPosition(1))
+
+            magnumSal.placeWorkerInMine(Black, MineShaftPosition(2))
+
+            assertThat(eventStream).contains(MinerPlaced(Black, MineShaftPosition(2)))
+        }
+
+        @Test
+        fun `Second player cannot place a worker in shaft 3`() {
+            val magnumSal = setupMagnumSalWithTwoPlayers()
+                    .withPlayerOrder(White, Black)
+            magnumSal.placeWorkerInMine(White, MineShaftPosition(1))
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
+                    .isThrownBy { magnumSal.placeWorkerInMine(Black, MineShaftPosition(3)) }
+
+            assertThat(eventStream).doesNotContain(MinerPlaced(Black, MineShaftPosition(3)))
+        }
+
+        @Test
+        fun `Players can fill up the shaft`() {
+            val magnumSal = setupMagnumSalWithTwoPlayers()
+                    .withPlayerOrder(White, Black)
+
+            magnumSal.placeWorkerInMine(White, MineShaftPosition(1))
+            magnumSal.placeWorkerInMine(Black, MineShaftPosition(2))
+            magnumSal.placeWorkerInMine(White, MineShaftPosition(3))
+            magnumSal.placeWorkerInMine(Black, MineShaftPosition(4))
+            magnumSal.placeWorkerInMine(White, MineShaftPosition(5))
+            magnumSal.placeWorkerInMine(Black, MineShaftPosition(6))
+
+            assertThat(eventStream).contains(
+                    MinerPlaced(White, MineShaftPosition(1)),
+                    MinerPlaced(Black, MineShaftPosition(2)),
+                    MinerPlaced(White, MineShaftPosition(3)),
+                    MinerPlaced(Black, MineShaftPosition(4)),
+                    MinerPlaced(White, MineShaftPosition(5)),
+                    MinerPlaced(Black, MineShaftPosition(6))
+            )
+        }
+
         //TODO at some point
         fun `placeWorkerInMine | Cannot place a worker when you're out of workers`() {
 
         }
+    }
+
+    @Nested
+    inner class MineShaftPositionTest {
+
+        @Test
+        fun `MineShaft is only 6 deep`() {
+            assertThatExceptionOfType(IllegalArgumentException::class.java)
+                    .isThrownBy { MineShaftPosition(7) }
+        }
+
+        @Test
+        fun `MineShaft does not go above ground`() {
+            assertThatExceptionOfType(IllegalArgumentException::class.java)
+                    .isThrownBy { MineShaftPosition(0) }
+            assertThatExceptionOfType(IllegalArgumentException::class.java)
+                    .isThrownBy { MineShaftPosition(-1) }
+        }
+
     }
 
     //TODO move to TestBuilder
