@@ -189,9 +189,37 @@ class MagnumSalTest {
             )
         }
 
+
         //TODO at some point
         fun `placeWorkerInMine | Cannot place a worker when you're out of workers`() {
 
+        }
+    }
+
+    @Nested
+    inner class RemoveWorkerFromMineTest {
+        @Test
+        internal fun `can remove worker if it does not break the chain`() {
+            val magnumSal = setupMagnumSalWithTwoPlayers()
+                    .withPlayerOrder(White, Black)
+            magnumSal.placeWorkerInMine(White, MineShaftPosition(1))
+
+            magnumSal.removeWorkerFromMine(White, MineShaftPosition(1))
+
+            assertThat(eventStream).contains(MinerRemoved(White, MineShaftPosition(1)))
+        }
+
+        @Test
+        internal fun `cannot remove worker if it would break the chain`() {
+            val magnumSal = setupMagnumSalWithTwoPlayers()
+                    .withPlayerOrder(White, Black)
+            magnumSal.placeWorkerInMine(White, MineShaftPosition(1))
+            magnumSal.placeWorkerInMine(Black, MineShaftPosition(2))
+
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
+                    .isThrownBy { magnumSal.removeWorkerFromMine(White, MineShaftPosition(1)) }
+
+            assertThat(eventStream).doesNotContain(MinerRemoved(White, MineShaftPosition(1)))
         }
     }
 

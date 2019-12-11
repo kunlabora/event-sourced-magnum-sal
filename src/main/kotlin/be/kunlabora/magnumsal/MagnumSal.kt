@@ -49,8 +49,15 @@ class MagnumSal(private val eventStream: EventStream) {
     private fun aMinerIsGoingToBePlacedAtTheTop(currentMineShaftPosition: MineShaftPosition) =
             (currentMineShaftPosition.index == 1)
 
-    private fun aMinerWasPlacedAt(currentMineShaftPosition: MineShaftPosition) =
-            (currentMineShaftPosition in eventStream.filterIsInstance<MinerPlaced>().map { it.mineShaftPosition })
+    private fun aMinerWasPlacedAt(position: MineShaftPosition) =
+            (position in eventStream.filterIsInstance<MinerPlaced>().map { it.mineShaftPosition })
+
+    fun removeWorkerFromMine(player: PlayerColor, mineShaftPosition: MineShaftPosition) {
+        transitionRequires("the chain not to be broken") {
+            !aMinerWasPlacedAt(mineShaftPosition.next())
+        }
+        eventStream.push(MinerRemoved(player, mineShaftPosition))
+    }
 }
 
 data class MineShaftPosition(val index: Int) {
@@ -59,6 +66,10 @@ data class MineShaftPosition(val index: Int) {
     }
     fun previous(): MineShaftPosition {
         return MineShaftPosition(index - 1)
+    }
+
+    fun next(): MineShaftPosition {
+        return MineShaftPosition(index + 1)
     }
 }
 
