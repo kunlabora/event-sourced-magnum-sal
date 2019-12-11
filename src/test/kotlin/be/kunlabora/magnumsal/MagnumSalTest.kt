@@ -199,7 +199,7 @@ class MagnumSalTest {
     @Nested
     inner class RemoveWorkerFromMineTest {
         @Test
-        internal fun `can remove worker if it does not break the chain`() {
+        fun `can remove worker if it does not break the chain`() {
             val magnumSal = setupMagnumSalWithTwoPlayers()
                     .withPlayerOrder(White, Black)
             magnumSal.placeWorkerInMine(White, MineShaftPosition(1))
@@ -210,7 +210,7 @@ class MagnumSalTest {
         }
 
         @Test
-        internal fun `cannot remove worker if it would break the chain`() {
+        fun `cannot remove worker if it would break the chain`() {
             val magnumSal = setupMagnumSalWithTwoPlayers()
                     .withPlayerOrder(White, Black)
             magnumSal.placeWorkerInMine(White, MineShaftPosition(1))
@@ -223,7 +223,7 @@ class MagnumSalTest {
         }
 
         @Test
-        internal fun `cannot remove worker if it's not your turn`() {
+        fun `cannot remove worker if it's not your turn`() {
 
         }
     }
