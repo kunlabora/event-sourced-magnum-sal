@@ -18,3 +18,19 @@ Postpone creating domain classes as long as possible, purely rely on the `EventS
 Start with determining the player order of a game with at least two players. Assume that the setup has been completed.  
 Don't start with the town actions.  
 Try to stall persisting state or creating other domain classes until you've implemented the _chain rule_.
+
+Work towards this scenario:
+
+1) Player 1 places a miner in mineshaft's first spot.
+1) Player 2 also places a miner in mineshaft's first spot.
+1) Player 1 removes their miner in the first spot.
+1) Player 2 also removes their miner in the first spot.
+1) Player 1 places a miner in mineshaft's second spot. <-- this should be an illegal move, because the first spot should first be filled.
+
+If you have **very** little time, you can work towards this scenario:
+
+Forget about two players and the town and the corridors. Just focus on the mine shaft and the chain rule 
+
+1) Player 1 places a miner in mineshaft's first spot.
+1) Player 1 removes their miner in the first spot.
+1) Player 1 places a miner in mineshaft's second spot. <-- this should be an illegal move, because the first spot should first be filled.
