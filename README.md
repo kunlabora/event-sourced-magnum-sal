@@ -17,4 +17,4 @@ Postpone creating domain classes as long as possible, purely rely on the `EventS
 ## Tips
 Start with starting a game with at least two players. Assume that the setup has been completed.  
 Don't start with the town actions.  
-Try to stall creating domain classes until you've implemented the _chain rule_.
+Try to stall persisting state or creating other domain classes until you've implemented the _chain rule_.
