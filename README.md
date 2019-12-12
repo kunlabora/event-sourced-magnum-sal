@@ -29,10 +29,17 @@ Work towards this scenario:
 1) Player 1 removes their miner from the first spot.
 1) Player 2 also removes their miner from the first spot. <-- this should be an illegal move, because the first spot should be occupied according to the chain rule.
 
-If you have **very** little time, you can work towards this scenario:
+## Quick-start (+- 60' Kata time)
+```shell script
+git checkout -b quick-start
+```
+
+If you have limited time, you can work towards this scenario:
 
 Forget about two players and the town and the corridors. Just focus on the mine shaft and the chain rule 
 
 1) Player 1 places a miner in the mineshaft's first spot.
 1) Player 1 places a miner in the mineshaft's second spot.
 1) Player 1 removes their miner in the first spot. <-- this should be an illegal move, because the first spot should be occupied according to the chain rule.
+
+`MineShaftPosition` already contains some validation and util functions that'll prove useful, check out the tests to see how it works.
