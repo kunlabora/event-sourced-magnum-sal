@@ -1,6 +1,6 @@
 package be.kunlabora.magnumsal
 
-import be.kunlabora.magnumsal.Event.*
+import be.kunlabora.magnumsal.MagnumSalEvent.*
 import be.kunlabora.magnumsal.PlayerColor.*
 import be.kunlabora.magnumsal.exception.IllegalTransitionException
 import org.assertj.core.api.Assertions.assertThat

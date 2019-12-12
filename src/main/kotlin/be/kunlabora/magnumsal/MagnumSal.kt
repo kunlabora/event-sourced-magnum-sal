@@ -1,7 +1,14 @@
 package be.kunlabora.magnumsal
 
-import be.kunlabora.magnumsal.Event.*
+import be.kunlabora.magnumsal.MagnumSalEvent.*
 import be.kunlabora.magnumsal.exception.transitionRequires
+
+sealed class MagnumSalEvent: Event {
+    data class PlayerOrderDetermined(val player1: PlayerColor, val player2: PlayerColor) : MagnumSalEvent()
+    data class PlayerJoined(val name: String, val color: PlayerColor) : MagnumSalEvent()
+    data class MinerPlaced(val player: PlayerColor, val mineShaftPosition: MineShaftPosition) : MagnumSalEvent()
+    data class MinerRemoved(val player: PlayerColor, val mineShaftPosition: MineShaftPosition) : MagnumSalEvent()
+}
 
 class MagnumSal(private val eventStream: EventStream) {
 
