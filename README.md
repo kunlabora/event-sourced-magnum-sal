@@ -24,17 +24,18 @@ Work towards this scenario:
 
 1) Player 1 places a miner in the mineshaft's first spot.
 1) Player 2 also places a miner in the mineshaft's first spot.
+1) Player 1 places a miner in the mineshaft's second spot.
+1) Player 2 also places a miner in the mineshaft's second spot.
 1) Player 1 removes their miner from the first spot.
-1) Player 2 also removes their miner from the first spot.
-1) Player 1 places a miner in the mineshaft's second spot. <-- this should be an illegal move, because the first spot should first be filled.
+1) Player 2 also removes their miner from the first spot. <-- this should be an illegal move, because the first spot should be occupied according to the chain rule.
 
 If you have **very** little time, you can work towards this scenario:
 
 Forget about two players and the town and the corridors. Just focus on the mine shaft and the chain rule 
 
 1) Player 1 places a miner in the mineshaft's first spot.
-1) Player 1 removes their miner in the first spot.
-1) Player 1 places a miner in the mineshaft's second spot. <-- this should be an illegal move, because the first spot should first be filled.
+1) Player 1 places a miner in the mineshaft's second spot.
+1) Player 1 removes their miner in the first spot. <-- this should be an illegal move, because the first spot should be occupied according to the chain rule.
 
 # Learnings!
 Thin line between making data classes with specific rules, and not creating domain objects.  
