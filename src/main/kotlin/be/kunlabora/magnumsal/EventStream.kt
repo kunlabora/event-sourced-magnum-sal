@@ -10,5 +10,5 @@ data class EventStream(private val _events: MutableList<Event> = emptyList<Event
     }
 }
 
-inline fun <reified T : Event> EventStream.lastEventOrNull() = lastOrNull { it is T } as T?
-inline fun <reified T : Event> EventStream.filterEvents() = filterIsInstance<T>() as EventStream
+inline fun <reified T> EventStream.lastEventOrNull() = lastOrNull { it is T } as T?
+inline fun <reified T> EventStream.filterEvents() = filterIsInstance<T>()
