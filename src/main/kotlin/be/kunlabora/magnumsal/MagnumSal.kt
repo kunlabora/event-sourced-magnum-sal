@@ -13,16 +13,16 @@ sealed class MagnumSalEvent: Event {
 class MagnumSal(private val eventStream: EventStream) {
 
     private val players
-        get() = eventStream.filterIsInstance<PlayerJoined>()
+        get() = eventStream.filterEvents<PlayerJoined>()
 
     private val amountOfPlayers
         get() = players.count()
 
     private val firstPlayer
-        get() = eventStream.filterIsInstance<PlayerOrderDetermined>().single().player1
+        get() = eventStream.filterEvents<PlayerOrderDetermined>().single().player1
 
     private val playerActions
-        get() = eventStream.filterIsInstance<MinerPlaced>()
+        get() = eventStream.filterEvents<MinerPlaced>()
 
     fun addPlayer(name: String, color: PlayerColor) {
         transitionRequires("the same color not to have been picked already") {
