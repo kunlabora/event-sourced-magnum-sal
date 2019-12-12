@@ -15,26 +15,26 @@ Make sure no impossible states can occur according to the Magnum Sal rules.
 Postpone creating domain classes as long as possible, purely rely on the `EventStream` instead.
 
 ## Tips
-Keep your events as fine-grained as possibble, and **always** in past tense.  
+Keep your events as fine-grained as possible, and **always** in past tense.  
 Start with determining the player order of a game with at least two players. Assume that the setup has been completed.  
 Don't start with the town actions.  
 Try to stall persisting state or creating other domain classes until you've implemented the _chain rule_.
 
 Work towards this scenario:
 
-1) Player 1 places a miner in mineshaft's first spot.
-1) Player 2 also places a miner in mineshaft's first spot.
-1) Player 1 removes their miner in the first spot.
-1) Player 2 also removes their miner in the first spot.
-1) Player 1 places a miner in mineshaft's second spot. <-- this should be an illegal move, because the first spot should first be filled.
+1) Player 1 places a miner in the mineshaft's first spot.
+1) Player 2 also places a miner in the mineshaft's first spot.
+1) Player 1 removes their miner from the first spot.
+1) Player 2 also removes their miner from the first spot.
+1) Player 1 places a miner in the mineshaft's second spot. <-- this should be an illegal move, because the first spot should first be filled.
 
 If you have **very** little time, you can work towards this scenario:
 
 Forget about two players and the town and the corridors. Just focus on the mine shaft and the chain rule 
 
-1) Player 1 places a miner in mineshaft's first spot.
+1) Player 1 places a miner in the mineshaft's first spot.
 1) Player 1 removes their miner in the first spot.
-1) Player 1 places a miner in mineshaft's second spot. <-- this should be an illegal move, because the first spot should first be filled.
+1) Player 1 places a miner in the mineshaft's second spot. <-- this should be an illegal move, because the first spot should first be filled.
 
 # Learnings!
 Thin line between making data classes with specific rules, and not creating domain objects.  
