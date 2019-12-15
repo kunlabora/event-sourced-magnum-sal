@@ -21,7 +21,7 @@ class MagnumSal(private val eventStream: EventStream) {
     private val firstPlayer
         get() = eventStream.filterEvents<PlayerOrderDetermined>().single().player1
 
-    private val playerActions
+    private val minersPlaced
         get() = eventStream.filterEvents<MinerPlaced>()
 
     fun addPlayer(name: String, color: PlayerColor) {
@@ -59,8 +59,8 @@ class MagnumSal(private val eventStream: EventStream) {
 
     private fun itIsTheTurnOfPlayer(player: PlayerColor): Boolean {
         val isFirstPlayer = firstPlayer == player
-        val playerActionsCount = playerActions.filter { it.player == player }.count()
-        val opponentActionsCount = playerActions.filter { it.player != player }.count()
+        val playerActionsCount = minersPlaced.filter { it.player == player }.count()
+        val opponentActionsCount = minersPlaced.filter { it.player != player }.count()
 
         return (isFirstPlayer && opponentActionsCount == playerActionsCount)
                 || (!isFirstPlayer && opponentActionsCount > playerActionsCount)
@@ -70,11 +70,11 @@ class MagnumSal(private val eventStream: EventStream) {
             (currentMineShaftPosition.index == 1)
 
     private fun aMinerWasPlacedAt(position: MineShaftPosition) =
-            (position in playerActions.map { it.mineShaftPosition })
+            (position in minersPlaced.map { it.mineShaftPosition })
 
     fun removeWorkerFromMine(player: PlayerColor, mineShaftPosition: MineShaftPosition) {
         transitionRequires("the chain not to be broken") {
-            !aMinerWasPlacedAt(mineShaftPosition.next())
+
         }
         eventStream.push(MinerRemoved(player, mineShaftPosition))
     }
