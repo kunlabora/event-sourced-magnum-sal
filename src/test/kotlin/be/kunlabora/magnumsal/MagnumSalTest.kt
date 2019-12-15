@@ -223,6 +223,23 @@ class MagnumSalTest {
         }
 
         @Test
+        fun `cannot remove worker if it would break the chain 2nd scenario`() {
+            val magnumSal = setupMagnumSalWithTwoPlayers()
+                    .withPlayerOrder(White, Black)
+            magnumSal.placeWorkerInMine(White, MineShaftPosition(1))
+            magnumSal.placeWorkerInMine(Black, MineShaftPosition(2))
+            magnumSal.removeWorkerFromMine(Black, MineShaftPosition(2))
+            magnumSal.removeWorkerFromMine(White, MineShaftPosition(1))
+            magnumSal.placeWorkerInMine(White, MineShaftPosition(1))
+            magnumSal.placeWorkerInMine(Black, MineShaftPosition(2))
+
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
+                    .isThrownBy { magnumSal.removeWorkerFromMine(White, MineShaftPosition(1)) }
+
+            assertThat(eventStream).doesNotContain(MinerRemoved(White, MineShaftPosition(1)))
+        }
+
+        @Test
         fun `cannot remove worker if it's not your turn`() {
 
         }
