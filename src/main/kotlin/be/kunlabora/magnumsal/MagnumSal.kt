@@ -1,9 +1,10 @@
 package be.kunlabora.magnumsal
 
 import be.kunlabora.magnumsal.MagnumSalEvent.*
+import be.kunlabora.magnumsal.MinerInShaft.Companion.asMinerInShaft
 import be.kunlabora.magnumsal.exception.transitionRequires
 
-sealed class MagnumSalEvent: Event {
+sealed class MagnumSalEvent : Event {
     data class PlayerOrderDetermined(val player1: PlayerColor, val player2: PlayerColor) : MagnumSalEvent()
     data class PlayerJoined(val name: String, val color: PlayerColor) : MagnumSalEvent()
     data class MinerPlaced(val player: PlayerColor, val mineShaftPosition: MineShaftPosition) : MagnumSalEvent()
@@ -23,6 +24,15 @@ class MagnumSal(private val eventStream: EventStream) {
 
     private val minersPlaced
         get() = eventStream.filterEvents<MinerPlaced>()
+
+    private val mineShaftOccupation: List<MinerInShaft>
+        get() = eventStream.filterEvents<MagnumSalEvent>().fold(emptyList()) { acc, event ->
+            when (event) {
+                is MinerRemoved -> asMinerInShaft(event)?.let { acc - it } ?: acc
+                is MinerPlaced -> asMinerInShaft(event)?.let { acc + it } ?: acc
+                else -> acc
+            }
+        }
 
     fun addPlayer(name: String, color: PlayerColor) {
         transitionRequires("the same color not to have been picked already") {
@@ -74,23 +84,42 @@ class MagnumSal(private val eventStream: EventStream) {
 
     fun removeWorkerFromMine(player: PlayerColor, mineShaftPosition: MineShaftPosition) {
         transitionRequires("the chain not to be broken") {
-
+            removingWouldNotBreakTheChain(MinerInShaft(player, mineShaftPosition))
         }
         eventStream.push(MinerRemoved(player, mineShaftPosition))
     }
+
+    private fun removingWouldNotBreakTheChain(minerInShaft: MinerInShaft): Boolean {
+        val mineShaftAfterRemoval = (mineShaftOccupation - minerInShaft).map { it.at }
+        return isThereAnotherMinerAt(minerInShaft.at, mineShaftAfterRemoval)
+                || wasItTheLastMinerAt(minerInShaft.at, mineShaftAfterRemoval)
+    }
+
+    private fun wasItTheLastMinerAt(mineShaftPosition: MineShaftPosition, mineShaftAfterRemoval: List<MineShaftPosition>) =
+            mineShaftPosition.next() !in mineShaftAfterRemoval
+
+    private fun isThereAnotherMinerAt(mineShaftPosition: MineShaftPosition, mineShaftAfterRemoval: List<MineShaftPosition>) =
+            mineShaftPosition in mineShaftAfterRemoval
 }
 
 data class MineShaftPosition(val index: Int) {
     init {
         require(index in 1..6) { "Mine shaft is only 6 deep" }
     }
+    fun previous(): MineShaftPosition = MineShaftPosition(index - 1)
+    fun next(): MineShaftPosition = MineShaftPosition(index + 1)
+    override fun toString(): String = "mine[$index]"
+}
 
-    fun previous(): MineShaftPosition {
-        return MineShaftPosition(index - 1)
-    }
+data class MinerInShaft(val player: PlayerColor, val at: MineShaftPosition) {
+    override fun toString(): String = "$player at $at"
 
-    fun next(): MineShaftPosition {
-        return MineShaftPosition(index + 1)
+    companion object {
+        fun asMinerInShaft(event: MagnumSalEvent): MinerInShaft? = when (event) {
+            is MinerRemoved -> MinerInShaft(event.player, event.mineShaftPosition)
+            is MinerPlaced -> MinerInShaft(event.player, event.mineShaftPosition)
+            else -> null
+        }
     }
 }
 
@@ -99,5 +128,6 @@ sealed class PlayerColor {
     object White : PlayerColor()
     object Orange : PlayerColor()
     object Purple : PlayerColor()
+    override fun toString(): String = this.javaClass.simpleName
 }
 

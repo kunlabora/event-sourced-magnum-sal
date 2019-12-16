@@ -227,16 +227,15 @@ class MagnumSalTest {
             val magnumSal = setupMagnumSalWithTwoPlayers()
                     .withPlayerOrder(White, Black)
             magnumSal.placeWorkerInMine(White, MineShaftPosition(1))
+            magnumSal.placeWorkerInMine(Black, MineShaftPosition(1))
+            magnumSal.placeWorkerInMine(White, MineShaftPosition(2))
             magnumSal.placeWorkerInMine(Black, MineShaftPosition(2))
-            magnumSal.removeWorkerFromMine(Black, MineShaftPosition(2))
             magnumSal.removeWorkerFromMine(White, MineShaftPosition(1))
-            magnumSal.placeWorkerInMine(White, MineShaftPosition(1))
-            magnumSal.placeWorkerInMine(Black, MineShaftPosition(2))
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.removeWorkerFromMine(White, MineShaftPosition(1)) }
+                    .isThrownBy { magnumSal.removeWorkerFromMine(Black, MineShaftPosition(1)) }
 
-            assertThat(eventStream).doesNotContain(MinerRemoved(White, MineShaftPosition(1)))
+            assertThat(eventStream).doesNotContain(MinerRemoved(Black, MineShaftPosition(1)))
         }
 
         @Test
