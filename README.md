@@ -39,6 +39,8 @@ If you have limited time, you can work towards this scenario:
 Forget about two players and the town and the corridors. Just focus on the mine shaft and the chain rule 
 
 1) Player 1 places a miner in the mineshaft's first spot.
+1) Player 1 removes a miner in the mineshaft's first spot.
+1) Player 1 places a miner in the mineshaft's first spot again.
 1) Player 1 places a miner in the mineshaft's second spot.
 1) Player 1 removes their miner in the first spot. <-- this should be an illegal move, because the first spot should be occupied according to the chain rule.
 
