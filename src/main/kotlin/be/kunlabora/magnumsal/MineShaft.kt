@@ -2,7 +2,10 @@ package be.kunlabora.magnumsal
 
 import be.kunlabora.magnumsal.exception.transitionRequires
 
-class MineShaftOccupation private constructor(private val _miners: List<MinerInShaft>) : List<MinerInShaft> by _miners {
+class MineShaft private constructor(private val _miners: List<MinerInShaft>) : List<MinerInShaft> by _miners {
+
+    private val occupation
+        get() = _miners.map{ it.at }
 
     fun attemptPlacingAMiner(player: PlayerColor, at: MineShaftPosition) {
         transitionRequires("the previous position to be occupied") {
@@ -17,22 +20,22 @@ class MineShaftOccupation private constructor(private val _miners: List<MinerInS
     }
 
     private fun placingWouldNotBreakTheChain(minerInShaft: MinerInShaft) =
-            minerInShaft.at.isTheTop() || isThereAnotherMinerAt(minerInShaft.at.previous())
+            minerInShaft.at.isTheTop() || isThereAMinerAt(minerInShaft.at.previous())
 
     private fun removingWouldNotBreakTheChain(minerInShaft: MinerInShaft) =
             isItTheLastMinerInTheChain(minerInShaft) || areThereOtherMinersAt(minerInShaft.at)
 
     private fun isItTheLastMinerInTheChain(miner: MinerInShaft) =
-            miner.at.next() !in _miners.map { it.at }
+            miner.at.next() !in occupation
 
     private fun areThereOtherMinersAt(position: MineShaftPosition) =
-            _miners.count { it.at == position } > 1
+            occupation.count { it == position } > 1
 
-    private fun isThereAnotherMinerAt(position: MineShaftPosition) =
-            position in _miners.map { it.at }
+    private fun isThereAMinerAt(position: MineShaftPosition) =
+            position in occupation
 
     companion object {
-        fun from(eventStream: EventStream): MineShaftOccupation {
+        fun from(eventStream: EventStream): MineShaft {
             val miners: List<MinerInShaft> = eventStream.filterEvents<MagnumSalEvent>().fold(emptyList()) { acc, event ->
                 when (event) {
                     is MagnumSalEvent.MinerRemoved -> MinerInShaft.asMinerInShaft(event)?.let { acc - it } ?: acc
@@ -40,7 +43,7 @@ class MineShaftOccupation private constructor(private val _miners: List<MinerInS
                     else -> acc
                 }
             }
-            return MineShaftOccupation(miners)
+            return MineShaft(miners)
         }
     }
 }

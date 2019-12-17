@@ -28,8 +28,8 @@ class MagnumSal(private val eventStream: EventStream) {
     private val playerActions
         get() = minersPlaced.map { it.player } + minersRemoved.map { it.player }
 
-    private val mineShaftOccupation: MineShaftOccupation
-        get() = MineShaftOccupation.from(eventStream)
+    private val mineShaft: MineShaft
+        get() = MineShaft.from(eventStream)
 
     fun addPlayer(name: String, color: PlayerColor) {
         transitionRequires("the same color not to have been picked already") {
@@ -56,13 +56,13 @@ class MagnumSal(private val eventStream: EventStream) {
 
     fun placeWorkerInMine(player: PlayerColor, at: MineShaftPosition) {
         requireItToBeTheTurnOf(player)
-        mineShaftOccupation.attemptPlacingAMiner(player, at)
+        mineShaft.attemptPlacingAMiner(player, at)
         eventStream.push(MinerPlaced(player, at))
     }
 
     fun removeWorkerFromMine(player: PlayerColor, mineShaftPosition: MineShaftPosition) {
         requireItToBeTheTurnOf(player)
-        mineShaftOccupation.attemptRemovingAMiner(player, mineShaftPosition)
+        mineShaft.attemptRemovingAMiner(player, mineShaftPosition)
         eventStream.push(MinerRemoved(player, mineShaftPosition))
     }
 
