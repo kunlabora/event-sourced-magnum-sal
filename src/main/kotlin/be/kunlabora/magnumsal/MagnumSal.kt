@@ -74,16 +74,6 @@ class MagnumSal(private val eventStream: EventStream) {
         eventStream.push(MinerRemoved(player, mineShaftPosition))
     }
 
-    private fun requireItToBeTheTurnOf(player: PlayerColor) {
-        transitionRequires("it to be your turn") {
-            itIsTheTurnOf(player)
-        }
-    }
-
-    private fun itIsTheTurnOf(player: PlayerColor): Boolean {
-        return playerActions.count() % amountOfPlayers == turnOrder.indexOf(player)
-    }
-
     private fun requirePlayerToHaveEnoughWorkers(player: PlayerColor) {
         transitionRequires("you to have enough available workers") {
             hasEnoughWorkersInPool(player)
