@@ -19,21 +19,21 @@ class MineShaftOccupation private constructor(private val _miners: List<MinerInS
     private fun placingWouldNotBreakTheChain(minerInShaft: MinerInShaft) =
             minerInShaft.at.isTheTop() || isThereAnotherMinerAt(minerInShaft.at.previous())
 
-    private fun removingWouldNotBreakTheChain(minerInShaft: MinerInShaft): Boolean {
-        val mineShaftAfterRemoval = MineShaftOccupation(_miners - minerInShaft)
-        return mineShaftAfterRemoval.isThereAnotherMinerAt(minerInShaft.at)
-                || mineShaftAfterRemoval.wasItTheLastMinerInTheChain(minerInShaft)
-    }
+    private fun removingWouldNotBreakTheChain(minerInShaft: MinerInShaft) =
+            isItTheLastMinerInTheChain(minerInShaft) || areThereOtherMinersAt(minerInShaft.at)
 
-    private fun wasItTheLastMinerInTheChain(miner: MinerInShaft) =
+    private fun isItTheLastMinerInTheChain(miner: MinerInShaft) =
             miner.at.next() !in _miners.map { it.at }
+
+    private fun areThereOtherMinersAt(position: MineShaftPosition) =
+            _miners.count { it.at == position } > 1
 
     private fun isThereAnotherMinerAt(position: MineShaftPosition) =
             position in _miners.map { it.at }
 
     companion object {
         fun from(eventStream: EventStream): MineShaftOccupation {
-            val miners : List<MinerInShaft> = eventStream.filterEvents<MagnumSalEvent>().fold(emptyList()) { acc, event ->
+            val miners: List<MinerInShaft> = eventStream.filterEvents<MagnumSalEvent>().fold(emptyList()) { acc, event ->
                 when (event) {
                     is MagnumSalEvent.MinerRemoved -> MinerInShaft.asMinerInShaft(event)?.let { acc - it } ?: acc
                     is MagnumSalEvent.MinerPlaced -> MinerInShaft.asMinerInShaft(event)?.let { acc + it } ?: acc
