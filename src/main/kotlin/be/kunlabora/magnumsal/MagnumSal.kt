@@ -56,15 +56,13 @@ class MagnumSal(private val eventStream: EventStream) {
 
     fun placeWorkerInMine(player: PlayerColor, at: MineShaftPosition) {
         requireItToBeTheTurnOf(player)
-        mineShaftOccupation.attemptPlacingMiner(at)
+        mineShaftOccupation.attemptPlacingAMiner(player, at)
         eventStream.push(MinerPlaced(player, at))
     }
 
     fun removeWorkerFromMine(player: PlayerColor, mineShaftPosition: MineShaftPosition) {
         requireItToBeTheTurnOf(player)
-        transitionRequires("the chain not to be broken") {
-            removingWouldNotBreakTheChain(MinerInShaft(player, mineShaftPosition))
-        }
+        mineShaftOccupation.attemptRemovingAMiner(player, mineShaftPosition)
         eventStream.push(MinerRemoved(player, mineShaftPosition))
     }
 
@@ -82,18 +80,6 @@ class MagnumSal(private val eventStream: EventStream) {
         return (isFirstPlayer && opponentActionsCount == playerActionsCount)
                 || (!isFirstPlayer && opponentActionsCount > playerActionsCount)
     }
-
-    private fun removingWouldNotBreakTheChain(minerInShaft: MinerInShaft): Boolean {
-        val mineShaftAfterRemoval = (mineShaftOccupation - minerInShaft).map { it.at }
-        return isThereAnotherMinerAt(minerInShaft.at, mineShaftAfterRemoval)
-                || wasItTheLastMinerAt(minerInShaft.at, mineShaftAfterRemoval)
-    }
-
-    private fun wasItTheLastMinerAt(mineShaftPosition: MineShaftPosition, mineShaftAfterRemoval: List<MineShaftPosition>) =
-            mineShaftPosition.next() !in mineShaftAfterRemoval
-
-    private fun isThereAnotherMinerAt(mineShaftPosition: MineShaftPosition, mineShaftAfterRemoval: List<MineShaftPosition>) =
-            mineShaftPosition in mineShaftAfterRemoval
 }
 
 sealed class PlayerColor {

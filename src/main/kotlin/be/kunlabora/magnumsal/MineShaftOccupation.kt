@@ -2,17 +2,34 @@ package be.kunlabora.magnumsal
 
 import be.kunlabora.magnumsal.exception.transitionRequires
 
-class MineShaftOccupation(private val _miners: List<MinerInShaft>) : List<MinerInShaft> by _miners {
+class MineShaftOccupation private constructor(private val _miners: List<MinerInShaft>) : List<MinerInShaft> by _miners {
 
-    fun attemptPlacingMiner(at: MineShaftPosition) {
+    fun attemptPlacingAMiner(player: PlayerColor, at: MineShaftPosition) {
         transitionRequires("the previous position to be occupied") {
-            at.isTheTop() || aMinerWasPlacedAt(at.previous())
+            placingWouldNotBreakTheChain(MinerInShaft(player, at))
         }
     }
 
-    private fun aMinerWasPlacedAt(position: MineShaftPosition) =
-            (position in _miners.map { it.at })
+    fun attemptRemovingAMiner(player: PlayerColor, at: MineShaftPosition) {
+        transitionRequires("the chain not to be broken") {
+            removingWouldNotBreakTheChain(MinerInShaft(player, at))
+        }
+    }
 
+    private fun placingWouldNotBreakTheChain(minerInShaft: MinerInShaft) =
+            minerInShaft.at.isTheTop() || isThereAnotherMinerAt(minerInShaft.at.previous())
+
+    private fun removingWouldNotBreakTheChain(minerInShaft: MinerInShaft): Boolean {
+        val mineShaftAfterRemoval = MineShaftOccupation(_miners - minerInShaft)
+        return mineShaftAfterRemoval.isThereAnotherMinerAt(minerInShaft.at)
+                || mineShaftAfterRemoval.wasItTheLastMinerInTheChain(minerInShaft)
+    }
+
+    private fun wasItTheLastMinerInTheChain(miner: MinerInShaft) =
+            miner.at.next() !in _miners.map { it.at }
+
+    private fun isThereAnotherMinerAt(position: MineShaftPosition) =
+            position in _miners.map { it.at }
 
     companion object {
         fun from(eventStream: EventStream): MineShaftOccupation {
