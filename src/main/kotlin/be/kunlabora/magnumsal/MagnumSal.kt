@@ -29,14 +29,8 @@ class MagnumSal(private val eventStream: EventStream) {
     private val playerActions
         get() = minersPlaced.map { it.player } + minersRemoved.map { it.player }
 
-    private val mineShaftOccupation: List<MinerInShaft>
-        get() = eventStream.filterEvents<MagnumSalEvent>().fold(emptyList()) { acc, event ->
-            when (event) {
-                is MinerRemoved -> asMinerInShaft(event)?.let { acc - it } ?: acc
-                is MinerPlaced -> asMinerInShaft(event)?.let { acc + it } ?: acc
-                else -> acc
-            }
-        }
+    private val mineShaftOccupation: MineShaftOccupation
+        get() = MineShaftOccupation.from(eventStream)
 
     fun addPlayer(name: String, color: PlayerColor) {
         transitionRequires("the same color not to have been picked already") {
@@ -109,18 +103,6 @@ class MagnumSal(private val eventStream: EventStream) {
 
     private fun isThereAnotherMinerAt(mineShaftPosition: MineShaftPosition, mineShaftAfterRemoval: List<MineShaftPosition>) =
             mineShaftPosition in mineShaftAfterRemoval
-}
-
-data class MinerInShaft(val player: PlayerColor, val at: MineShaftPosition) {
-    override fun toString(): String = "$player at $at"
-
-    companion object {
-        fun asMinerInShaft(event: MagnumSalEvent): MinerInShaft? = when (event) {
-            is MinerRemoved -> MinerInShaft(event.player, event.mineShaftPosition)
-            is MinerPlaced -> MinerInShaft(event.player, event.mineShaftPosition)
-            else -> null
-        }
-    }
 }
 
 sealed class PlayerColor {
