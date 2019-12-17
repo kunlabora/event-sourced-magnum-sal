@@ -62,22 +62,11 @@ class MagnumSal(private val eventStream: EventStream) {
     }
 
     fun placeWorkerInMine(player: PlayerColor, mineShaftPosition: MineShaftPosition) {
-        transitionRequires("it to be your turn") {
-            itIsTheTurnOfPlayer(player)
-        }
+        requireItToBeTheTurnOf(player)
         transitionRequires("the previous MineShaft Position to be occupied") {
             aMinerIsGoingToBePlacedAtTheTop(mineShaftPosition) || aMinerWasPlacedAt(mineShaftPosition.previous())
         }
         eventStream.push(MinerPlaced(player, mineShaftPosition))
-    }
-
-    private fun itIsTheTurnOfPlayer(player: PlayerColor): Boolean {
-        val isFirstPlayer = firstPlayer == player
-        val playerActionsCount = playerActions.filter { it == player }.count()
-        val opponentActionsCount = playerActions.filter { it != player }.count()
-
-        return (isFirstPlayer && opponentActionsCount == playerActionsCount)
-                || (!isFirstPlayer && opponentActionsCount > playerActionsCount)
     }
 
     private fun aMinerIsGoingToBePlacedAtTheTop(currentMineShaftPosition: MineShaftPosition) =
@@ -87,13 +76,26 @@ class MagnumSal(private val eventStream: EventStream) {
             (position in minersPlaced.map { it.mineShaftPosition })
 
     fun removeWorkerFromMine(player: PlayerColor, mineShaftPosition: MineShaftPosition) {
-        transitionRequires("it to be your turn") {
-            itIsTheTurnOfPlayer(player)
-        }
+        requireItToBeTheTurnOf(player)
         transitionRequires("the chain not to be broken") {
             removingWouldNotBreakTheChain(MinerInShaft(player, mineShaftPosition))
         }
         eventStream.push(MinerRemoved(player, mineShaftPosition))
+    }
+
+    private fun requireItToBeTheTurnOf(player: PlayerColor) {
+        transitionRequires("it to be your turn") {
+            itIsTheTurnOf(player)
+        }
+    }
+
+    private fun itIsTheTurnOf(player: PlayerColor): Boolean {
+        val isFirstPlayer = firstPlayer == player
+        val playerActionsCount = playerActions.filter { it == player }.count()
+        val opponentActionsCount = playerActions.filter { it != player }.count()
+
+        return (isFirstPlayer && opponentActionsCount == playerActionsCount)
+                || (!isFirstPlayer && opponentActionsCount > playerActionsCount)
     }
 
     private fun removingWouldNotBreakTheChain(minerInShaft: MinerInShaft): Boolean {
