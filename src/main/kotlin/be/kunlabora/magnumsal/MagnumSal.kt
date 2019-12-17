@@ -1,7 +1,6 @@
 package be.kunlabora.magnumsal
 
 import be.kunlabora.magnumsal.MagnumSalEvent.*
-import be.kunlabora.magnumsal.MinerInShaft.Companion.asMinerInShaft
 import be.kunlabora.magnumsal.exception.transitionRequires
 
 sealed class MagnumSalEvent : Event {
@@ -55,19 +54,11 @@ class MagnumSal(private val eventStream: EventStream) {
         eventStream.push(PlayerOrderDetermined(player1, player2))
     }
 
-    fun placeWorkerInMine(player: PlayerColor, mineShaftPosition: MineShaftPosition) {
+    fun placeWorkerInMine(player: PlayerColor, at: MineShaftPosition) {
         requireItToBeTheTurnOf(player)
-        transitionRequires("the previous MineShaft Position to be occupied") {
-            aMinerIsGoingToBePlacedAtTheTop(mineShaftPosition) || aMinerWasPlacedAt(mineShaftPosition.previous())
-        }
-        eventStream.push(MinerPlaced(player, mineShaftPosition))
+        mineShaftOccupation.attemptPlacingMiner(at)
+        eventStream.push(MinerPlaced(player, at))
     }
-
-    private fun aMinerIsGoingToBePlacedAtTheTop(currentMineShaftPosition: MineShaftPosition) =
-            (currentMineShaftPosition.index == 1)
-
-    private fun aMinerWasPlacedAt(position: MineShaftPosition) =
-            (position in minersPlaced.map { it.mineShaftPosition })
 
     fun removeWorkerFromMine(player: PlayerColor, mineShaftPosition: MineShaftPosition) {
         requireItToBeTheTurnOf(player)

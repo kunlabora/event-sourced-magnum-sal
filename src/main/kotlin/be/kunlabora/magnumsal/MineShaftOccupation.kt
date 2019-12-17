@@ -1,6 +1,22 @@
 package be.kunlabora.magnumsal
 
+import be.kunlabora.magnumsal.exception.transitionRequires
+
 class MineShaftOccupation(private val _miners: List<MinerInShaft>) : List<MinerInShaft> by _miners {
+
+    fun attemptPlacingMiner(at: MineShaftPosition) {
+        transitionRequires("the previous position to be occupied") {
+            aMinerIsGoingToBePlacedAtTheTop(at) || aMinerWasPlacedAt(at.previous())
+        }
+    }
+
+    private fun aMinerIsGoingToBePlacedAtTheTop(currentMineShaftPosition: MineShaftPosition) =
+            (currentMineShaftPosition.index == 1)
+
+    private fun aMinerWasPlacedAt(position: MineShaftPosition) =
+            (position in _miners.map { it.at })
+
+
     companion object {
         fun from(eventStream: EventStream): MineShaftOccupation {
             val miners : List<MinerInShaft> = eventStream.filterEvents<MagnumSalEvent>().fold(emptyList()) { acc, event ->
