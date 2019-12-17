@@ -203,6 +203,7 @@ class MagnumSalTest {
             val magnumSal = setupMagnumSalWithTwoPlayers()
                     .withPlayerOrder(White, Black)
             magnumSal.placeWorkerInMine(White, MineShaftPosition(1))
+            magnumSal.placeWorkerInMine(Black, MineShaftPosition(1))
 
             magnumSal.removeWorkerFromMine(White, MineShaftPosition(1))
 
@@ -240,7 +241,16 @@ class MagnumSalTest {
 
         @Test
         fun `cannot remove worker if it's not your turn`() {
+            val magnumSal = setupMagnumSalWithTwoPlayers()
+                    .withPlayerOrder(White, Black)
+            magnumSal.placeWorkerInMine(White, MineShaftPosition(1))
+            magnumSal.placeWorkerInMine(Black, MineShaftPosition(1))
+            magnumSal.removeWorkerFromMine(White, MineShaftPosition(1))
 
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
+                    .isThrownBy { magnumSal.removeWorkerFromMine(White, MineShaftPosition(1)) }
+
+            assertThat(eventStream).containsOnlyOnce(MinerRemoved(White, MineShaftPosition(1)))
         }
     }
 

@@ -24,6 +24,10 @@ class MagnumSal(private val eventStream: EventStream) {
 
     private val minersPlaced
         get() = eventStream.filterEvents<MinerPlaced>()
+    private val minersRemoved
+        get() = eventStream.filterEvents<MinerRemoved>()
+    private val playerActions
+        get() = minersPlaced.map { it.player } + minersRemoved.map { it.player }
 
     private val mineShaftOccupation: List<MinerInShaft>
         get() = eventStream.filterEvents<MagnumSalEvent>().fold(emptyList()) { acc, event ->
@@ -58,19 +62,19 @@ class MagnumSal(private val eventStream: EventStream) {
     }
 
     fun placeWorkerInMine(player: PlayerColor, mineShaftPosition: MineShaftPosition) {
-        transitionRequires("the previous MineShaft Position to be occupied") {
-            aMinerIsGoingToBePlacedAtTheTop(mineShaftPosition) || aMinerWasPlacedAt(mineShaftPosition.previous())
-        }
         transitionRequires("it to be your turn") {
             itIsTheTurnOfPlayer(player)
+        }
+        transitionRequires("the previous MineShaft Position to be occupied") {
+            aMinerIsGoingToBePlacedAtTheTop(mineShaftPosition) || aMinerWasPlacedAt(mineShaftPosition.previous())
         }
         eventStream.push(MinerPlaced(player, mineShaftPosition))
     }
 
     private fun itIsTheTurnOfPlayer(player: PlayerColor): Boolean {
         val isFirstPlayer = firstPlayer == player
-        val playerActionsCount = minersPlaced.filter { it.player == player }.count()
-        val opponentActionsCount = minersPlaced.filter { it.player != player }.count()
+        val playerActionsCount = playerActions.filter { it == player }.count()
+        val opponentActionsCount = playerActions.filter { it != player }.count()
 
         return (isFirstPlayer && opponentActionsCount == playerActionsCount)
                 || (!isFirstPlayer && opponentActionsCount > playerActionsCount)
@@ -83,6 +87,9 @@ class MagnumSal(private val eventStream: EventStream) {
             (position in minersPlaced.map { it.mineShaftPosition })
 
     fun removeWorkerFromMine(player: PlayerColor, mineShaftPosition: MineShaftPosition) {
+        transitionRequires("it to be your turn") {
+            itIsTheTurnOfPlayer(player)
+        }
         transitionRequires("the chain not to be broken") {
             removingWouldNotBreakTheChain(MinerInShaft(player, mineShaftPosition))
         }
