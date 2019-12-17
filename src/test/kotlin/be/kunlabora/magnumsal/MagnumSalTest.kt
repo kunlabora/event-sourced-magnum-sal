@@ -34,17 +34,20 @@ class MagnumSalTest {
                     .doesNotContain(PlayerJoined("Bruno", Black))
         }
 
-        //TODO To expand to 5th player at a later time
         @Test
-        fun `Cannot add a third player`() {
+        fun `Cannot add a fifth player`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" to White, "Tim" to Black)
+                    .withPlayersInOrder(
+                            "Bruno" to White,
+                            "Tim" to Black,
+                            "Nele" to Orange,
+                            "Jan" to Purple)
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.addPlayer("Nele", Orange) }
+                    .isThrownBy { magnumSal.addPlayer("Snarf", Orange) }
 
             assertThat(eventStream)
-                    .doesNotContain(PlayerJoined("Nele", Orange))
+                    .doesNotContain(PlayerJoined("Snarf", Orange))
         }
     }
 
@@ -77,8 +80,9 @@ class MagnumSalTest {
             val magnumSal = MagnumSal(eventStream)
                     .withPlayers("Bruno" to White, "Tim" to Black)
 
-            assertThatExceptionOfType(IllegalArgumentException::class.java)
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { magnumSal.determinePlayOrder(Black, Black) }
+                    .withMessage("Transition requires player colors to be unique")
 
             assertThat(eventStream.filterEvents<PlayerOrderDetermined>()).isEmpty()
         }
@@ -91,6 +95,31 @@ class MagnumSalTest {
             magnumSal.determinePlayOrder(White, Black)
 
             assertThat(eventStream).contains(PlayerOrderDetermined(White, Black))
+        }
+
+        @Test
+        fun `Can determine a player order for three players`() {
+            val magnumSal = MagnumSal(eventStream)
+                    .withPlayers("Bruno" to White,
+                            "Tim" to Black,
+                            "Snarf" to Purple)
+
+            magnumSal.determinePlayOrder(Black, Purple, White)
+
+            assertThat(eventStream).contains(PlayerOrderDetermined(Black, Purple, White))
+        }
+
+        @Test
+        fun `Can determine a player order for four players`() {
+            val magnumSal = MagnumSal(eventStream)
+                    .withPlayers("Bruno" to White,
+                            "Tim" to Black,
+                            "Gargamel" to Orange,
+                            "Snarf" to Purple)
+
+            magnumSal.determinePlayOrder(Orange, Black, Purple, White)
+
+            assertThat(eventStream).contains(PlayerOrderDetermined(Orange, Black, Purple, White))
         }
     }
 

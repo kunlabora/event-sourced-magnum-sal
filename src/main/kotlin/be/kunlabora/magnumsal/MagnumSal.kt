@@ -4,7 +4,7 @@ import be.kunlabora.magnumsal.MagnumSalEvent.*
 import be.kunlabora.magnumsal.exception.transitionRequires
 
 sealed class MagnumSalEvent : Event {
-    data class PlayerOrderDetermined(val player1: PlayerColor, val player2: PlayerColor) : MagnumSalEvent()
+    data class PlayerOrderDetermined(val player1: PlayerColor, val player2: PlayerColor, val player3: PlayerColor? = null, val player4: PlayerColor? = null) : MagnumSalEvent()
     data class PlayerJoined(val name: String, val color: PlayerColor) : MagnumSalEvent()
     data class MinerPlaced(val player: PlayerColor, val mineShaftPosition: MineShaftPosition) : MagnumSalEvent()
     data class MinerRemoved(val player: PlayerColor, val mineShaftPosition: MineShaftPosition) : MagnumSalEvent()
@@ -35,23 +35,22 @@ class MagnumSal(private val eventStream: EventStream) {
         transitionRequires("the same color not to have been picked already") {
             color !in players.map { it.color }
         }
-        transitionRequires("a maximum of one player to have joined") {
-            amountOfPlayers <= 1
-        }
         eventStream.push(PlayerJoined(name, color))
     }
 
-    //TODO later: add player3: PlayerColor? = null, player4 : PlayerColor? = null
-    fun determinePlayOrder(player1: PlayerColor, player2: PlayerColor) {
-        require(player1 != player2) { "Play order can only be determined with different PlayerColors" }
+    fun determinePlayOrder(player1: PlayerColor, player2: PlayerColor, player3: PlayerColor? = null, player4: PlayerColor? = null) {
+        val colors = setOf(player1, player2, player3, player4).filterNotNull()
+        transitionRequires("player colors to be unique") {
+            colors.size == listOfNotNull(player1, player2, player3, player4).size
+        }
         transitionRequires("at least 2 players") {
             amountOfPlayers >= 2
         }
         transitionRequires("player colors to have been picked") {
-            player1 in players.map { it.color }
-                    && player2 in players.map { it.color }
+            val players = players.map { it.color }.toSet()
+            colors.intersect(players).size == players.size
         }
-        eventStream.push(PlayerOrderDetermined(player1, player2))
+        eventStream.push(PlayerOrderDetermined(player1, player2, player3, player4))
     }
 
     fun placeWorkerInMine(player: PlayerColor, at: MineShaftPosition) {
@@ -87,6 +86,7 @@ sealed class PlayerColor {
     object White : PlayerColor()
     object Orange : PlayerColor()
     object Purple : PlayerColor()
+
     override fun toString(): String = this.javaClass.simpleName
 }
 

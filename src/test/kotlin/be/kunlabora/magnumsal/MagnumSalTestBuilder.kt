@@ -17,7 +17,7 @@ fun MagnumSal.withPlayerOrder(player1: PlayerColor,
                               player2: PlayerColor,
                               player3: PlayerColor?,
                               player4: PlayerColor?): MagnumSal {
-    this.determinePlayOrder(player1, player2)
+    this.determinePlayOrder(player1, player2, player3, player4)
     return this
 }
 
