@@ -1,5 +1,7 @@
 package be.kunlabora.magnumsal
 
+import be.kunlabora.magnumsal.MineShaftPosition.Companion.at
+
 typealias Player = Pair<String, PlayerColor>
 
 fun MagnumSal.withPlayers(player1: Player,
@@ -31,7 +33,7 @@ fun MagnumSal.withPlayersInOrder(player1: Player,
 fun MagnumSal.distributeWorkersInTheMineShaft(amountOfWorkersToUse: Int, playerOrder: List<PlayerColor>): MagnumSal {
     (1..amountOfWorkersToUse).forEach { pos ->
         playerOrder.forEach { player ->
-            this.placeWorkerInMine(player, MineShaftPosition(pos))
+            this.placeWorkerInMine(player, at(pos))
         }
     }
     return this
