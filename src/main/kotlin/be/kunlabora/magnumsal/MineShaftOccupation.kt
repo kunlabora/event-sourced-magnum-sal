@@ -6,12 +6,9 @@ class MineShaftOccupation(private val _miners: List<MinerInShaft>) : List<MinerI
 
     fun attemptPlacingMiner(at: MineShaftPosition) {
         transitionRequires("the previous position to be occupied") {
-            aMinerIsGoingToBePlacedAtTheTop(at) || aMinerWasPlacedAt(at.previous())
+            at.isTheTop() || aMinerWasPlacedAt(at.previous())
         }
     }
-
-    private fun aMinerIsGoingToBePlacedAtTheTop(currentMineShaftPosition: MineShaftPosition) =
-            (currentMineShaftPosition.index == 1)
 
     private fun aMinerWasPlacedAt(position: MineShaftPosition) =
             (position in _miners.map { it.at })
