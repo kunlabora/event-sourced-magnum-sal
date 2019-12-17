@@ -92,7 +92,9 @@ class MagnumSal(private val eventStream: EventStream) {
     }
 
     private fun hasEnoughWorkersInPool(player: PlayerColor): Boolean {
-        return minersPlaced.count { it.player == player } < workersAtStart
+        val minersPlacedBy = minersPlaced.count { it.player == player }
+        val minersRemovedBy = minersRemoved.count { it.player == player }
+        return (minersPlacedBy - minersRemovedBy) < workersAtStart
     }
 }
 

@@ -173,6 +173,23 @@ class MagnumSalTest {
         }
 
         @Test
+        fun `Cannot place a worker when you're out of workers`() {
+            val magnumSal = MagnumSal(eventStream)
+                    .withPlayersInOrder("Bruno" to White, "Tim" to Black)
+                    .distributeWorkersInTheMineShaft(5, listOf(White, Black))
+
+            visualize(MineShaft.from(eventStream))
+
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
+                    .isThrownBy { magnumSal.placeWorkerInMine(White, at(6)) }
+                    .withMessage("Transition requires you to have enough available workers")
+
+            assertThat(eventStream).doesNotContain(
+                    MinerPlaced(White, at(6))
+            )
+        }
+
+        @Test
         fun `Second player can place a worker in shaft 1`() {
             val magnumSal = MagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" to White, "Tim" to Black)
@@ -227,22 +244,6 @@ class MagnumSalTest {
             )
         }
 
-        @Test
-        fun `Cannot place a worker when you're out of workers`() {
-            val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" to White, "Tim" to Black)
-                    .distributeWorkersInTheMineShaft(5, listOf(White, Black))
-
-            MineShaft.from(eventStream).visualize()
-
-            assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.placeWorkerInMine(White, at(6)) }
-                    .withMessage("Transition requires you to have enough available workers")
-
-            assertThat(eventStream).doesNotContain(
-                    MinerPlaced(White, at(6))
-            )
-        }
     }
 
     @Nested
@@ -352,6 +353,33 @@ class MagnumSalTest {
                     .withMessage("Transition requires it to be your turn")
 
             assertThat(eventStream).containsOnlyOnce(MinerPlaced(Purple, at(1)))
+        }
+    }
+
+    @Nested
+    inner class CheckingForAvailableWorkers {
+        @Test
+        fun `No more workers after placing and removing miners`() {
+            val magnumSal = MagnumSal(eventStream)
+                    .withPlayersInOrder("Bruno" to White, "Tim" to Black)
+                    .distributeWorkersInTheMineShaft(5, listOf(White, Black))
+            magnumSal.removeWorkerFromMine(White, at(5))
+            magnumSal.removeWorkerFromMine(Black, at(5))
+
+            visualize(MineShaft.from(eventStream))
+
+            magnumSal.placeWorkerInMine(White, at(5))
+            magnumSal.placeWorkerInMine(Black, at(5))
+
+            visualize(MineShaft.from(eventStream))
+
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
+                    .isThrownBy { magnumSal.placeWorkerInMine(White, at(6)) }
+                    .withMessage("Transition requires you to have enough available workers")
+
+            assertThat(eventStream).doesNotContain(
+                    MinerPlaced(White, at(6))
+            )
         }
     }
 }
