@@ -15,11 +15,11 @@ class MagnumSal(private val eventStream: EventStream) {
     private val players
         get() = eventStream.filterEvents<PlayerJoined>()
 
-    private val amountOfPlayers
-        get() = players.count()
-
     private val workersAtStart: Int
         get() = if (amountOfPlayers == 2) 5 else 4
+
+    private val amountOfPlayers
+        get() = players.count()
 
     private val turnOrder
         get() =

@@ -31,8 +31,8 @@ fun MagnumSal.withPlayersInOrder(player1: Player,
 }
 
 fun MagnumSal.distributeWorkersInTheMineShaft(amountOfWorkersToUse: Int, playerOrder: List<PlayerColor>): MagnumSal {
-    (1..amountOfWorkersToUse).forEach { pos ->
-        playerOrder.forEach { player ->
+    for (pos in 1..amountOfWorkersToUse) {
+        for (player in playerOrder) {
             this.placeWorkerInMine(player, at(pos))
         }
     }
