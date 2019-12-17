@@ -18,8 +18,10 @@ class MagnumSal(private val eventStream: EventStream) {
     private val amountOfPlayers
         get() = players.count()
 
-    private val firstPlayer
-        get() = eventStream.filterEvents<PlayerOrderDetermined>().single().player1
+    private val turnOrder
+        get() =
+            eventStream.filterEvents<PlayerOrderDetermined>().single()
+                    .let { listOfNotNull(it.player1, it.player2, it.player3, it.player4) }
 
     private val minersPlaced
         get() = eventStream.filterEvents<MinerPlaced>()
@@ -72,12 +74,7 @@ class MagnumSal(private val eventStream: EventStream) {
     }
 
     private fun itIsTheTurnOf(player: PlayerColor): Boolean {
-        val isFirstPlayer = firstPlayer == player
-        val playerActionsCount = playerActions.filter { it == player }.count()
-        val opponentActionsCount = playerActions.filter { it != player }.count()
-
-        return (isFirstPlayer && opponentActionsCount == playerActionsCount)
-                || (!isFirstPlayer && opponentActionsCount > playerActionsCount)
+        return playerActions.count() % amountOfPlayers == turnOrder.indexOf(player)
     }
 }
 
