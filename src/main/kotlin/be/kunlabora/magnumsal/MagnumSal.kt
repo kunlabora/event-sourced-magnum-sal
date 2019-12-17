@@ -33,6 +33,7 @@ class MagnumSal(private val eventStream: EventStream) {
     private val mineShaft: MineShaft
         get() = MineShaft.from(eventStream)
 
+
     fun addPlayer(name: String, color: PlayerColor) {
         transitionRequires("the same color not to have been picked already") {
             color !in players.map { it.color }
@@ -40,7 +41,10 @@ class MagnumSal(private val eventStream: EventStream) {
         eventStream.push(PlayerJoined(name, color))
     }
 
-    fun determinePlayOrder(player1: PlayerColor, player2: PlayerColor, player3: PlayerColor? = null, player4: PlayerColor? = null) {
+    fun determinePlayOrder(player1: PlayerColor,
+                           player2: PlayerColor,
+                           player3: PlayerColor? = null,
+                           player4: PlayerColor? = null) {
         val colors = setOf(player1, player2, player3, player4).filterNotNull()
         transitionRequires("player colors to be unique") {
             colors.size == listOfNotNull(player1, player2, player3, player4).size
