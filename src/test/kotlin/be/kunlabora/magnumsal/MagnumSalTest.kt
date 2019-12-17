@@ -304,58 +304,6 @@ class MagnumSalTest {
     }
 
     @Nested
-    inner class CheckingForTurnOrder {
-        @Test
-        fun `Illegal case in a game with 2 players, first player goes twice after one round`() {
-            val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
-
-            magnumSal.placeWorkerInMine(White, at(1))
-            magnumSal.placeWorkerInMine(Black, at(1))
-            magnumSal.placeWorkerInMine(White, at(2))
-
-            assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.placeWorkerInMine(White, at(2)) }
-                    .withMessage("Transition requires it to be your turn")
-
-            assertThat(eventStream).containsOnlyOnce(MinerPlaced(White, at(2)))
-        }
-
-        @Test
-        fun `Illegal case in a game with 3 players, third player goes twice`() {
-            val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" using White, "Tim" using Black, "Snarf" using Orange)
-
-            magnumSal.placeWorkerInMine(White, at(1))
-            magnumSal.placeWorkerInMine(Black, at(1))
-            magnumSal.placeWorkerInMine(Orange, at(1))
-
-            assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.placeWorkerInMine(Orange, at(1)) }
-                    .withMessage("Transition requires it to be your turn")
-
-            assertThat(eventStream).containsOnlyOnce(MinerPlaced(Orange, at(1)))
-        }
-
-        @Test
-        fun `Illegal case in a game with 4 players, fourth player goes twice`() {
-            val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" using White, "Tim" using Black, "Snarf" using Orange, "Gargamel" using Purple)
-
-            magnumSal.placeWorkerInMine(White, at(1))
-            magnumSal.placeWorkerInMine(Black, at(1))
-            magnumSal.placeWorkerInMine(Orange, at(1))
-            magnumSal.placeWorkerInMine(Purple, at(1))
-
-            assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.placeWorkerInMine(Purple, at(1)) }
-                    .withMessage("Transition requires it to be your turn")
-
-            assertThat(eventStream).containsOnlyOnce(MinerPlaced(Purple, at(1)))
-        }
-    }
-
-    @Nested
     inner class CheckingForAvailableWorkers {
         @Test
         fun `No more workers after placing and removing miners`() {

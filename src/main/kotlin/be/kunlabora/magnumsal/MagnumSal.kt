@@ -1,6 +1,7 @@
 package be.kunlabora.magnumsal
 
 import be.kunlabora.magnumsal.MagnumSalEvent.*
+import be.kunlabora.magnumsal.TurnOrder.Companion.onlyInPlayersTurn
 import be.kunlabora.magnumsal.exception.transitionRequires
 
 sealed class MagnumSalEvent : Event {
@@ -62,15 +63,13 @@ class MagnumSal(private val eventStream: EventStream) {
         eventStream.push(PlayerOrderDetermined(player1, player2, player3, player4))
     }
 
-    fun placeWorkerInMine(player: PlayerColor, at: MineShaftPosition) {
-        requireItToBeTheTurnOf(player)
+    fun placeWorkerInMine(player: PlayerColor, at: MineShaftPosition) = onlyInPlayersTurn(player) {
         requirePlayerToHaveEnoughWorkers(player)
         mineShaft.attemptPlacingAMiner(player, at)
         eventStream.push(MinerPlaced(player, at))
     }
 
-    fun removeWorkerFromMine(player: PlayerColor, mineShaftPosition: MineShaftPosition) {
-        requireItToBeTheTurnOf(player)
+    fun removeWorkerFromMine(player: PlayerColor, mineShaftPosition: MineShaftPosition) = onlyInPlayersTurn(player) {
         mineShaft.attemptRemovingAMiner(player, mineShaftPosition)
         eventStream.push(MinerRemoved(player, mineShaftPosition))
     }
@@ -96,6 +95,8 @@ class MagnumSal(private val eventStream: EventStream) {
         val minersRemovedBy = minersRemoved.count { it.player == player }
         return (minersPlacedBy - minersRemovedBy) < workersAtStart
     }
+
+    private fun onlyInPlayersTurn(player: PlayerColor, block: () -> Unit): Any = onlyInPlayersTurn(eventStream, player, block)
 }
 
 sealed class PlayerColor {
