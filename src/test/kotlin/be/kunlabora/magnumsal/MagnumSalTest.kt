@@ -20,7 +20,7 @@ class MagnumSalTest {
     }
 
     @Nested
-    inner class AddPlayer {
+    inner class AddingPlayers {
         @Test
         fun `Cannot add two players with the same color`() {
             val magnumSal = MagnumSal(eventStream)
@@ -52,7 +52,7 @@ class MagnumSalTest {
     }
 
     @Nested
-    inner class DeterminePlayOrder {
+    inner class DeterminingPlayOrder {
         @Test
         fun `Cannot determine a player order when only one player joined`() {
             val magnumSal = MagnumSal(eventStream)
@@ -124,7 +124,7 @@ class MagnumSalTest {
     }
 
     @Nested
-    inner class PlaceWorkerInMine {
+    inner class PlacingWorkersInTheMine {
         @Test
         fun `Can place a worker in Shaft 1`() {
             val magnumSal = MagnumSal(eventStream)
@@ -234,7 +234,7 @@ class MagnumSalTest {
     }
 
     @Nested
-    inner class RemoveWorkerFromMineTest {
+    inner class RemovingMinersFromTheMine {
         @Test
         fun `can remove worker if it does not break the chain`() {
             val magnumSal = MagnumSal(eventStream)
@@ -292,7 +292,7 @@ class MagnumSalTest {
     }
 
     @Nested
-    inner class TurnOrderTests {
+    inner class CheckingForTurnOrder {
         @Test
         fun `Illegal case in a game with 2 players, first player goes twice after one round`() {
             val magnumSal = MagnumSal(eventStream)
