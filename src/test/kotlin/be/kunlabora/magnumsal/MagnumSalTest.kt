@@ -8,7 +8,6 @@ import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import java.lang.IllegalArgumentException
 
 class MagnumSalTest {
 
@@ -227,9 +226,21 @@ class MagnumSalTest {
             )
         }
 
-        //TODO at some point
-        fun `placeWorkerInMine | Cannot place a worker when you're out of workers`() {
+        @Test
+        fun `Cannot place a worker when you're out of workers`() {
+            val magnumSal = MagnumSal(eventStream)
+                    .withPlayersInOrder("Bruno" to White, "Tim" to Black)
+                    .distributeWorkersInTheMineShaft(5, listOf(White, Black))
 
+            MineShaft.from(eventStream).visualize()
+
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
+                    .isThrownBy { magnumSal.placeWorkerInMine(White, MineShaftPosition(6)) }
+                    .withMessage("Transition requires you to have enough available workers")
+
+            assertThat(eventStream).doesNotContain(
+                    MinerPlaced(White, MineShaftPosition(6))
+            )
         }
     }
 
@@ -342,5 +353,4 @@ class MagnumSalTest {
             assertThat(eventStream).containsOnlyOnce(MinerPlaced(Purple, MineShaftPosition(1)))
         }
     }
-
 }

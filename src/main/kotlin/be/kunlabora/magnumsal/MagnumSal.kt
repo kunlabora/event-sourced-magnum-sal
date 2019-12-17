@@ -18,6 +18,9 @@ class MagnumSal(private val eventStream: EventStream) {
     private val amountOfPlayers
         get() = players.count()
 
+    private val workersAtStart: Int
+        get() = if (amountOfPlayers == 2) 5 else 4
+
     private val turnOrder
         get() =
             eventStream.filterEvents<PlayerOrderDetermined>().single()
@@ -61,6 +64,7 @@ class MagnumSal(private val eventStream: EventStream) {
 
     fun placeWorkerInMine(player: PlayerColor, at: MineShaftPosition) {
         requireItToBeTheTurnOf(player)
+        requirePlayerToHaveEnoughWorkers(player)
         mineShaft.attemptPlacingAMiner(player, at)
         eventStream.push(MinerPlaced(player, at))
     }
@@ -79,6 +83,16 @@ class MagnumSal(private val eventStream: EventStream) {
 
     private fun itIsTheTurnOf(player: PlayerColor): Boolean {
         return playerActions.count() % amountOfPlayers == turnOrder.indexOf(player)
+    }
+
+    private fun requirePlayerToHaveEnoughWorkers(player: PlayerColor) {
+        transitionRequires("you to have enough available workers") {
+            hasEnoughWorkersInPool(player)
+        }
+    }
+
+    private fun hasEnoughWorkersInPool(player: PlayerColor): Boolean {
+        return minersPlaced.count { it.player == player } < workersAtStart
     }
 }
 
