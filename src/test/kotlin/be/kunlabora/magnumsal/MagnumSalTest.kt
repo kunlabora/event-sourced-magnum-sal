@@ -38,10 +38,10 @@ class MagnumSalTest {
         fun `Cannot add a fifth player`() {
             val magnumSal = MagnumSal(eventStream)
                     .withPlayersInOrder(
-                            "Bruno" to White,
-                            "Tim" to Black,
-                            "Nele" to Orange,
-                            "Jan" to Purple)
+                            "Bruno" using White,
+                            "Tim" using Black,
+                            "Nele" using Orange,
+                            "Jan" using Purple)
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { magnumSal.addPlayer("Snarf", Orange) }
@@ -67,7 +67,7 @@ class MagnumSalTest {
         @Test
         fun `Cannot determine a player order with colors that players didn't choose`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayers("Bruno" to White, "Tim" to Black)
+                    .withPlayers("Bruno" using White, "Tim" using Black)
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { magnumSal.determinePlayOrder(Orange, Black) }
@@ -78,7 +78,7 @@ class MagnumSalTest {
         @Test
         fun `Cannot determine a player order with two same colors`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayers("Bruno" to White, "Tim" to Black)
+                    .withPlayers("Bruno" using White, "Tim" using Black)
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { magnumSal.determinePlayOrder(Black, Black) }
@@ -90,7 +90,7 @@ class MagnumSalTest {
         @Test
         fun `Can determine a player order when at least two players joined`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayers("Bruno" to White, "Tim" to Black)
+                    .withPlayers("Bruno" using White, "Tim" using Black)
 
             magnumSal.determinePlayOrder(White, Black)
 
@@ -100,9 +100,9 @@ class MagnumSalTest {
         @Test
         fun `Can determine a player order for three players`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayers("Bruno" to White,
-                            "Tim" to Black,
-                            "Snarf" to Purple)
+                    .withPlayers("Bruno" using White,
+                            "Tim" using Black,
+                            "Snarf" using Purple)
 
             magnumSal.determinePlayOrder(Black, Purple, White)
 
@@ -112,10 +112,10 @@ class MagnumSalTest {
         @Test
         fun `Can determine a player order for four players`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayers("Bruno" to White,
-                            "Tim" to Black,
-                            "Gargamel" to Orange,
-                            "Snarf" to Purple)
+                    .withPlayers("Bruno" using White,
+                            "Tim" using Black,
+                            "Gargamel" using Orange,
+                            "Snarf" using Purple)
 
             magnumSal.determinePlayOrder(Orange, Black, Purple, White)
 
@@ -128,7 +128,7 @@ class MagnumSalTest {
         @Test
         fun `Can place a worker in Shaft 1`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" to White, "Tim" to Black)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
 
             magnumSal.placeWorkerInMine(White, at(1))
 
@@ -138,7 +138,7 @@ class MagnumSalTest {
         @Test
         fun `Cannot place a worker in Shaft 2 when Shaft 1 is unoccupied`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" to White, "Tim" to Black)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { magnumSal.placeWorkerInMine(White, at(2)) }
@@ -149,7 +149,7 @@ class MagnumSalTest {
         @Test
         fun `Cannot place two workers in one turn`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" to White, "Tim" to Black)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
 
             magnumSal.placeWorkerInMine(White, at(1))
             assertThatExceptionOfType(IllegalTransitionException::class.java)
@@ -163,7 +163,7 @@ class MagnumSalTest {
         @Test
         fun `Cannot place a worker when it's not your turn`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" to White, "Tim" to Black)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { magnumSal.placeWorkerInMine(Black, at(1)) }
@@ -175,7 +175,7 @@ class MagnumSalTest {
         @Test
         fun `Cannot place a worker when you're out of workers`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" to White, "Tim" to Black)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
                     .distributeWorkersInTheMineShaft(5, listOf(White, Black))
 
             visualize(MineShaft.from(eventStream))
@@ -192,7 +192,7 @@ class MagnumSalTest {
         @Test
         fun `Second player can place a worker in shaft 1`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" to White, "Tim" to Black)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
             magnumSal.placeWorkerInMine(White, at(1))
 
             magnumSal.placeWorkerInMine(Black, at(1))
@@ -203,7 +203,7 @@ class MagnumSalTest {
         @Test
         fun `Second player can place a worker in shaft 2`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" to White, "Tim" to Black)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
             magnumSal.placeWorkerInMine(White, at(1))
 
             magnumSal.placeWorkerInMine(Black, at(2))
@@ -214,7 +214,7 @@ class MagnumSalTest {
         @Test
         fun `Second player cannot place a worker in shaft 3`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" to White, "Tim" to Black)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
             magnumSal.placeWorkerInMine(White, at(1))
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { magnumSal.placeWorkerInMine(Black, at(3)) }
@@ -225,7 +225,7 @@ class MagnumSalTest {
         @Test
         fun `Players can fill up the shaft`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" to White, "Tim" to Black)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
 
             magnumSal.placeWorkerInMine(White, at(1))
             magnumSal.placeWorkerInMine(Black, at(2))
@@ -243,7 +243,6 @@ class MagnumSalTest {
                     MinerPlaced(Black, at(6))
             )
         }
-
     }
 
     @Nested
@@ -251,7 +250,7 @@ class MagnumSalTest {
         @Test
         fun `can remove worker if it does not break the chain`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" to White, "Tim" to Black)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
             magnumSal.placeWorkerInMine(White, at(1))
             magnumSal.placeWorkerInMine(Black, at(1))
 
@@ -263,7 +262,7 @@ class MagnumSalTest {
         @Test
         fun `cannot remove worker if it would break the chain`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" to White, "Tim" to Black)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
             magnumSal.placeWorkerInMine(White, at(1))
             magnumSal.placeWorkerInMine(Black, at(2))
 
@@ -276,7 +275,7 @@ class MagnumSalTest {
         @Test
         fun `cannot remove worker if it would break the chain 2nd scenario`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" to White, "Tim" to Black)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
             magnumSal.placeWorkerInMine(White, at(1))
             magnumSal.placeWorkerInMine(Black, at(1))
             magnumSal.placeWorkerInMine(White, at(2))
@@ -292,7 +291,7 @@ class MagnumSalTest {
         @Test
         fun `cannot remove worker if it's not your turn`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" to White, "Tim" to Black)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
             magnumSal.placeWorkerInMine(White, at(1))
             magnumSal.placeWorkerInMine(Black, at(1))
             magnumSal.removeWorkerFromMine(White, at(1))
@@ -309,7 +308,7 @@ class MagnumSalTest {
         @Test
         fun `Illegal case in a game with 2 players, first player goes twice after one round`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" to White, "Tim" to Black)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
 
             magnumSal.placeWorkerInMine(White, at(1))
             magnumSal.placeWorkerInMine(Black, at(1))
@@ -325,7 +324,7 @@ class MagnumSalTest {
         @Test
         fun `Illegal case in a game with 3 players, third player goes twice`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" to White, "Tim" to Black, "Snarf" to Orange)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black, "Snarf" using Orange)
 
             magnumSal.placeWorkerInMine(White, at(1))
             magnumSal.placeWorkerInMine(Black, at(1))
@@ -341,7 +340,7 @@ class MagnumSalTest {
         @Test
         fun `Illegal case in a game with 4 players, fourth player goes twice`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" to White, "Tim" to Black, "Snarf" to Orange, "Gargamel" to Purple)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black, "Snarf" using Orange, "Gargamel" using Purple)
 
             magnumSal.placeWorkerInMine(White, at(1))
             magnumSal.placeWorkerInMine(Black, at(1))
@@ -361,7 +360,7 @@ class MagnumSalTest {
         @Test
         fun `No more workers after placing and removing miners`() {
             val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" to White, "Tim" to Black)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
                     .distributeWorkersInTheMineShaft(5, listOf(White, Black))
             magnumSal.removeWorkerFromMine(White, at(5))
             magnumSal.removeWorkerFromMine(Black, at(5))
