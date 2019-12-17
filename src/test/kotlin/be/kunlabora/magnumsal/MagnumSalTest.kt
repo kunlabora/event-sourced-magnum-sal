@@ -254,25 +254,6 @@ class MagnumSalTest {
         }
     }
 
-    @Nested
-    inner class MineShaftPositionTest {
-
-        @Test
-        fun `MineShaft is only 6 deep`() {
-            assertThatExceptionOfType(IllegalArgumentException::class.java)
-                    .isThrownBy { MineShaftPosition(7) }
-        }
-
-        @Test
-        fun `MineShaft does not go above ground`() {
-            assertThatExceptionOfType(IllegalArgumentException::class.java)
-                    .isThrownBy { MineShaftPosition(0) }
-            assertThatExceptionOfType(IllegalArgumentException::class.java)
-                    .isThrownBy { MineShaftPosition(-1) }
-        }
-
-    }
-
     //TODO move to TestBuilder
     private fun setupMagnumSalWithTwoPlayers(): MagnumSal {
         magnumSal.addPlayer("Tim", Black)
