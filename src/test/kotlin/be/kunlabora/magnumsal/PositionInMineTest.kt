@@ -33,4 +33,55 @@ class PositionInMineTest {
                 .isThrownBy { at(-1, 0) }
     }
 
+    @Test
+    fun `There are only corridors on depths 2, 4 and 6`() {
+        assertThatExceptionOfType(java.lang.IllegalArgumentException::class.java)
+                .isThrownBy { at(1, 1) }
+                .withMessage("Position out of bounds: there is no corridor at depth 1")
+        assertThatExceptionOfType(java.lang.IllegalArgumentException::class.java)
+                .isThrownBy { at(3, 1) }
+                .withMessage("Position out of bounds: there is no corridor at depth 3")
+        assertThatExceptionOfType(java.lang.IllegalArgumentException::class.java)
+                .isThrownBy { at(5, 1) }
+                .withMessage("Position out of bounds: there is no corridor at depth 5")
+        assertThatExceptionOfType(java.lang.IllegalArgumentException::class.java)
+                .isThrownBy { at(1, -1) }
+                .withMessage("Position out of bounds: there is no corridor at depth 1")
+        assertThatExceptionOfType(java.lang.IllegalArgumentException::class.java)
+                .isThrownBy { at(3, -1) }
+                .withMessage("Position out of bounds: there is no corridor at depth 3")
+        assertThatExceptionOfType(java.lang.IllegalArgumentException::class.java)
+                .isThrownBy { at(5, -1) }
+                .withMessage("Position out of bounds: there is no corridor at depth 5")
+    }
+
+    @Test
+    fun `There are only 4 mine chambers in both corridors at depth 2`() {
+        assertThatExceptionOfType(java.lang.IllegalArgumentException::class.java)
+                .isThrownBy { at(2, -5) }
+                .withMessage("Position out of bounds: there is no mine chamber at -5 in the corridor at depth 2")
+        assertThatExceptionOfType(java.lang.IllegalArgumentException::class.java)
+                .isThrownBy { at(2, 5) }
+                .withMessage("Position out of bounds: there is no mine chamber at 5 in the corridor at depth 2")
+    }
+
+    @Test
+    fun `There are only 3 mine chambers in both corridors at depth 4`() {
+        assertThatExceptionOfType(java.lang.IllegalArgumentException::class.java)
+                .isThrownBy { at(4, -4) }
+                .withMessage("Position out of bounds: there is no mine chamber at -4 in the corridor at depth 4")
+        assertThatExceptionOfType(java.lang.IllegalArgumentException::class.java)
+                .isThrownBy { at(4, 4) }
+                .withMessage("Position out of bounds: there is no mine chamber at 4 in the corridor at depth 4")
+    }
+
+    @Test
+    fun `There are only 2 mine chambers in both corridors at depth 6`() {
+        assertThatExceptionOfType(java.lang.IllegalArgumentException::class.java)
+                .isThrownBy { at(6, -3) }
+                .withMessage("Position out of bounds: there is no mine chamber at -3 in the corridor at depth 6")
+        assertThatExceptionOfType(java.lang.IllegalArgumentException::class.java)
+                .isThrownBy { at(6, 3) }
+                .withMessage("Position out of bounds: there is no mine chamber at 3 in the corridor at depth 6")
+    }
 }
