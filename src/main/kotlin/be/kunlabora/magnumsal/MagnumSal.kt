@@ -1,7 +1,6 @@
 package be.kunlabora.magnumsal
 
 import be.kunlabora.magnumsal.MagnumSalEvent.*
-import be.kunlabora.magnumsal.TurnOrder.Companion.onlyInPlayersTurn
 import be.kunlabora.magnumsal.exception.transitionRequires
 
 sealed class MagnumSalEvent : Event {
@@ -13,6 +12,8 @@ sealed class MagnumSalEvent : Event {
 
 class MagnumSal(private val eventStream: EventStream) {
 
+    private val turnOrderRule: TurnOrderRule = TurnOrderRule(eventStream)
+
     private val players
         get() = eventStream.filterEvents<PlayerJoined>()
 
@@ -22,17 +23,10 @@ class MagnumSal(private val eventStream: EventStream) {
     private val amountOfPlayers
         get() = players.count()
 
-    private val turnOrder
-        get() =
-            eventStream.filterEvents<PlayerOrderDetermined>().single()
-                    .let { listOfNotNull(it.player1, it.player2, it.player3, it.player4) }
-
     private val minersPlaced
         get() = eventStream.filterEvents<MinerPlaced>()
     private val minersRemoved
         get() = eventStream.filterEvents<MinerRemoved>()
-    private val playerActions
-        get() = minersPlaced.map { it.player } + minersRemoved.map { it.player }
 
     private val mineShaft: MineShaft
         get() = MineShaft.from(eventStream)
@@ -86,7 +80,7 @@ class MagnumSal(private val eventStream: EventStream) {
         return (minersPlacedBy - minersRemovedBy) < workersAtStart
     }
 
-    private fun onlyInPlayersTurn(player: PlayerColor, block: () -> Unit): Any = onlyInPlayersTurn(eventStream, player, block)
+    private fun onlyInPlayersTurn(player: PlayerColor, block: () -> Unit): Any = turnOrderRule.onlyInPlayersTurn(player, block)
 }
 
 sealed class PlayerColor {

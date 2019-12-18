@@ -2,7 +2,7 @@ package be.kunlabora.magnumsal
 
 import be.kunlabora.magnumsal.exception.transitionRequires
 
-class TurnOrder(private val eventStream: EventStream) {
+class TurnOrderRule(private val eventStream: EventStream) {
 
     private val players
         get() = eventStream.filterEvents<MagnumSalEvent.PlayerJoined>()
@@ -22,16 +22,14 @@ class TurnOrder(private val eventStream: EventStream) {
     private val playerActions
         get() = minersPlaced.map { it.player } + minersRemoved.map { it.player }
 
-    fun itIsTheTurnOf(player: PlayerColor): Boolean {
+    private fun itIsTheTurnOf(player: PlayerColor): Boolean {
         return playerActions.count() % amountOfPlayers == turnOrder.indexOf(player)
     }
 
-    companion object {
-        fun onlyInPlayersTurn(eventStream: EventStream, player: PlayerColor, block: () -> Unit) {
-            transitionRequires("it to be your turn") {
-                TurnOrder(eventStream).itIsTheTurnOf(player)
-            }
-            block()
+    fun onlyInPlayersTurn(player: PlayerColor, block: () -> Unit): Any {
+        transitionRequires("it to be your turn") {
+            itIsTheTurnOf(player)
         }
+        return block()
     }
 }

@@ -2,7 +2,6 @@ package be.kunlabora.magnumsal
 
 import be.kunlabora.magnumsal.MineShaftPosition.Companion.at
 import be.kunlabora.magnumsal.PlayerColor.*
-import be.kunlabora.magnumsal.TurnOrder.Companion.onlyInPlayersTurn
 import be.kunlabora.magnumsal.exception.IllegalTransitionException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
@@ -10,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 
-class TurnOrderTest {
+class TurnOrderRuleTest {
     private lateinit var eventStream: EventStream
 
     @BeforeEach
@@ -29,7 +28,7 @@ class TurnOrderTest {
 
         assertThatExceptionOfType(IllegalTransitionException::class.java)
                 .isThrownBy {
-                    onlyInPlayersTurn(eventStream, White) {
+                    TurnOrderRule(eventStream).onlyInPlayersTurn(White) {
                         fail { "this should not be executed, because it's not $White's turn" }
                     }
                 }
@@ -47,7 +46,7 @@ class TurnOrderTest {
 
         assertThatExceptionOfType(IllegalTransitionException::class.java)
                 .isThrownBy {
-                    onlyInPlayersTurn(eventStream, Orange) {
+                    TurnOrderRule(eventStream).onlyInPlayersTurn(Orange) {
                         fail { "this should not be executed, because it's not $Orange's turn" }
                     }
                 }
@@ -68,7 +67,7 @@ class TurnOrderTest {
 
         assertThatExceptionOfType(IllegalTransitionException::class.java)
                 .isThrownBy {
-                    onlyInPlayersTurn(eventStream, Orange) {
+                    TurnOrderRule(eventStream).onlyInPlayersTurn(Orange) {
                         fail { "this should not be executed, because it's not $Purple's turn" }
                     }
                 }
