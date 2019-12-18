@@ -1,6 +1,6 @@
 package be.kunlabora.magnumsal
 
-import be.kunlabora.magnumsal.MineShaftPosition.Companion.at
+import be.kunlabora.magnumsal.PositionInMine.Companion.at
 
 data class Player(val name: PlayerName, val color: PlayerColor)
 
@@ -36,7 +36,7 @@ fun MagnumSal.withPlayersInOrder(player1: Player,
 fun MagnumSal.distributeWorkersInTheMineShaft(amountOfWorkersToUse: Int, playerOrder: List<PlayerColor>): MagnumSal {
     for (pos in 1..amountOfWorkersToUse) {
         for (player in playerOrder) {
-            this.placeWorkerInMine(player, at(pos))
+            this.placeWorkerInMine(player, at(pos, 0))
         }
     }
     return this

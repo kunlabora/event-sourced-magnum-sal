@@ -1,7 +1,7 @@
 package be.kunlabora.magnumsal
 
 import be.kunlabora.magnumsal.MagnumSalEvent.*
-import be.kunlabora.magnumsal.MineShaftPosition.Companion.at
+import be.kunlabora.magnumsal.PositionInMine.Companion.at
 import be.kunlabora.magnumsal.PlayerColor.*
 import be.kunlabora.magnumsal.exception.IllegalTransitionException
 import org.assertj.core.api.Assertions.assertThat
@@ -130,9 +130,9 @@ class MagnumSalTest {
             val magnumSal = MagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
 
-            magnumSal.placeWorkerInMine(White, at(1))
+            magnumSal.placeWorkerInMine(White, at(1, 0))
 
-            assertThat(eventStream).contains(MinerPlaced(White, at(1)))
+            assertThat(eventStream).contains(MinerPlaced(White, at(1, 0)))
         }
 
         @Test
@@ -141,9 +141,9 @@ class MagnumSalTest {
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.placeWorkerInMine(White, at(2)) }
+                    .isThrownBy { magnumSal.placeWorkerInMine(White, at(2, 0)) }
 
-            assertThat(eventStream).doesNotContain(MinerPlaced(White, at(2)))
+            assertThat(eventStream).doesNotContain(MinerPlaced(White, at(2, 0)))
         }
 
         @Test
@@ -151,13 +151,13 @@ class MagnumSalTest {
             val magnumSal = MagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
 
-            magnumSal.placeWorkerInMine(White, at(1))
+            magnumSal.placeWorkerInMine(White, at(1, 0))
             assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.placeWorkerInMine(White, at(2)) }
+                    .isThrownBy { magnumSal.placeWorkerInMine(White, at(2, 0)) }
 
             assertThat(eventStream)
-                    .contains(MinerPlaced(White, at(1)))
-                    .doesNotContain(MinerPlaced(White, at(2)))
+                    .contains(MinerPlaced(White, at(1, 0)))
+                    .doesNotContain(MinerPlaced(White, at(2, 0)))
         }
 
         @Test
@@ -166,10 +166,10 @@ class MagnumSalTest {
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.placeWorkerInMine(Black, at(1)) }
+                    .isThrownBy { magnumSal.placeWorkerInMine(Black, at(1, 0)) }
 
             assertThat(eventStream)
-                    .doesNotContain(MinerPlaced(Black, at(1)))
+                    .doesNotContain(MinerPlaced(Black, at(1, 0)))
         }
 
         @Test
@@ -181,11 +181,11 @@ class MagnumSalTest {
             visualize(MineShaft.from(eventStream))
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.placeWorkerInMine(White, at(6)) }
+                    .isThrownBy { magnumSal.placeWorkerInMine(White, at(6, 0)) }
                     .withMessage("Transition requires you to have enough available workers")
 
             assertThat(eventStream).doesNotContain(
-                    MinerPlaced(White, at(6))
+                    MinerPlaced(White, at(6, 0))
             )
         }
 
@@ -193,33 +193,33 @@ class MagnumSalTest {
         fun `Second player can place a worker in shaft 1`() {
             val magnumSal = MagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
-            magnumSal.placeWorkerInMine(White, at(1))
+            magnumSal.placeWorkerInMine(White, at(1, 0))
 
-            magnumSal.placeWorkerInMine(Black, at(1))
+            magnumSal.placeWorkerInMine(Black, at(1, 0))
 
-            assertThat(eventStream).contains(MinerPlaced(Black, at(1)))
+            assertThat(eventStream).contains(MinerPlaced(Black, at(1, 0)))
         }
 
         @Test
         fun `Second player can place a worker in shaft 2`() {
             val magnumSal = MagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
-            magnumSal.placeWorkerInMine(White, at(1))
+            magnumSal.placeWorkerInMine(White, at(1, 0))
 
-            magnumSal.placeWorkerInMine(Black, at(2))
+            magnumSal.placeWorkerInMine(Black, at(2, 0))
 
-            assertThat(eventStream).contains(MinerPlaced(Black, at(2)))
+            assertThat(eventStream).contains(MinerPlaced(Black, at(2, 0)))
         }
 
         @Test
         fun `Second player cannot place a worker in shaft 3`() {
             val magnumSal = MagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
-            magnumSal.placeWorkerInMine(White, at(1))
+            magnumSal.placeWorkerInMine(White, at(1, 0))
             assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.placeWorkerInMine(Black, at(3)) }
+                    .isThrownBy { magnumSal.placeWorkerInMine(Black, at(3, 0)) }
 
-            assertThat(eventStream).doesNotContain(MinerPlaced(Black, at(3)))
+            assertThat(eventStream).doesNotContain(MinerPlaced(Black, at(3, 0)))
         }
 
         @Test
@@ -227,20 +227,20 @@ class MagnumSalTest {
             val magnumSal = MagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
 
-            magnumSal.placeWorkerInMine(White, at(1))
-            magnumSal.placeWorkerInMine(Black, at(2))
-            magnumSal.placeWorkerInMine(White, at(3))
-            magnumSal.placeWorkerInMine(Black, at(4))
-            magnumSal.placeWorkerInMine(White, at(5))
-            magnumSal.placeWorkerInMine(Black, at(6))
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(Black, at(2, 0))
+            magnumSal.placeWorkerInMine(White, at(3, 0))
+            magnumSal.placeWorkerInMine(Black, at(4, 0))
+            magnumSal.placeWorkerInMine(White, at(5, 0))
+            magnumSal.placeWorkerInMine(Black, at(6, 0))
 
             assertThat(eventStream).contains(
-                    MinerPlaced(White, at(1)),
-                    MinerPlaced(Black, at(2)),
-                    MinerPlaced(White, at(3)),
-                    MinerPlaced(Black, at(4)),
-                    MinerPlaced(White, at(5)),
-                    MinerPlaced(Black, at(6))
+                    MinerPlaced(White, at(1, 0)),
+                    MinerPlaced(Black, at(2, 0)),
+                    MinerPlaced(White, at(3, 0)),
+                    MinerPlaced(Black, at(4, 0)),
+                    MinerPlaced(White, at(5, 0)),
+                    MinerPlaced(Black, at(6, 0))
             )
         }
     }
@@ -251,55 +251,55 @@ class MagnumSalTest {
         fun `can remove worker if it does not break the chain`() {
             val magnumSal = MagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
-            magnumSal.placeWorkerInMine(White, at(1))
-            magnumSal.placeWorkerInMine(Black, at(1))
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(Black, at(1, 0))
 
-            magnumSal.removeWorkerFromMine(White, at(1))
+            magnumSal.removeWorkerFromMine(White, at(1, 0))
 
-            assertThat(eventStream).contains(MinerRemoved(White, at(1)))
+            assertThat(eventStream).contains(MinerRemoved(White, at(1, 0)))
         }
 
         @Test
         fun `cannot remove worker if it would break the chain`() {
             val magnumSal = MagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
-            magnumSal.placeWorkerInMine(White, at(1))
-            magnumSal.placeWorkerInMine(Black, at(2))
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(Black, at(2, 0))
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.removeWorkerFromMine(White, at(1)) }
+                    .isThrownBy { magnumSal.removeWorkerFromMine(White, at(1, 0)) }
 
-            assertThat(eventStream).doesNotContain(MinerRemoved(White, at(1)))
+            assertThat(eventStream).doesNotContain(MinerRemoved(White, at(1, 0)))
         }
 
         @Test
         fun `cannot remove worker if it would break the chain 2nd scenario`() {
             val magnumSal = MagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
-            magnumSal.placeWorkerInMine(White, at(1))
-            magnumSal.placeWorkerInMine(Black, at(1))
-            magnumSal.placeWorkerInMine(White, at(2))
-            magnumSal.placeWorkerInMine(Black, at(2))
-            magnumSal.removeWorkerFromMine(White, at(1))
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(Black, at(1, 0))
+            magnumSal.placeWorkerInMine(White, at(2, 0))
+            magnumSal.placeWorkerInMine(Black, at(2, 0))
+            magnumSal.removeWorkerFromMine(White, at(1, 0))
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.removeWorkerFromMine(Black, at(1)) }
+                    .isThrownBy { magnumSal.removeWorkerFromMine(Black, at(1, 0)) }
 
-            assertThat(eventStream).doesNotContain(MinerRemoved(Black, at(1)))
+            assertThat(eventStream).doesNotContain(MinerRemoved(Black, at(1, 0)))
         }
 
         @Test
         fun `cannot remove worker if it's not your turn`() {
             val magnumSal = MagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
-            magnumSal.placeWorkerInMine(White, at(1))
-            magnumSal.placeWorkerInMine(Black, at(1))
-            magnumSal.removeWorkerFromMine(White, at(1))
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(Black, at(1, 0))
+            magnumSal.removeWorkerFromMine(White, at(1, 0))
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.removeWorkerFromMine(White, at(1)) }
+                    .isThrownBy { magnumSal.removeWorkerFromMine(White, at(1, 0)) }
 
-            assertThat(eventStream).containsOnlyOnce(MinerRemoved(White, at(1)))
+            assertThat(eventStream).containsOnlyOnce(MinerRemoved(White, at(1, 0)))
         }
     }
 
@@ -310,22 +310,22 @@ class MagnumSalTest {
             val magnumSal = MagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
                     .distributeWorkersInTheMineShaft(5, listOf(White, Black))
-            magnumSal.removeWorkerFromMine(White, at(5))
-            magnumSal.removeWorkerFromMine(Black, at(5))
+            magnumSal.removeWorkerFromMine(White, at(5, 0))
+            magnumSal.removeWorkerFromMine(Black, at(5, 0))
 
             visualize(MineShaft.from(eventStream))
 
-            magnumSal.placeWorkerInMine(White, at(5))
-            magnumSal.placeWorkerInMine(Black, at(5))
+            magnumSal.placeWorkerInMine(White, at(5, 0))
+            magnumSal.placeWorkerInMine(Black, at(5, 0))
 
             visualize(MineShaft.from(eventStream))
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.placeWorkerInMine(White, at(6)) }
+                    .isThrownBy { magnumSal.placeWorkerInMine(White, at(6, 0)) }
                     .withMessage("Transition requires you to have enough available workers")
 
             assertThat(eventStream).doesNotContain(
-                    MinerPlaced(White, at(6))
+                    MinerPlaced(White, at(6, 0))
             )
         }
     }

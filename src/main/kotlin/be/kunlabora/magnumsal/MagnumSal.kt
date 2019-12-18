@@ -6,8 +6,8 @@ import be.kunlabora.magnumsal.exception.transitionRequires
 sealed class MagnumSalEvent : Event {
     data class PlayerOrderDetermined(val player1: PlayerColor, val player2: PlayerColor, val player3: PlayerColor? = null, val player4: PlayerColor? = null) : MagnumSalEvent()
     data class PlayerJoined(val name: String, val color: PlayerColor) : MagnumSalEvent()
-    data class MinerPlaced(val player: PlayerColor, val mineShaftPosition: MineShaftPosition) : MagnumSalEvent()
-    data class MinerRemoved(val player: PlayerColor, val mineShaftPosition: MineShaftPosition) : MagnumSalEvent()
+    data class MinerPlaced(val player: PlayerColor, val positionInMine: PositionInMine) : MagnumSalEvent()
+    data class MinerRemoved(val player: PlayerColor, val positionInMine: PositionInMine) : MagnumSalEvent()
 }
 
 class MagnumSal(private val eventStream: EventStream) {
@@ -57,15 +57,15 @@ class MagnumSal(private val eventStream: EventStream) {
         eventStream.push(PlayerOrderDetermined(player1, player2, player3, player4))
     }
 
-    fun placeWorkerInMine(player: PlayerColor, at: MineShaftPosition) = onlyInPlayersTurn(player) {
+    fun placeWorkerInMine(player: PlayerColor, at: PositionInMine) = onlyInPlayersTurn(player) {
         requirePlayerToHaveEnoughWorkers(player)
         mineShaft.attemptPlacingAMiner(player, at)
         eventStream.push(MinerPlaced(player, at))
     }
 
-    fun removeWorkerFromMine(player: PlayerColor, mineShaftPosition: MineShaftPosition) = onlyInPlayersTurn(player) {
-        mineShaft.attemptRemovingAMiner(player, mineShaftPosition)
-        eventStream.push(MinerRemoved(player, mineShaftPosition))
+    fun removeWorkerFromMine(player: PlayerColor, positionInMine: PositionInMine) = onlyInPlayersTurn(player) {
+        mineShaft.attemptRemovingAMiner(player, positionInMine)
+        eventStream.push(MinerRemoved(player, positionInMine))
     }
 
     private fun requirePlayerToHaveEnoughWorkers(player: PlayerColor) {

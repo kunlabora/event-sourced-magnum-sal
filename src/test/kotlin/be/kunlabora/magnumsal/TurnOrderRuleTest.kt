@@ -1,6 +1,6 @@
 package be.kunlabora.magnumsal
 
-import be.kunlabora.magnumsal.MineShaftPosition.Companion.at
+import be.kunlabora.magnumsal.PositionInMine.Companion.at
 import be.kunlabora.magnumsal.PlayerColor.*
 import be.kunlabora.magnumsal.exception.IllegalTransitionException
 import org.assertj.core.api.Assertions.assertThat
@@ -22,9 +22,9 @@ class TurnOrderRuleTest {
         val magnumSal = MagnumSal(eventStream)
                 .withPlayersInOrder("Bruno" using White, "Tim" using Black)
 
-        magnumSal.placeWorkerInMine(White, at(1))
-        magnumSal.placeWorkerInMine(Black, at(1))
-        magnumSal.placeWorkerInMine(White, at(2))
+        magnumSal.placeWorkerInMine(White, at(1, 0))
+        magnumSal.placeWorkerInMine(Black, at(1, 0))
+        magnumSal.placeWorkerInMine(White, at(2, 0))
 
         assertThatExceptionOfType(IllegalTransitionException::class.java)
                 .isThrownBy {
@@ -40,9 +40,9 @@ class TurnOrderRuleTest {
         val magnumSal = MagnumSal(eventStream)
                 .withPlayersInOrder("Bruno" using White, "Tim" using Black, "Snarf" using Orange)
 
-        magnumSal.placeWorkerInMine(White, at(1))
-        magnumSal.placeWorkerInMine(Black, at(1))
-        magnumSal.placeWorkerInMine(Orange, at(1))
+        magnumSal.placeWorkerInMine(White, at(1, 0))
+        magnumSal.placeWorkerInMine(Black, at(1, 0))
+        magnumSal.placeWorkerInMine(Orange, at(1, 0))
 
         assertThatExceptionOfType(IllegalTransitionException::class.java)
                 .isThrownBy {
@@ -52,7 +52,7 @@ class TurnOrderRuleTest {
                 }
                 .withMessage("Transition requires it to be your turn")
 
-        assertThat(eventStream).containsOnlyOnce(MagnumSalEvent.MinerPlaced(Orange, at(1)))
+        assertThat(eventStream).containsOnlyOnce(MagnumSalEvent.MinerPlaced(Orange, at(1, 0)))
     }
 
     @Test
@@ -60,10 +60,10 @@ class TurnOrderRuleTest {
         val magnumSal = MagnumSal(eventStream)
                 .withPlayersInOrder("Bruno" using White, "Tim" using Black, "Snarf" using Orange, "Gargamel" using Purple)
 
-        magnumSal.placeWorkerInMine(White, at(1))
-        magnumSal.placeWorkerInMine(Black, at(1))
-        magnumSal.placeWorkerInMine(Orange, at(1))
-        magnumSal.placeWorkerInMine(Purple, at(1))
+        magnumSal.placeWorkerInMine(White, at(1, 0))
+        magnumSal.placeWorkerInMine(Black, at(1, 0))
+        magnumSal.placeWorkerInMine(Orange, at(1, 0))
+        magnumSal.placeWorkerInMine(Purple, at(1, 0))
 
         assertThatExceptionOfType(IllegalTransitionException::class.java)
                 .isThrownBy {
@@ -73,6 +73,6 @@ class TurnOrderRuleTest {
                 }
                 .withMessage("Transition requires it to be your turn")
 
-        assertThat(eventStream).containsOnlyOnce(MagnumSalEvent.MinerPlaced(Purple, at(1)))
+        assertThat(eventStream).containsOnlyOnce(MagnumSalEvent.MinerPlaced(Purple, at(1, 0)))
     }
 }
