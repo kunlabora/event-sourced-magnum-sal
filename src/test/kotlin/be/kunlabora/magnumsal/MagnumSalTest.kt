@@ -7,6 +7,7 @@ import be.kunlabora.magnumsal.exception.IllegalTransitionException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -287,6 +288,19 @@ class MagnumSalTest {
                     .isThrownBy { magnumSal.removeWorkerFromMine(White, at(1, 0)) }
 
             assertThat(eventStream).containsOnlyOnce(MinerRemoved(White, at(1, 0)))
+        }
+
+        @Test
+        @Disabled
+        fun `cannot remove worker if it's not your worker`() {
+            val magnumSal = MagnumSal(eventStream)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
+                    .isThrownBy { magnumSal.removeWorkerFromMine(Black, at(1, 0)) }
+
+            assertThat(eventStream).containsOnlyOnce(MinerRemoved(Black, at(1, 0)))
         }
     }
 
