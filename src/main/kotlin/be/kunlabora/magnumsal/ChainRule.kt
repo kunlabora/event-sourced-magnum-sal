@@ -23,6 +23,9 @@ class ChainRule(private val _eventStream: EventStream) {
         return miner.at.isTheTop() || isThereAMinerAt(miner.at.higher())
     }
 
+    private fun isThereAMinerAt(position: PositionInMine) =
+            position in mineOccupation
+
     private fun removingAMinerDoesNotBreakTheChain(miner: Miner): Boolean {
         return isItTheLastMinerInTheChain(miner) || areThereOtherMinersAt(miner.at)
     }
@@ -32,7 +35,4 @@ class ChainRule(private val _eventStream: EventStream) {
 
     private fun areThereOtherMinersAt(position: PositionInMine) =
             mineOccupation.count { it == position } > 1
-
-    private fun isThereAMinerAt(position: PositionInMine) =
-            position in mineOccupation
 }

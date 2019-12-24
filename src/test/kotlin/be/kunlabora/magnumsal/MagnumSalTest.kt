@@ -147,6 +147,39 @@ class MagnumSalTest {
         }
 
         @Test
+        fun `Second player can also place a worker in shaft 1`() {
+            val magnumSal = MagnumSal(eventStream)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+
+            magnumSal.placeWorkerInMine(Black, at(1, 0))
+
+            assertThat(eventStream).contains(MinerPlaced(Black, at(1, 0)))
+        }
+
+        @Test
+        fun `Second player can place a worker in shaft 2`() {
+            val magnumSal = MagnumSal(eventStream)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+
+            magnumSal.placeWorkerInMine(Black, at(2, 0))
+
+            assertThat(eventStream).contains(MinerPlaced(Black, at(2, 0)))
+        }
+
+        @Test
+        fun `Second player cannot place a worker in shaft 3`() {
+            val magnumSal = MagnumSal(eventStream)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
+                    .isThrownBy { magnumSal.placeWorkerInMine(Black, at(3, 0)) }
+
+            assertThat(eventStream).doesNotContain(MinerPlaced(Black, at(3, 0)))
+        }
+
+        @Test
         fun `Cannot place two workers in one turn`() {
             val magnumSal = MagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
@@ -190,39 +223,6 @@ class MagnumSalTest {
         }
 
         @Test
-        fun `Second player can place a worker in shaft 1`() {
-            val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
-            magnumSal.placeWorkerInMine(White, at(1, 0))
-
-            magnumSal.placeWorkerInMine(Black, at(1, 0))
-
-            assertThat(eventStream).contains(MinerPlaced(Black, at(1, 0)))
-        }
-
-        @Test
-        fun `Second player can place a worker in shaft 2`() {
-            val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
-            magnumSal.placeWorkerInMine(White, at(1, 0))
-
-            magnumSal.placeWorkerInMine(Black, at(2, 0))
-
-            assertThat(eventStream).contains(MinerPlaced(Black, at(2, 0)))
-        }
-
-        @Test
-        fun `Second player cannot place a worker in shaft 3`() {
-            val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
-            magnumSal.placeWorkerInMine(White, at(1, 0))
-            assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.placeWorkerInMine(Black, at(3, 0)) }
-
-            assertThat(eventStream).doesNotContain(MinerPlaced(Black, at(3, 0)))
-        }
-
-        @Test
         fun `Players can fill up the shaft`() {
             val magnumSal = MagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
@@ -257,19 +257,6 @@ class MagnumSalTest {
             magnumSal.removeWorkerFromMine(White, at(1, 0))
 
             assertThat(eventStream).contains(MinerRemoved(White, at(1, 0)))
-        }
-
-        @Test
-        fun `cannot remove worker if it would break the chain`() {
-            val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
-            magnumSal.placeWorkerInMine(White, at(1, 0))
-            magnumSal.placeWorkerInMine(Black, at(2, 0))
-
-            assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.removeWorkerFromMine(White, at(1, 0)) }
-
-            assertThat(eventStream).doesNotContain(MinerRemoved(White, at(1, 0)))
         }
 
         @Test
