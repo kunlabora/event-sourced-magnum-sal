@@ -19,13 +19,13 @@ data class PositionInMine(val depth: Int, val width: Int) {
     }
 
     fun isTheTop() = this.depth == 1
-    private fun isInMineShaft() = this.width == 0
-    fun higher() = PositionInMine(depth - 1, 0)
     fun deeper() = PositionInMine(depth + 1, 0)
     fun previous() = if (isInMineShaft()) higher() else previousInCorridor()
     fun next() = if (isInMineShaft()) deeper() else nextInCorridor()
     private fun previousInCorridor() = if (width < 0) PositionInMine(depth, width + 1) else PositionInMine(depth, width - 1)
     private fun nextInCorridor() = if (width < 0) PositionInMine(depth, width - 1) else PositionInMine(depth, width + 1)
+    private fun isInMineShaft() = this.width == 0
+    private fun higher() = PositionInMine(depth - 1, 0)
 
     override fun toString(): String {
         return if (width == 0) "mineshaft[$depth]" else if (width < 0) "minechamber[$depth, left[${width.absoluteValue}]]" else "minechamber[$depth, right[$width]]"

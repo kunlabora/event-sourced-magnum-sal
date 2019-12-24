@@ -20,7 +20,7 @@ class ChainRule(private val _eventStream: EventStream) {
     }
 
     private fun placingAMinerDoesNotBreakTheChain(miner: Miner): Boolean {
-        return miner.at.isTheTop() || isThereAMinerAt(miner.at.higher())
+        return miner.at.isTheTop() || isThereAMinerAt(miner.at.previous())
     }
 
     private fun isThereAMinerAt(position: PositionInMine) =
