@@ -1,6 +1,8 @@
 package be.kunlabora.magnumsal
 
 import be.kunlabora.magnumsal.MagnumSalEvent.*
+import be.kunlabora.magnumsal.MinerMovement.PlaceMiner
+import be.kunlabora.magnumsal.MinerMovement.RemoveMiner
 import be.kunlabora.magnumsal.exception.transitionRequires
 
 sealed class MagnumSalEvent : Event {
@@ -13,6 +15,7 @@ sealed class MagnumSalEvent : Event {
 class MagnumSal(private val eventStream: EventStream) {
 
     private val turnOrderRule: TurnOrderRule = TurnOrderRule(eventStream)
+    private val chainRule: ChainRule = ChainRule(eventStream)
 
     private val players
         get() = eventStream.filterEvents<PlayerJoined>()
@@ -58,14 +61,16 @@ class MagnumSal(private val eventStream: EventStream) {
     }
 
     fun placeWorkerInMine(player: PlayerColor, at: PositionInMine) = onlyInPlayersTurn(player) {
-        requirePlayerToHaveEnoughWorkers(player)
-        miners.attemptPlacingAMiner(player, at)
-        eventStream.push(MinerPlaced(player, at))
+        withoutBreakingTheChain(PlaceMiner(player, at)) {
+            requirePlayerToHaveEnoughWorkers(player)
+            eventStream.push(MinerPlaced(player, at))
+        }
     }
 
-    fun removeWorkerFromMine(player: PlayerColor, positionInMine: PositionInMine) = onlyInPlayersTurn(player) {
-        miners.attemptRemovingAMiner(player, positionInMine)
-        eventStream.push(MinerRemoved(player, positionInMine))
+    fun removeWorkerFromMine(player: PlayerColor, at: PositionInMine) = onlyInPlayersTurn(player) {
+        withoutBreakingTheChain(RemoveMiner(player, at)) {
+            eventStream.push(MinerRemoved(player, at))
+        }
     }
 
     private fun requirePlayerToHaveEnoughWorkers(player: PlayerColor) {
@@ -81,6 +86,7 @@ class MagnumSal(private val eventStream: EventStream) {
     }
 
     private fun onlyInPlayersTurn(player: PlayerColor, block: () -> Unit): Any = turnOrderRule.onlyInPlayersTurn(player, block)
+    private fun withoutBreakingTheChain(minerMovement: MinerMovement, block: () -> Unit): Any = chainRule.withoutBreakingTheChain(minerMovement, block)
 }
 
 sealed class PlayerColor {

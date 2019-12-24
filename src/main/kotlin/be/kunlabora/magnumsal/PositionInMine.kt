@@ -1,6 +1,7 @@
 package be.kunlabora.magnumsal
 
 import java.lang.IllegalArgumentException
+import kotlin.math.absoluteValue
 
 data class PositionInMine(val depth: Int, val width: Int) {
     init {
@@ -20,7 +21,7 @@ data class PositionInMine(val depth: Int, val width: Int) {
     fun deeper() = PositionInMine(depth + 1, 0)
     fun isTheTop() = this.depth == 1
     override fun toString(): String {
-        return if (width == 0) "mineshaft[$depth]" else if (width < 0) "leftcorridor[$depth]" else "rightcorridor[$depth]"
+        return if (width == 0) "mineshaft[$depth]" else if (width < 0) "minechamber[$depth, left[${width.absoluteValue}]]" else "minechamber[$depth, right[$width]]"
     }
 
     companion object {
