@@ -36,6 +36,18 @@ class PositionInMineTest {
     }
 
     @Test
+    fun `The Mine has 3 cross-sections`() {
+        assertThat(at(2,0).isCrossSection()).isTrue()
+        assertThat(at(4,0).isCrossSection()).isTrue()
+        assertThat(at(6,0).isCrossSection()).isTrue()
+
+        assertThat(at(1,0).isCrossSection()).isFalse()
+        assertThat(at(2,2).isCrossSection()).isFalse()
+        assertThat(at(4,-1).isCrossSection()).isFalse()
+        assertThat(at(6,1).isCrossSection()).isFalse()
+    }
+
+    @Test
     fun `The Mine is only 6 deep`() {
         assertThatExceptionOfType(IllegalArgumentException::class.java)
                 .isThrownBy { at(7, 0) }
@@ -162,5 +174,19 @@ class PositionInMineTest {
         assertThat(at(2,-1).next()).isEqualTo(at(2,-2))
         assertThat(at(4,-1).next()).isEqualTo(at(4,-2))
         assertThat(at(6,-1).next()).isEqualTo(at(6,-2))
+    }
+
+    @Test
+    fun `nearestFurtherPositions | when not a cross-section, should return next`() {
+        assertThat(at(1,0).nearestFurtherPositions()).containsExactly(at(2,0))
+        assertThat(at(2,1).nearestFurtherPositions()).containsExactly(at(2,2))
+        assertThat(at(4,-1).nearestFurtherPositions()).containsExactly(at(4,-2))
+    }
+
+    @Test
+    fun `nearestFurtherPositions | when a cross-section, should return next positions of both corridors and one mineshaft deeper, except at bottom`() {
+        assertThat(at(2,0).nearestFurtherPositions()).containsExactly(at(3,0), at(2,-1), at(2,1))
+        assertThat(at(4,0).nearestFurtherPositions()).containsExactly(at(5,0), at(4,-1), at(4,1))
+        assertThat(at(6,0).nearestFurtherPositions()).containsExactly(at(6,-1), at(6,1))
     }
 }

@@ -164,7 +164,43 @@ class ChainRuleTest {
         }
 
         @Test
-        @Disabled
+        fun `Illegal case where removing a miner from a corridor would break the chain - simplest case`() {
+            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(Black, at(2, 0))
+            magnumSal.placeWorkerInMine(White, at(2, 1))
+            magnumSal.placeWorkerInMine(Black, at(2, 2))
+            val chainRule = ChainRule(eventStream)
+
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
+                    .isThrownBy { chainRule.withoutBreakingTheChain(RemoveMiner(White, at(2, 1))) { fail("should not be executed") } }
+        }
+
+        @Test
+        fun `Illegal case where removing a miner from the mineshaft cross-section with an occupied right corridor would break the chain`() {
+            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(Black, at(2, 0))
+            magnumSal.placeWorkerInMine(White, at(2, 1))
+            val chainRule = ChainRule(eventStream)
+
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
+                    .isThrownBy { chainRule.withoutBreakingTheChain(RemoveMiner(Black, at(2, 0))) { fail("should not be executed") } }
+        }
+
+        @Test
+        fun `Illegal case where removing a miner from the mineshaft cross-section with an occupied left corridor would break the chain`() {
+            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(Black, at(2, 0))
+            magnumSal.placeWorkerInMine(White, at(2, -1))
+            val chainRule = ChainRule(eventStream)
+
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
+                    .isThrownBy { chainRule.withoutBreakingTheChain(RemoveMiner(Black, at(2, 0))) { fail("should not be executed") } }
+        }
+
+        @Test
         fun `Legal case with a completely filled corridor where removing a miner from the end of the corridor would not break the chain`() {
             val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
             magnumSal.placeWorkerInMine(White, at(1, 0))
