@@ -43,6 +43,80 @@ class ChainRuleTest {
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { chainRule.withoutBreakingTheChain(PlaceMiner(Black, at(3, 0))) { fail("should not be executed") } }
         }
+
+        @Test
+        fun `Illegal case where placing a worker in a corridor at depth 2 without a miner in the mineshaft at depth 2 would break the chain`() {
+            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            val chainRule = ChainRule(eventStream)
+
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
+                    .isThrownBy { chainRule.withoutBreakingTheChain(PlaceMiner(Black, at(2, 1))) { fail("should not be executed") } }
+        }
+
+        @Test
+        fun `Legal case where placing a worker in a corridor at depth 2 with a miner in the mineshaft at depth 2 would not break the chain`() {
+            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(Black, at(2, 0))
+            val chainRule = ChainRule(eventStream)
+
+            chainRule.withoutBreakingTheChain(PlaceMiner(White, at(2, 1))) { eventStream.push(MinerPlaced(White, at(2, 1))) }
+
+            assertThat(eventStream).containsOnlyOnce(MinerPlaced(White, at(2, 1)))
+        }
+
+        @Test
+        fun `Illegal case where placing a worker 3 positions along the right corridor without a miner in a previous chamber of the same corridor would break the chain`() {
+            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(Black, at(2, 0))
+            magnumSal.placeWorkerInMine(White, at(2, 1))
+            val chainRule = ChainRule(eventStream)
+
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
+                    .isThrownBy { chainRule.withoutBreakingTheChain(PlaceMiner(Black, at(2, 3))) { fail("should not be executed") } }
+        }
+
+        @Test
+        fun `Legal case where placing a worker 3 positions along the right corridor with a miner in a previous chamber of the same corridor would break the chain`() {
+            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(Black, at(2, 0))
+            magnumSal.placeWorkerInMine(White, at(2, 1))
+            magnumSal.placeWorkerInMine(Black, at(2, 2))
+            val chainRule = ChainRule(eventStream)
+
+            chainRule.withoutBreakingTheChain(PlaceMiner(White, at(2, 3))) { eventStream.push(MinerPlaced(White, at(2,3))) }
+
+            assertThat(eventStream).containsOnlyOnce(MinerPlaced(White, at(2,3)))
+        }
+
+        @Test
+        fun `Illegal case where placing a worker 3 positions along the left corridor without a miner in a previous chamber of the same corridor would break the chain`() {
+            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(Black, at(2, 0))
+            magnumSal.placeWorkerInMine(White, at(2, -1))
+            val chainRule = ChainRule(eventStream)
+
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
+                    .isThrownBy { chainRule.withoutBreakingTheChain(PlaceMiner(Black, at(2, -3))) { fail("should not be executed") } }
+        }
+
+        @Test
+        fun `Legal case where placing a worker 3 positions along the left corridor with a miner in a previous chamber of the same corridor would break the chain`() {
+            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(Black, at(2, 0))
+            magnumSal.placeWorkerInMine(White, at(2, -1))
+            magnumSal.placeWorkerInMine(Black, at(2, -2))
+            val chainRule = ChainRule(eventStream)
+
+            chainRule.withoutBreakingTheChain(PlaceMiner(White, at(2, -3))) { eventStream.push(MinerPlaced(White, at(2,-3))) }
+
+            assertThat(eventStream).containsOnlyOnce(MinerPlaced(White, at(2,-3)))
+        }
     }
 
     @Nested
