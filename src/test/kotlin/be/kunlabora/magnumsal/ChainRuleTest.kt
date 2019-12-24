@@ -145,5 +145,21 @@ class ChainRuleTest {
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { chainRule.withoutBreakingTheChain(RemoveMiner(Black, at(1, 0))) { fail("should not be executed") } }
         }
+
+        @Test
+        fun `Legal case with a completely filled mineshaft where removing a miner from the bottom would not break the chain`() {
+            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(Black, at(2, 0))
+            magnumSal.placeWorkerInMine(White, at(3, 0))
+            magnumSal.placeWorkerInMine(Black, at(4, 0))
+            magnumSal.placeWorkerInMine(White, at(5, 0))
+            magnumSal.placeWorkerInMine(Black, at(6, 0))
+            val chainRule = ChainRule(eventStream)
+
+            chainRule.withoutBreakingTheChain(RemoveMiner(White, at(6, 0))) { eventStream.push(MinerRemoved(White, at(6, 0))) }
+
+            assertThat(eventStream).containsOnlyOnce(MinerRemoved(White, at(6, 0)))
+        }
     }
 }
