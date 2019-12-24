@@ -99,6 +99,31 @@ class PositionInMineTest {
 
     @Test
     fun `previous | when it's a first corridor position, returns position at same depth but in the mineshaft`() {
+        assertThat(at(2,1).previous()).isEqualTo(at(2,0))
+        assertThat(at(4,1).previous()).isEqualTo(at(4,0))
+        assertThat(at(6,1).previous()).isEqualTo(at(6,0))
+        assertThat(at(2,-1).previous()).isEqualTo(at(2,0))
+        assertThat(at(4,-1).previous()).isEqualTo(at(4,0))
+        assertThat(at(6,-1).previous()).isEqualTo(at(6,0))
+    }
+
+    @Test
+    fun `previous | from end of 1st left corridor up to the top`() {
+        val travelled = emptyList<PositionInMine>().toMutableList()
+        at(2,-4)
+                .previous().also { travelled += it }
+                .previous().also { travelled += it }
+                .previous().also { travelled += it }
+                .previous().also { travelled += it }
+                .previous().also { travelled += it }
+
+        assertThat(travelled).containsExactly(
+                at(2,-3),
+                at(2,-2),
+                at(2,-1),
+                at(2,0),
+                at(1,0)
+        )
     }
 
     @Test
@@ -115,5 +140,11 @@ class PositionInMineTest {
 
     @Test
     fun `next | when it's a corridor position, returns further along the corridor`() {
+        assertThat(at(2,1).next()).isEqualTo(at(2,2))
+        assertThat(at(4,1).next()).isEqualTo(at(4,2))
+        assertThat(at(6,1).next()).isEqualTo(at(6,2))
+        assertThat(at(2,-1).next()).isEqualTo(at(2,-2))
+        assertThat(at(4,-1).next()).isEqualTo(at(4,-2))
+        assertThat(at(6,-1).next()).isEqualTo(at(6,-2))
     }
 }
