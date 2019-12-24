@@ -84,4 +84,36 @@ class PositionInMineTest {
                 .isThrownBy { at(6, 3) }
                 .withMessage("Position out of bounds: there is no mine chamber at 3 in the corridor at depth 6")
     }
+
+    @Test
+    fun `previous | when it's a mineshaft position, returns higher up the mineshaft`() {
+        assertThat(at(6, 0).previous()).isEqualTo(at(5, 0))
+        assertThat(at(5, 0).previous()).isEqualTo(at(4, 0))
+        assertThat(at(4, 0).previous()).isEqualTo(at(3, 0))
+        assertThat(at(3, 0).previous()).isEqualTo(at(2, 0))
+        assertThat(at(2, 0).previous()).isEqualTo(at(1, 0))
+        assertThatExceptionOfType(IllegalArgumentException::class.java)
+                .isThrownBy { at(1, 0).previous() }
+                .withMessage("The Mine does not go above ground")
+    }
+
+    @Test
+    fun `previous | when it's a first corridor position, returns position at same depth but in the mineshaft`() {
+    }
+
+    @Test
+    fun `next | when it's a mineshaft position, returns deeper down the mineshaft`() {
+        assertThat(at(1, 0).next()).isEqualTo(at(2, 0))
+        assertThat(at(2, 0).next()).isEqualTo(at(3, 0))
+        assertThat(at(3, 0).next()).isEqualTo(at(4, 0))
+        assertThat(at(4, 0).next()).isEqualTo(at(5, 0))
+        assertThat(at(5, 0).next()).isEqualTo(at(6, 0))
+        assertThatExceptionOfType(IllegalArgumentException::class.java)
+                .isThrownBy { at(6, 0).next() }
+                .withMessage("The Mine is only 6 deep")
+    }
+
+    @Test
+    fun `next | when it's a corridor position, returns further along the corridor`() {
+    }
 }
