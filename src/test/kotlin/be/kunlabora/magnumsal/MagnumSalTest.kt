@@ -178,7 +178,7 @@ class MagnumSalTest {
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
                     .distributeWorkersInTheMineShaft(5, listOf(White, Black))
 
-            visualize(MineShaft.from(eventStream))
+            visualize(Miners.from(eventStream))
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { magnumSal.placeWorkerInMine(White, at(6, 0)) }
@@ -313,12 +313,12 @@ class MagnumSalTest {
             magnumSal.removeWorkerFromMine(White, at(5, 0))
             magnumSal.removeWorkerFromMine(Black, at(5, 0))
 
-            visualize(MineShaft.from(eventStream))
+            visualize(Miners.from(eventStream))
 
             magnumSal.placeWorkerInMine(White, at(5, 0))
             magnumSal.placeWorkerInMine(Black, at(5, 0))
 
-            visualize(MineShaft.from(eventStream))
+            visualize(Miners.from(eventStream))
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { magnumSal.placeWorkerInMine(White, at(6, 0)) }

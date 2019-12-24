@@ -43,11 +43,11 @@ fun MagnumSal.distributeWorkersInTheMineShaft(amountOfWorkersToUse: Int, playerO
 }
 
 // Util
-fun visualize(mineShaft: MineShaft) {
+fun visualize(miners: Miners) {
     println("#".repeat(10) + " MineShaft Top " + "#".repeat(10))
-    mineShaft.groupBy { it.at }
+    miners.groupBy { it.at }
             .forEach { (at, miners) ->
-                val amountOfMinersPerPlayer = miners.groupBy(MinerInShaft::player) { miner -> miners.count { it == miner } }
+                val amountOfMinersPerPlayer = miners.groupBy(Miner::player) { miner -> miners.count { it == miner } }
                 println("$at: $amountOfMinersPerPlayer")
             }
     println("#".repeat(10) + " MineShaft End " + "#".repeat(10))

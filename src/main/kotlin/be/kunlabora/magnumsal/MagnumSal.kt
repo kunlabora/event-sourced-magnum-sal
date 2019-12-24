@@ -28,8 +28,8 @@ class MagnumSal(private val eventStream: EventStream) {
     private val minersRemoved
         get() = eventStream.filterEvents<MinerRemoved>()
 
-    private val mineShaft: MineShaft
-        get() = MineShaft.from(eventStream)
+    private val miners: Miners
+        get() = Miners.from(eventStream)
 
 
     fun addPlayer(name: String, color: PlayerColor) {
@@ -59,12 +59,12 @@ class MagnumSal(private val eventStream: EventStream) {
 
     fun placeWorkerInMine(player: PlayerColor, at: PositionInMine) = onlyInPlayersTurn(player) {
         requirePlayerToHaveEnoughWorkers(player)
-        mineShaft.attemptPlacingAMiner(player, at)
+        miners.attemptPlacingAMiner(player, at)
         eventStream.push(MinerPlaced(player, at))
     }
 
     fun removeWorkerFromMine(player: PlayerColor, positionInMine: PositionInMine) = onlyInPlayersTurn(player) {
-        mineShaft.attemptRemovingAMiner(player, positionInMine)
+        miners.attemptRemovingAMiner(player, positionInMine)
         eventStream.push(MinerRemoved(player, positionInMine))
     }
 
