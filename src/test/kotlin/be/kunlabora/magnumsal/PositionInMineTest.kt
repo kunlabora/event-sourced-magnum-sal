@@ -20,6 +20,22 @@ class PositionInMineTest {
     }
 
     @Test
+    fun `The Mine has Ends as last mine chambers including the bottom of the mineshaft`() {
+        assertThat(at(2, 4).isAnEnd()).isTrue()
+        assertThat(at(2, -4).isAnEnd()).isTrue()
+        assertThat(at(4, 3).isAnEnd()).isTrue()
+        assertThat(at(4, -3).isAnEnd()).isTrue()
+        assertThat(at(6, 2).isAnEnd()).isTrue()
+        assertThat(at(6, -2).isAnEnd()).isTrue()
+        assertThat(at(6, 0).isAnEnd()).isTrue()
+
+        assertThat(at(6, 1).isAnEnd()).isFalse()
+        assertThat(at(4, -1).isAnEnd()).isFalse()
+        assertThat(at(2, 0).isAnEnd()).isFalse()
+        assertThat(at(1, 0).isAnEnd()).isFalse()
+    }
+
+    @Test
     fun `The Mine is only 6 deep`() {
         assertThatExceptionOfType(IllegalArgumentException::class.java)
                 .isThrownBy { at(7, 0) }

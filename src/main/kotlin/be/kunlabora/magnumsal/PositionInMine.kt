@@ -4,6 +4,10 @@ import java.lang.IllegalArgumentException
 import kotlin.math.absoluteValue
 
 data class PositionInMine(val depth: Int, val width: Int) {
+
+    private val ends
+        get() = listOf(at(2, 4), at(2, -4), at(4, 3), at(4, -3), at(6, 2), at(6, -2), at(6, 0))
+
     init {
         require(depth > 0) { "The Mine does not go above ground" }
         require(depth in 1..6) { "The Mine is only 6 deep" }
@@ -19,13 +23,14 @@ data class PositionInMine(val depth: Int, val width: Int) {
     }
 
     fun isTheTop() = this.depth == 1
-    fun deeper() = PositionInMine(depth + 1, 0)
+    fun isAnEnd() = this in ends
+    fun deeper() = at(depth + 1, 0)
     fun previous() = if (isInMineShaft()) higher() else previousInCorridor()
     fun next() = if (isInMineShaft()) deeper() else nextInCorridor()
-    private fun previousInCorridor() = if (width < 0) PositionInMine(depth, width + 1) else PositionInMine(depth, width - 1)
-    private fun nextInCorridor() = if (width < 0) PositionInMine(depth, width - 1) else PositionInMine(depth, width + 1)
+    private fun previousInCorridor() = if (width < 0) at(depth, width + 1) else at(depth, width - 1)
+    private fun nextInCorridor() = if (width < 0) at(depth, width - 1) else at(depth, width + 1)
     private fun isInMineShaft() = this.width == 0
-    private fun higher() = PositionInMine(depth - 1, 0)
+    private fun higher() = at(depth - 1, 0)
 
     override fun toString(): String {
         return if (width == 0) "mineshaft[$depth]" else if (width < 0) "minechamber[$depth, left[${width.absoluteValue}]]" else "minechamber[$depth, right[$width]]"

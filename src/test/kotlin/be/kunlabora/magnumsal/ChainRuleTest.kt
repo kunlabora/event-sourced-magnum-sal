@@ -11,6 +11,7 @@ import be.kunlabora.magnumsal.exception.IllegalTransitionException
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -160,6 +161,23 @@ class ChainRuleTest {
             chainRule.withoutBreakingTheChain(RemoveMiner(White, at(6, 0))) { eventStream.push(MinerRemoved(White, at(6, 0))) }
 
             assertThat(eventStream).containsOnlyOnce(MinerRemoved(White, at(6, 0)))
+        }
+
+        @Test
+        @Disabled
+        fun `Legal case with a completely filled corridor where removing a miner from the end of the corridor would not break the chain`() {
+            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(Black, at(2, 0))
+            magnumSal.placeWorkerInMine(White, at(2, 1))
+            magnumSal.placeWorkerInMine(Black, at(2, 2))
+            magnumSal.placeWorkerInMine(White, at(2, 3))
+            magnumSal.placeWorkerInMine(Black, at(2, 4))
+            val chainRule = ChainRule(eventStream)
+
+            chainRule.withoutBreakingTheChain(RemoveMiner(White, at(2, 4))) { eventStream.push(MinerRemoved(White, at(2, 4))) }
+
+            assertThat(eventStream).containsOnlyOnce(MinerRemoved(White, at(2, 4)))
         }
     }
 }
