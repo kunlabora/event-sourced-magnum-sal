@@ -8,9 +8,10 @@ import be.kunlabora.magnumsal.exception.transitionRequires
 sealed class MagnumSalEvent : Event {
     data class PlayerOrderDetermined(val player1: PlayerColor, val player2: PlayerColor, val player3: PlayerColor? = null, val player4: PlayerColor? = null) : MagnumSalEvent()
     data class PlayerJoined(val name: String, val color: PlayerColor) : MagnumSalEvent()
+    data class CoveredMineChamberWasLaid(val chamber: MineChamber) : MagnumSalEvent()
     data class MinerPlaced(val player: PlayerColor, val positionInMine: PositionInMine) : MagnumSalEvent()
     data class MinerRemoved(val player: PlayerColor, val positionInMine: PositionInMine) : MagnumSalEvent()
-    data class MineChamberRevealed(val positionInMine: PositionInMine) : MagnumSalEvent()
+    data class MineChamberRevealed(val chamber: MineChamber) : MagnumSalEvent()
 }
 
 class MagnumSal(private val eventStream: EventStream) {
@@ -28,6 +29,8 @@ class MagnumSal(private val eventStream: EventStream) {
     private val miners: Miners
         get() = Miners.from(eventStream)
 
+    private val revealedMineChambers
+        get() = eventStream.filterEvents<MineChamberRevealed>()
 
     fun addPlayer(name: String, color: PlayerColor) {
         transitionRequires("the same color not to have been picked already") {
@@ -58,6 +61,13 @@ class MagnumSal(private val eventStream: EventStream) {
         withoutBreakingTheChain(PlaceMiner(player, at)) {
             requirePlayerToHaveEnoughWorkers(player)
             eventStream.push(MinerPlaced(player, at))
+            revealMineChamberIfPossible(at)
+        }
+    }
+
+    private fun revealMineChamberIfPossible(at: PositionInMine) {
+        if (at.isInACorridor() && at !in revealedMineChambers.map { it.chamber.at }) {
+            eventStream.push(MineChamberRevealed(MineChamber(at, listOf(SaltQuality.BROWN), 0)))
         }
     }
 

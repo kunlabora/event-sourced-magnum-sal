@@ -3,6 +3,7 @@ package be.kunlabora.magnumsal
 import be.kunlabora.magnumsal.MagnumSalEvent.*
 import be.kunlabora.magnumsal.PositionInMine.Companion.at
 import be.kunlabora.magnumsal.PlayerColor.*
+import be.kunlabora.magnumsal.SaltQuality.BROWN
 import be.kunlabora.magnumsal.exception.IllegalTransitionException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
@@ -319,30 +320,28 @@ class MagnumSalTest {
     @Nested
     inner class ExploringTheMine {
         @Test
-        @Disabled
         fun `Placing a Miner on an undiscovered tile, reveals the contents of the mine chamber`() {
             val magnumSal = MagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
-                    .withUnshuffledMineChambers()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, 1))
 
-            assertThat(eventStream).containsOnlyOnce(MineChamberRevealed(at(2,0)))
+            assertThat(eventStream.filterEvents<MineChamberRevealed>().map { it.chamber.at })
+                    .containsOnlyOnce(at(2,1))
         }
 
         @Test
-        @Disabled
         fun `Placing a second Miner on a discovered tile, does not reveal the contents of the mine chamber again`() {
             val magnumSal = MagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
-                    .withUnshuffledMineChambers()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, 1))
             magnumSal.placeWorkerInMine(Black, at(2, 1))
 
-            assertThat(eventStream).containsOnlyOnce(MineChamberRevealed(at(2,0)))
+            assertThat(eventStream.filterEvents<MineChamberRevealed>().map { it.chamber.at })
+                    .containsOnlyOnce(at(2,1))
         }
     }
 }

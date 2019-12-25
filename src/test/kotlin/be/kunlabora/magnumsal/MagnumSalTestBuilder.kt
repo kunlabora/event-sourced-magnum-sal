@@ -42,11 +42,6 @@ fun MagnumSal.distributeWorkersInTheMineShaft(amountOfWorkersToUse: Int, playerO
     return this
 }
 
-fun MagnumSal.withUnshuffledMineChambers(): MagnumSal {
-    TODO("set up unshuffled mine chambers after implementing mine chamber game setup")
-    return this
-}
-
 // Util
 fun visualize(miners: Miners) {
     println("#".repeat(10) + " MineShaft Top " + "#".repeat(10))

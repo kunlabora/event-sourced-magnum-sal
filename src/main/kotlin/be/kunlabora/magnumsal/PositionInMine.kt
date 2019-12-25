@@ -24,6 +24,7 @@ data class PositionInMine(val depth: Int, val width: Int) {
 
     fun isTheTop() = this.depth == 1
     fun isAnEnd() = this in ends
+    fun isInACorridor() = this.width != 0
     fun previous() = if (isInMineShaft()) higher() else previousInCorridor()
     fun next() = if (isInMineShaft()) deeper() else nextInCorridor()
     fun isCrossSection() = this in listOf(at(2,0),at(4,0),at(6,0))
@@ -37,6 +38,7 @@ data class PositionInMine(val depth: Int, val width: Int) {
     override fun toString(): String {
         return if (width == 0) "mineshaft[$depth]" else if (width < 0) "minechamber[$depth, left[${width.absoluteValue}]]" else "minechamber[$depth, right[$width]]"
     }
+
 
 
     companion object {
