@@ -7,6 +7,7 @@ import be.kunlabora.magnumsal.exception.IllegalTransitionException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -315,4 +316,33 @@ class MagnumSalTest {
         }
     }
 
+    @Nested
+    inner class ExploringTheMine {
+        @Test
+        @Disabled
+        fun `Placing a Miner on an undiscovered tile, reveals the contents of the mine chamber`() {
+            val magnumSal = MagnumSal(eventStream)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .withUnshuffledMineChambers()
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(Black, at(2, 0))
+            magnumSal.placeWorkerInMine(White, at(2, 1))
+
+            assertThat(eventStream).containsOnlyOnce(MineChamberRevealed(at(2,0)))
+        }
+
+        @Test
+        @Disabled
+        fun `Placing a second Miner on a discovered tile, does not reveal the contents of the mine chamber again`() {
+            val magnumSal = MagnumSal(eventStream)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .withUnshuffledMineChambers()
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(Black, at(2, 0))
+            magnumSal.placeWorkerInMine(White, at(2, 1))
+            magnumSal.placeWorkerInMine(Black, at(2, 1))
+
+            assertThat(eventStream).containsOnlyOnce(MineChamberRevealed(at(2,0)))
+        }
+    }
 }

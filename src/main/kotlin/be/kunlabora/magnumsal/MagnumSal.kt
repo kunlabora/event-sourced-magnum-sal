@@ -10,6 +10,7 @@ sealed class MagnumSalEvent : Event {
     data class PlayerJoined(val name: String, val color: PlayerColor) : MagnumSalEvent()
     data class MinerPlaced(val player: PlayerColor, val positionInMine: PositionInMine) : MagnumSalEvent()
     data class MinerRemoved(val player: PlayerColor, val positionInMine: PositionInMine) : MagnumSalEvent()
+    data class MineChamberRevealed(val positionInMine: PositionInMine) : MagnumSalEvent()
 }
 
 class MagnumSal(private val eventStream: EventStream) {
