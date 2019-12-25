@@ -291,7 +291,19 @@ class MagnumSalTest {
         }
 
         @Test
-        @Disabled
+        fun `cannot remove worker if there's no worker`() {
+            val magnumSal = MagnumSal(eventStream)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(Black, at(1, 0))
+
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
+                    .isThrownBy { magnumSal.removeWorkerFromMine(White, at(2, 0)) }
+
+            assertThat(eventStream).doesNotContain(MinerRemoved(White, at(2, 0)))
+        }
+
+        @Test
         fun `cannot remove worker if it's not your worker`() {
             val magnumSal = MagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
@@ -300,7 +312,7 @@ class MagnumSalTest {
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { magnumSal.removeWorkerFromMine(Black, at(1, 0)) }
 
-            assertThat(eventStream).containsOnlyOnce(MinerRemoved(Black, at(1, 0)))
+            assertThat(eventStream).doesNotContain(MinerRemoved(Black, at(1, 0)))
         }
     }
 

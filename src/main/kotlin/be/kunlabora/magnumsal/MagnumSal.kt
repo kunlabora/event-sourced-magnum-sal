@@ -69,9 +69,14 @@ class MagnumSal(private val eventStream: EventStream) {
 
     fun removeWorkerFromMine(player: PlayerColor, at: PositionInMine) = onlyInPlayersTurn(player) {
         withoutBreakingTheChain(RemoveMiner(player, at)) {
+            transitionRequires("you to have a worker at the position you want to remove from") {
+                hasWorkerAt(player, at)
+            }
             eventStream.push(MinerRemoved(player, at))
         }
     }
+
+    private fun hasWorkerAt(player: PlayerColor, at: PositionInMine): Boolean = miners.any { it == Miner(player, at) }
 
     private fun requirePlayerToHaveEnoughWorkers(player: PlayerColor) {
         transitionRequires("you to have enough available workers") {
