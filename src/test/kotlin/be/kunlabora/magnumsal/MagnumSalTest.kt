@@ -7,7 +7,6 @@ import be.kunlabora.magnumsal.exception.IllegalTransitionException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -316,30 +315,4 @@ class MagnumSalTest {
         }
     }
 
-    @Nested
-    inner class CheckingForAvailableWorkers {
-        @Test
-        fun `No more workers after placing and removing miners`() {
-            val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
-                    .distributeWorkersInTheMineShaft(5, listOf(White, Black))
-            magnumSal.removeWorkerFromMine(White, at(5, 0))
-            magnumSal.removeWorkerFromMine(Black, at(5, 0))
-
-            visualize(Miners.from(eventStream))
-
-            magnumSal.placeWorkerInMine(White, at(5, 0))
-            magnumSal.placeWorkerInMine(Black, at(5, 0))
-
-            visualize(Miners.from(eventStream))
-
-            assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.placeWorkerInMine(White, at(6, 0)) }
-                    .withMessage("Transition requires you to have enough available workers")
-
-            assertThat(eventStream).doesNotContain(
-                    MinerPlaced(White, at(6, 0))
-            )
-        }
-    }
 }

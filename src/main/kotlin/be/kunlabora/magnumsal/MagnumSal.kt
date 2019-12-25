@@ -14,22 +14,15 @@ sealed class MagnumSalEvent : Event {
 
 class MagnumSal(private val eventStream: EventStream) {
 
-    private val turnOrderRule: TurnOrderRule = TurnOrderRule(eventStream)
-    private val chainRule: ChainRule = ChainRule(eventStream)
+    private val turnOrderRule = TurnOrderRule(eventStream)
+    private val chainRule = ChainRule(eventStream)
+    private val workerLimitRule = WorkerLimitRule(eventStream)
 
     private val players
         get() = eventStream.filterEvents<PlayerJoined>()
 
-    private val workersAtStart: Int
-        get() = if (amountOfPlayers == 2) 5 else 4
-
     private val amountOfPlayers
         get() = players.count()
-
-    private val minersPlaced
-        get() = eventStream.filterEvents<MinerPlaced>()
-    private val minersRemoved
-        get() = eventStream.filterEvents<MinerRemoved>()
 
     private val miners: Miners
         get() = Miners.from(eventStream)
@@ -78,18 +71,7 @@ class MagnumSal(private val eventStream: EventStream) {
 
     private fun hasWorkerAt(player: PlayerColor, at: PositionInMine): Boolean = miners.any { it == Miner(player, at) }
 
-    private fun requirePlayerToHaveEnoughWorkers(player: PlayerColor) {
-        transitionRequires("you to have enough available workers") {
-            hasEnoughWorkersInPool(player)
-        }
-    }
-
-    private fun hasEnoughWorkersInPool(player: PlayerColor): Boolean {
-        val minersPlacedBy = minersPlaced.count { it.player == player }
-        val minersRemovedBy = minersRemoved.count { it.player == player }
-        return (minersPlacedBy - minersRemovedBy) < workersAtStart
-    }
-
+    private fun requirePlayerToHaveEnoughWorkers(player: PlayerColor) = workerLimitRule.requirePlayerToHaveEnoughWorkers(player)
     private fun onlyInPlayersTurn(player: PlayerColor, block: () -> Unit): Any = turnOrderRule.onlyInPlayersTurn(player, block)
     private fun withoutBreakingTheChain(minerMovement: MinerMovement, block: () -> Unit): Any = chainRule.withoutBreakingTheChain(minerMovement, block)
 }
