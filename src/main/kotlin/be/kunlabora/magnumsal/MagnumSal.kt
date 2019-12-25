@@ -65,12 +65,6 @@ class MagnumSal(private val eventStream: EventStream) {
         }
     }
 
-    private fun revealMineChamberIfPossible(at: PositionInMine) {
-        if (at.isInACorridor() && at !in revealedMineChambers.map { it.chamber.at }) {
-            eventStream.push(MineChamberRevealed(MineChamber(at, listOf(SaltQuality.BROWN), 0)))
-        }
-    }
-
     fun removeWorkerFromMine(player: PlayerColor, at: PositionInMine) = onlyInPlayersTurn(player) {
         withoutBreakingTheChain(RemoveMiner(player, at)) {
             transitionRequires("you to have a worker at the position you want to remove from") {
@@ -79,6 +73,14 @@ class MagnumSal(private val eventStream: EventStream) {
             eventStream.push(MinerRemoved(player, at))
         }
     }
+
+    private fun revealMineChamberIfPossible(at: PositionInMine) {
+        if (at.isInACorridor() && isNotRevealed(at)) {
+            eventStream.push(MineChamberRevealed(MineChamber(at, listOf(SaltQuality.BROWN), 0)))
+        }
+    }
+
+    private fun isNotRevealed(at: PositionInMine) = at !in revealedMineChambers.map { it.chamber.at }
 
     private fun hasWorkerAt(player: PlayerColor, at: PositionInMine): Boolean = miners.any { it == Miner(player, at) }
 
