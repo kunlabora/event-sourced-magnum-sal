@@ -2,7 +2,6 @@ package be.kunlabora.magnumsal.gamepieces
 
 import be.kunlabora.magnumsal.PositionInMine
 import be.kunlabora.magnumsal.gamepieces.Salt.*
-import be.kunlabora.magnumsal.toCamelCase
 import java.util.*
 
 enum class Level {
@@ -29,12 +28,24 @@ enum class Salt {
     WHITE;
 
     override fun toString(): String {
-        return super.toString().toCamelCase()
+        return super.toString().capitalize()
     }
 }
 
 data class Salts(private val _salts: List<Salt>) : List<Salt> by _salts {
-    fun cubesPerQuality() = _salts.groupBy { it }.mapValues { it.value.size }
+    constructor(vararg salts: Salt) : this(salts.toList())
+
+    fun canBeMinedFrom(saltInMineChamber: Salts): Boolean {
+        val cubesPerQualityToMine = this.cubesPerQuality()
+        val cubesPerQualityInChamber = saltInMineChamber.cubesPerQuality()
+        cubesPerQualityToMine.forEach { (quality, cubes) ->
+            val cubesInChamber = cubesPerQualityInChamber[quality]
+            cubesInChamber?.let { if (it < cubes) return false } ?: return false
+        }
+        return true
+    }
+
+    private fun cubesPerQuality() = _salts.groupBy { it }.mapValues { it.value.size }
 
     override fun toString(): String =
             cubesPerQuality().map { "${it.value} ${it.key} salt" }.joinToString()

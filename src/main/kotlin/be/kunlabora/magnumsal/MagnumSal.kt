@@ -4,14 +4,18 @@ import be.kunlabora.magnumsal.MagnumSalEvent.*
 import be.kunlabora.magnumsal.MinerMovement.PlaceMiner
 import be.kunlabora.magnumsal.MinerMovement.RemoveMiner
 import be.kunlabora.magnumsal.exception.transitionRequires
-import be.kunlabora.magnumsal.gamepieces.*
+import be.kunlabora.magnumsal.gamepieces.AllMineChamberTiles
+import be.kunlabora.magnumsal.gamepieces.Level
+import be.kunlabora.magnumsal.gamepieces.MineChamberTile
+import be.kunlabora.magnumsal.gamepieces.Salts
 
 sealed class MagnumSalEvent : Event {
     data class PlayerOrderDetermined(val player1: PlayerColor, val player2: PlayerColor, val player3: PlayerColor? = null, val player4: PlayerColor? = null) : MagnumSalEvent()
     data class PlayerJoined(val name: String, val color: PlayerColor) : MagnumSalEvent()
-    data class MinerPlaced(val player: PlayerColor, val positionInMine: PositionInMine) : MagnumSalEvent()
-    data class MinerRemoved(val player: PlayerColor, val positionInMine: PositionInMine) : MagnumSalEvent()
+    data class MinerPlaced(val player: PlayerColor, val at: PositionInMine) : MagnumSalEvent()
+    data class MinerRemoved(val player: PlayerColor, val at: PositionInMine) : MagnumSalEvent()
     data class MineChamberRevealed(val at: PositionInMine, val tile: MineChamberTile) : MagnumSalEvent()
+    data class SaltMined(val player: PlayerColor, val from: PositionInMine, val saltsMined: Salts) : MagnumSalEvent()
 }
 
 class MagnumSal(private val eventStream: EventStream, private val allMineChamberTiles: List<MineChamberTile> = AllMineChamberTiles) {
@@ -90,16 +94,12 @@ class MagnumSal(private val eventStream: EventStream, private val allMineChamber
         transitionRequires("there to be $saltToMine in $at") {
             saltIsAvailableAt(saltToMine, at)
         }
+        eventStream.push(SaltMined(player, at, saltToMine))
     }
 
     private fun saltIsAvailableAt(saltToMine: Salts, at: PositionInMine): Boolean {
-        val cubesPerQualityToMine = saltToMine.cubesPerQuality()
-        val cubesPerQualityInChamber = Salts(revealedMineChambers.single { it.at == at }.tile.salt).cubesPerQuality()
-        cubesPerQualityToMine.forEach { (quality, cubes) ->
-            val cubesInChamber = cubesPerQualityInChamber[quality]
-            cubesInChamber?.let { if(it <= cubes) return false } ?: return false
-        }
-        return true
+        val saltInMineChamber = Salts(revealedMineChambers.single { it.at == at }.tile.salt)
+        return saltToMine.canBeMinedFrom(saltInMineChamber)
     }
 
     private fun strengthAt(player: PlayerColor, at: PositionInMine): Int {

@@ -21,8 +21,8 @@ data class Miner(val player: PlayerColor, val at: PositionInMine) {
 
     companion object {
         fun from(event: MagnumSalEvent): Miner? = when (event) {
-            is MagnumSalEvent.MinerRemoved -> Miner(event.player, event.positionInMine)
-            is MagnumSalEvent.MinerPlaced -> Miner(event.player, event.positionInMine)
+            is MagnumSalEvent.MinerRemoved -> Miner(event.player, event.at)
+            is MagnumSalEvent.MinerPlaced -> Miner(event.player, event.at)
             else -> null
         }
     }
