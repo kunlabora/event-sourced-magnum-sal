@@ -27,5 +27,5 @@ data class MineChamber(val at: PositionInMine, val salt: List<SaltQuality>, val 
 
     //TODO: consolidate MineTile with MineChamber, maybe use optional PositionInMine, or have a MineChamber contain a MineTile
     //MineTile does not have the same validations that MineChamber has, and MAgnumSal.revealNewMineChamber needs to do ridiculous id comparison
-    fun asTile(): MineTile = (this.level with this.salt and this.water).copy(id = this.mineTileId)
+    fun asTile(): MineChamberTile = (this.level with this.salt and this.water).copy(id = this.mineTileId)
 }

@@ -7,11 +7,11 @@ enum class Level {
     I, II, III
 }
 
-data class MineTile(val level: Level, val salt: List<SaltQuality>, val waterCubes: WaterCubes = 0, val id: UUID = UUID.randomUUID())
-infix fun Level.with(salt: List<SaltQuality>): MineTile = MineTile(this, salt)
-infix fun MineTile.and(waterCubes: WaterCubes): MineTile = this.copy(waterCubes = waterCubes)
+data class MineChamberTile(val level: Level, val salt: List<SaltQuality>, val waterCubes: WaterCubes = 0, val id: UUID = UUID.randomUUID())
+infix fun Level.with(salt: List<SaltQuality>): MineChamberTile = MineChamberTile(this, salt)
+infix fun MineChamberTile.and(waterCubes: WaterCubes): MineChamberTile = this.copy(waterCubes = waterCubes)
 
-private val LevelOneMineTiles = listOf(
+private val LevelOneMineChamberTiles = listOf(
         Level.I with listOf(BROWN, BROWN, GREEN) and 1,
         Level.I with listOf(BROWN, BROWN, GREEN) and 1,
         Level.I with listOf(BROWN, GREEN) and 1,
@@ -21,7 +21,7 @@ private val LevelOneMineTiles = listOf(
         Level.I with listOf(BROWN, GREEN, GREEN) and 1,
         Level.I with listOf(BROWN, BROWN) and 0
 )
-private val LevelTwoMineTiles = listOf(
+private val LevelTwoMineChamberTiles = listOf(
         Level.II with listOf(BROWN, BROWN, BROWN, GREEN) and 2,
         Level.II with listOf(GREEN, GREEN, WHITE) and 2,
         Level.II with listOf(BROWN, WHITE, WHITE) and 3,
@@ -29,11 +29,11 @@ private val LevelTwoMineTiles = listOf(
         Level.II with listOf(BROWN, BROWN, GREEN, WHITE) and 2,
         Level.II with listOf(BROWN, GREEN, GREEN, GREEN) and 2
 )
-private val LevelThreeMineTiles = listOf(
+private val LevelThreeMineChamberTiles = listOf(
         Level.III with listOf(GREEN, GREEN, GREEN, WHITE, WHITE) and 3,
         Level.III with listOf(GREEN, WHITE, WHITE, WHITE) and 3,
         Level.III with listOf(GREEN, GREEN, WHITE, WHITE, WHITE) and 3,
         Level.III with listOf(WHITE, WHITE, WHITE, WHITE) and 3
 )
 
-val AllMineTiles = (LevelOneMineTiles + LevelTwoMineTiles + LevelThreeMineTiles)
+val AllMineChamberTiles = (LevelOneMineChamberTiles + LevelTwoMineChamberTiles + LevelThreeMineChamberTiles)
