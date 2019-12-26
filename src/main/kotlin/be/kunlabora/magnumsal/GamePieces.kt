@@ -36,4 +36,4 @@ val LevelThreeMineTiles = listOf(
         Level.III with listOf(WHITE, WHITE, WHITE, WHITE) and 3
 )
 
-val AllMineTiles = (LevelOneMineTiles + LevelTwoMineTiles + LevelThreeMineTiles).shuffled()
+val AllMineTiles = (LevelOneMineTiles + LevelTwoMineTiles + LevelThreeMineTiles)

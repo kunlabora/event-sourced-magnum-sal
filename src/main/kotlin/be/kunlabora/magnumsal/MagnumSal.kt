@@ -81,7 +81,7 @@ class MagnumSal(private val eventStream: EventStream) {
 
     private fun revealNewMineChamber(at: PositionInMine): MineChamber {
         val revealedTiles = revealedMineChambers.map { it.chamber.asTile() }
-        val availableChambers = AllMineTiles - revealedTiles
+        val availableChambers = AllMineTiles.shuffled() - revealedTiles
         val levelToReveal = at.level
                 ?: throw IllegalStateException("Somehow a MineChamber was created at a depth where there is no corridor...")
         val (_, salt, water, id) = availableChambers.filter { it.level == levelToReveal }[0]
