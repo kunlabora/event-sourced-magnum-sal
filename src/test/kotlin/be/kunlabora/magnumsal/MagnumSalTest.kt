@@ -362,7 +362,7 @@ class MagnumSalTest {
             magnumSal.placeWorkerInMine(Black, at(2, -3))
             magnumSal.placeWorkerInMine(White, at(2, -4))
 
-            val uncoveredLevelIChambers = eventStream.filterEvents<MineChamberRevealed>().map { (Level.I with it.chamber.salt and it.chamber.water).copy(id = it.chamber.mineTileId) }
+            val uncoveredLevelIChambers = eventStream.filterEvents<MineChamberRevealed>().map { it.chamber.asTile() }
             assertThat(uncoveredLevelIChambers)
                     .usingElementComparatorIgnoringFields("at")
                     .containsAll(LevelOneMineTiles)
