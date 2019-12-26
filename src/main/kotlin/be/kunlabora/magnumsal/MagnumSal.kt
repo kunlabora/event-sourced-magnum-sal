@@ -76,6 +76,16 @@ class MagnumSal(private val eventStream: EventStream) {
         }
     }
 
+    fun mine(player: PlayerColor, at: PositionInMine) = onlyInPlayersTurn(player) {
+        transitionRequires("you to mine from a MineChamber") {
+            at.isInACorridor()
+        }
+        transitionRequires("you to mine from a revealed MineChamber") {
+            at in revealedMineChambers.map { it.at }
+        }
+    }
+
+
     private fun revealMineChamberIfPossible(at: PositionInMine) {
         if (at.isInACorridor() && isNotRevealed(at)) {
             revealNewMineChamber(at)

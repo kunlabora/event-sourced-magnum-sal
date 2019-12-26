@@ -386,13 +386,38 @@ class MagnumSalTest {
     @Nested
     inner class MiningFromTheMine {
         @Test
-        fun `Cannot mine from the mineshaft`() {
+        fun `Cannot mine when it's not your turn`() {
+            val magnumSal = MagnumSal(eventStream)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1,0))
 
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
+                    .isThrownBy { magnumSal.mine(White, at(1,0)) }
+                    .withMessage("Transition requires it to be your turn")
+        }
+
+        @Test
+        fun `Cannot mine from the mineshaft`() {
+            val magnumSal = MagnumSal(eventStream)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1,0))
+            magnumSal.placeWorkerInMine(Black, at(2,0))
+
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
+                    .isThrownBy { magnumSal.mine(White, at(1,0)) }
+                    .withMessage("Transition requires you to mine from a MineChamber")
         }
 
         @Test
         fun `Cannot mine from an unrevealed Mine Chamber`() {
+            val magnumSal = MagnumSal(eventStream)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1,0))
+            magnumSal.placeWorkerInMine(Black, at(2,0))
 
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
+                    .isThrownBy { magnumSal.mine(White, at(2,1)) }
+                    .withMessage("Transition requires you to mine from a revealed MineChamber")
         }
 
         @Test
