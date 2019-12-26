@@ -350,6 +350,8 @@ class MagnumSalTest {
             assertThat(uncoveredLevelIChambers)
                     .usingElementComparatorIgnoringFields("at")
                     .containsAll(AllMineChamberTiles.filter { it.level == Level.I })
+                    .doesNotContainAnyElementsOf(AllMineChamberTiles.filter { it.level == Level.II })
+                    .doesNotContainAnyElementsOf(AllMineChamberTiles.filter { it.level == Level.III })
         }
 
         @Test
@@ -360,6 +362,8 @@ class MagnumSalTest {
             assertThat(uncoveredLevelIChambers)
                     .usingElementComparatorIgnoringFields("at")
                     .containsAll(AllMineChamberTiles.filter { it.level == Level.II })
+                    .doesNotContainAnyElementsOf(AllMineChamberTiles.filter { it.level == Level.I })
+                    .doesNotContainAnyElementsOf(AllMineChamberTiles.filter { it.level == Level.III })
         }
 
         @Test
@@ -370,6 +374,8 @@ class MagnumSalTest {
             assertThat(uncoveredLevelIChambers)
                     .usingElementComparatorIgnoringFields("at")
                     .containsAll(AllMineChamberTiles.filter { it.level == Level.III })
+                    .doesNotContainAnyElementsOf(AllMineChamberTiles.filter { it.level == Level.I })
+                    .doesNotContainAnyElementsOf(AllMineChamberTiles.filter { it.level == Level.II })
         }
     }
 }
