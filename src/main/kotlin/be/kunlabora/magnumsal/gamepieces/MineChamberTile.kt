@@ -28,7 +28,7 @@ enum class Salt {
     WHITE;
 
     override fun toString(): String {
-        return super.toString().capitalize()
+        return super.toString().toLowerCase().capitalize()
     }
 }
 

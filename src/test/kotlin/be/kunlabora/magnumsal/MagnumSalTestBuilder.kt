@@ -7,7 +7,7 @@ import be.kunlabora.magnumsal.gamepieces.MineChamberTile
 
 data class Player(val name: PlayerName, val color: PlayerColor)
 
-infix fun PlayerName.using(color: PlayerColor) : Player = Player(this, color)
+infix fun PlayerName.using(color: PlayerColor): Player = Player(this, color)
 typealias PlayerName = String
 
 fun MagnumSal.withPlayers(player1: Player,
@@ -42,6 +42,27 @@ fun MagnumSal.distributeWorkersInTheMineShaft(amountOfWorkersToUse: Int, playerO
             this.placeWorkerInMine(player, at(pos, 0))
         }
     }
+    return this
+}
+
+fun MagnumSal.withFourWhiteMinersAtFirstRightMineChamber(): MagnumSal {
+    this.placeWorkerInMine(White, at(1, 0))
+    this.placeWorkerInMine(Black, at(1, 0))
+    this.placeWorkerInMine(White, at(2, 0))
+    this.placeWorkerInMine(Black, at(2, 0))
+    this.removeWorkerFromMine(White, at(1, 0))
+    this.placeWorkerInMine(Black, at(2, 0))
+    this.removeWorkerFromMine(White, at(2, 0))
+    this.placeWorkerInMine(Black, at(2, 0))
+    this.placeWorkerInMine(White, at(2, 1))
+    this.placeWorkerInMine(Black, at(2, 0))
+    this.placeWorkerInMine(White, at(2, 1))
+    this.removeWorkerFromMine(Black, at(2, 0))
+    this.placeWorkerInMine(White, at(2, 1))
+    this.removeWorkerFromMine(Black, at(2, 0))
+    this.placeWorkerInMine(White, at(2, 1))
+    this.removeWorkerFromMine(Black, at(2, 0))
+
     return this
 }
 
