@@ -365,7 +365,7 @@ class MagnumSalTest {
             val uncoveredLevelIChambers = eventStream.filterEvents<MineChamberRevealed>().map { (Level.I with it.chamber.salt and it.chamber.water).copy(id = it.chamber.mineTileId) }
             assertThat(uncoveredLevelIChambers)
                     .usingElementComparatorIgnoringFields("at")
-                    .containsAll(LevelOneChambers)
+                    .containsAll(LevelOneMineTiles)
         }
     }
 }
