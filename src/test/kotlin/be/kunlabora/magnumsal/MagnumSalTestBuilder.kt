@@ -42,6 +42,26 @@ fun MagnumSal.distributeWorkersInTheMineShaft(amountOfWorkersToUse: Int, playerO
     return this
 }
 
+fun MagnumSal.revealAllLevelIMineChambers(): MagnumSal {
+    this.withPlayersInOrder("Bruno" using PlayerColor.White, "Tim" using PlayerColor.Black)
+    this.placeWorkerInMine(PlayerColor.White, at(1, 0))
+    this.placeWorkerInMine(PlayerColor.Black, at(2, 0))
+    this.placeWorkerInMine(PlayerColor.White, at(2, 1))
+    this.placeWorkerInMine(PlayerColor.Black, at(2, 2))
+    this.placeWorkerInMine(PlayerColor.White, at(2, 3))
+    this.placeWorkerInMine(PlayerColor.Black, at(2, 4))
+    this.placeWorkerInMine(PlayerColor.White, at(2, 1))
+    this.removeWorkerFromMine(PlayerColor.Black, at(2, 4))
+    this.removeWorkerFromMine(PlayerColor.White, at(2, 3))
+    this.removeWorkerFromMine(PlayerColor.Black, at(2, 2))
+    this.removeWorkerFromMine(PlayerColor.White, at(2, 1))
+    this.placeWorkerInMine(PlayerColor.Black, at(2, -1))
+    this.placeWorkerInMine(PlayerColor.White, at(2, -2))
+    this.placeWorkerInMine(PlayerColor.Black, at(2, -3))
+    this.placeWorkerInMine(PlayerColor.White, at(2, -4))
+    return this
+}
+
 // Util
 fun visualize(miners: Miners) {
     println("#".repeat(10) + " MineShaft Top " + "#".repeat(10))

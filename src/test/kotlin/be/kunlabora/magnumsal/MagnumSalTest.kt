@@ -344,23 +344,7 @@ class MagnumSalTest {
 
         @Test
         fun `Uncovering all tiles at depth 2, should only reveal level I mine chambers`() {
-            val magnumSal = MagnumSal(eventStream)
-                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
-            magnumSal.placeWorkerInMine(White, at(1, 0))
-            magnumSal.placeWorkerInMine(Black, at(2, 0))
-            magnumSal.placeWorkerInMine(White, at(2, 1))
-            magnumSal.placeWorkerInMine(Black, at(2, 2))
-            magnumSal.placeWorkerInMine(White, at(2, 3))
-            magnumSal.placeWorkerInMine(Black, at(2, 4))
-            magnumSal.placeWorkerInMine(White, at(2, 1))
-            magnumSal.removeWorkerFromMine(Black, at(2, 4))
-            magnumSal.removeWorkerFromMine(White, at(2, 3))
-            magnumSal.removeWorkerFromMine(Black, at(2, 2))
-            magnumSal.removeWorkerFromMine(White, at(2, 1))
-            magnumSal.placeWorkerInMine(Black, at(2, -1))
-            magnumSal.placeWorkerInMine(White, at(2, -2))
-            magnumSal.placeWorkerInMine(Black, at(2, -3))
-            magnumSal.placeWorkerInMine(White, at(2, -4))
+            MagnumSal(eventStream).revealAllLevelIMineChambers()
 
             val uncoveredLevelIChambers = eventStream.filterEvents<MineChamberRevealed>().map { it.chamber.asTile() }
             assertThat(uncoveredLevelIChambers)
