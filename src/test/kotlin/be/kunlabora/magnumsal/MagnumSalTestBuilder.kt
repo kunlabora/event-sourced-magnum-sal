@@ -2,6 +2,8 @@ package be.kunlabora.magnumsal
 
 import be.kunlabora.magnumsal.PlayerColor.*
 import be.kunlabora.magnumsal.PositionInMine.Companion.at
+import be.kunlabora.magnumsal.gamepieces.AllMineChamberTiles
+import be.kunlabora.magnumsal.gamepieces.MineChamberTile
 
 data class Player(val name: PlayerName, val color: PlayerColor)
 
@@ -102,4 +104,13 @@ fun visualize(miners: Miners) {
                 println("$at: $amountOfMinersPerPlayer")
             }
     println("#".repeat(10) + " MineShaft End " + "#".repeat(10))
+}
+
+class TestMagnumSal(val eventStream: EventStream)
+
+fun TestMagnumSal.withOnlyMineChamberTilesOf(tile: MineChamberTile): MagnumSal {
+    val tiles = AllMineChamberTiles
+            .filter { it.level == tile.level }
+            .map { it.copy(salt = tile.salt, waterCubes = tile.waterCubes) }
+    return MagnumSal(this.eventStream, tiles)
 }

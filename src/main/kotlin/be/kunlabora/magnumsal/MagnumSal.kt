@@ -4,9 +4,7 @@ import be.kunlabora.magnumsal.MagnumSalEvent.*
 import be.kunlabora.magnumsal.MinerMovement.PlaceMiner
 import be.kunlabora.magnumsal.MinerMovement.RemoveMiner
 import be.kunlabora.magnumsal.exception.transitionRequires
-import be.kunlabora.magnumsal.gamepieces.AllMineChamberTiles
-import be.kunlabora.magnumsal.gamepieces.Level
-import be.kunlabora.magnumsal.gamepieces.MineChamberTile
+import be.kunlabora.magnumsal.gamepieces.*
 
 sealed class MagnumSalEvent : Event {
     data class PlayerOrderDetermined(val player1: PlayerColor, val player2: PlayerColor, val player3: PlayerColor? = null, val player4: PlayerColor? = null) : MagnumSalEvent()
@@ -16,7 +14,7 @@ sealed class MagnumSalEvent : Event {
     data class MineChamberRevealed(val at: PositionInMine, val tile: MineChamberTile) : MagnumSalEvent()
 }
 
-class MagnumSal(private val eventStream: EventStream) {
+class MagnumSal(private val eventStream: EventStream, private val allMineChamberTiles: List<MineChamberTile> = AllMineChamberTiles) {
 
     private val turnOrderRule = TurnOrderRule(eventStream)
     private val chainRule = ChainRule(eventStream)
@@ -76,7 +74,7 @@ class MagnumSal(private val eventStream: EventStream) {
         }
     }
 
-    fun mine(player: PlayerColor, at: PositionInMine) = onlyInPlayersTurn(player) {
+    fun mine(player: PlayerColor, at: PositionInMine, saltToMine: List<Salt>) = onlyInPlayersTurn(player) {
         transitionRequires("you to mine from a MineChamber") {
             at.isInACorridor()
         }
@@ -86,6 +84,15 @@ class MagnumSal(private val eventStream: EventStream) {
         transitionRequires("you to have a miner at $at") {
             hasWorkerAt(player, at)
         }
+        transitionRequires("you to have enough miners at $at") {
+            strengthAt(player, at) >= saltToMine.size
+        }
+    }
+
+    private fun strengthAt(player: PlayerColor, at: PositionInMine): Int {
+        val waterInChamber = revealedMineChambers.single { it.at == at }.tile.waterCubes
+        val playerMiners = miners.count { it == Miner(player, at) }
+        return playerMiners - waterInChamber
     }
 
     private fun revealMineChamberIfPossible(at: PositionInMine) {
@@ -99,7 +106,7 @@ class MagnumSal(private val eventStream: EventStream) {
     private fun revealNewMineChamber(at: PositionInMine) {
         val level = Level.from(at)
         val revealedMineChamberTiles = revealedMineChambers.map { it.tile }
-        val unrevealedMineChamberTiles = AllMineChamberTiles.shuffled() - revealedMineChamberTiles
+        val unrevealedMineChamberTiles = allMineChamberTiles.shuffled() - revealedMineChamberTiles
         val tile = unrevealedMineChamberTiles.filter { it.level == level }[0]
         eventStream.push(MineChamberRevealed(at, tile))
     }
@@ -109,6 +116,8 @@ class MagnumSal(private val eventStream: EventStream) {
     private fun requirePlayerToHaveEnoughWorkers(player: PlayerColor) = workerLimitRule.requirePlayerToHaveEnoughWorkers(player)
     private fun onlyInPlayersTurn(player: PlayerColor, block: () -> Unit): Any = turnOrderRule.onlyInPlayersTurn(player, block)
     private fun withoutBreakingTheChain(minerMovement: MinerMovement, block: () -> Unit): Any = chainRule.withoutBreakingTheChain(minerMovement, block)
+
+    companion object
 }
 
 sealed class PlayerColor {

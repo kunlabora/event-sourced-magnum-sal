@@ -6,6 +6,8 @@ import be.kunlabora.magnumsal.PlayerColor.*
 import be.kunlabora.magnumsal.exception.IllegalTransitionException
 import be.kunlabora.magnumsal.gamepieces.AllMineChamberTiles
 import be.kunlabora.magnumsal.gamepieces.Level
+import be.kunlabora.magnumsal.gamepieces.MineChamberTile
+import be.kunlabora.magnumsal.gamepieces.Salt
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.BeforeEach
@@ -392,7 +394,7 @@ class MagnumSalTest {
             magnumSal.placeWorkerInMine(White, at(1,0))
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.mine(White, at(1,0)) }
+                    .isThrownBy { magnumSal.mine(White, at(1,0), listOf(Salt.BROWN)) }
                     .withMessage("Transition requires it to be your turn")
         }
 
@@ -404,7 +406,7 @@ class MagnumSalTest {
             magnumSal.placeWorkerInMine(Black, at(2,0))
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.mine(White, at(1,0)) }
+                    .isThrownBy { magnumSal.mine(White, at(1,0), listOf(Salt.BROWN)) }
                     .withMessage("Transition requires you to mine from a MineChamber")
         }
 
@@ -416,7 +418,7 @@ class MagnumSalTest {
             magnumSal.placeWorkerInMine(Black, at(2,0))
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.mine(White, at(2,1)) }
+                    .isThrownBy { magnumSal.mine(White, at(2,1), listOf(Salt.BROWN)) }
                     .withMessage("Transition requires you to mine from a revealed MineChamber")
         }
 
@@ -429,16 +431,26 @@ class MagnumSalTest {
             magnumSal.placeWorkerInMine(White, at(2,1))
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.mine(Black, at(2,1)) }
+                    .isThrownBy { magnumSal.mine(Black, at(2,1), listOf(Salt.BROWN)) }
                     .withMessage("Transition requires you to have a miner at ${at(2,1)}")
         }
 
+        //Mining requires strength
         @Test
         fun `Cannot mine from a Mine Chamber with water when not enough own miners present`() {
+            val magnumSal = TestMagnumSal(eventStream)
+                    .withOnlyMineChamberTilesOf(MineChamberTile(Level.I, listOf(Salt.BROWN), 1))
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1,0))
+            magnumSal.placeWorkerInMine(Black, at(2,0))
+            magnumSal.placeWorkerInMine(White, at(2,1))
+            magnumSal.placeWorkerInMine(Black, at(2,2))
 
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
+                    .isThrownBy { magnumSal.mine(White, at(2,1), listOf(Salt.BROWN)) }
+                    .withMessage("Transition requires you to have enough miners at ${at(2,1)}")
         }
 
-        //Mining requires strength
         @Test
         fun `Mining from a Mine Chamber without water and with own miners present allows to mine an amount of salt equal to own miners`() {
 
