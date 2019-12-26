@@ -3,12 +3,10 @@ package be.kunlabora.magnumsal
 import be.kunlabora.magnumsal.MagnumSalEvent.*
 import be.kunlabora.magnumsal.PositionInMine.Companion.at
 import be.kunlabora.magnumsal.PlayerColor.*
-import be.kunlabora.magnumsal.SaltQuality.BROWN
 import be.kunlabora.magnumsal.exception.IllegalTransitionException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -342,6 +340,32 @@ class MagnumSalTest {
 
             assertThat(eventStream.filterEvents<MineChamberRevealed>().map { it.chamber.at })
                     .containsOnlyOnce(at(2,1))
+        }
+
+        @Test
+        fun `Uncovering all tiles at depth 2, should only reveal level I mine chambers`() {
+            val magnumSal = MagnumSal(eventStream)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(Black, at(2, 0))
+            magnumSal.placeWorkerInMine(White, at(2, 1))
+            magnumSal.placeWorkerInMine(Black, at(2, 2))
+            magnumSal.placeWorkerInMine(White, at(2, 3))
+            magnumSal.placeWorkerInMine(Black, at(2, 4))
+            magnumSal.placeWorkerInMine(White, at(2, 1))
+            magnumSal.removeWorkerFromMine(Black, at(2, 4))
+            magnumSal.removeWorkerFromMine(White, at(2, 3))
+            magnumSal.removeWorkerFromMine(Black, at(2, 2))
+            magnumSal.removeWorkerFromMine(White, at(2, 1))
+            magnumSal.placeWorkerInMine(Black, at(2, -1))
+            magnumSal.placeWorkerInMine(White, at(2, -2))
+            magnumSal.placeWorkerInMine(Black, at(2, -3))
+            magnumSal.placeWorkerInMine(White, at(2, -4))
+
+            val uncoveredLevelIChambers = eventStream.filterEvents<MineChamberRevealed>().map { (Level.I with it.chamber.salt and it.chamber.water).copy(id = it.chamber.mineTileId) }
+            assertThat(uncoveredLevelIChambers)
+                    .usingElementComparatorIgnoringFields("at")
+                    .containsAll(LevelOneChambers)
         }
     }
 }

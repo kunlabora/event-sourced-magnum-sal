@@ -8,13 +8,14 @@ import be.kunlabora.magnumsal.exception.transitionRequires
 sealed class MagnumSalEvent : Event {
     data class PlayerOrderDetermined(val player1: PlayerColor, val player2: PlayerColor, val player3: PlayerColor? = null, val player4: PlayerColor? = null) : MagnumSalEvent()
     data class PlayerJoined(val name: String, val color: PlayerColor) : MagnumSalEvent()
-    data class CoveredMineChamberWasLaid(val chamber: MineChamber) : MagnumSalEvent()
     data class MinerPlaced(val player: PlayerColor, val positionInMine: PositionInMine) : MagnumSalEvent()
     data class MinerRemoved(val player: PlayerColor, val positionInMine: PositionInMine) : MagnumSalEvent()
     data class MineChamberRevealed(val chamber: MineChamber) : MagnumSalEvent()
 }
 
 class MagnumSal(private val eventStream: EventStream) {
+
+    private val allChambers: List<MineTile> = LevelOneChambers.toMutableList().shuffled()
 
     private val turnOrderRule = TurnOrderRule(eventStream)
     private val chainRule = ChainRule(eventStream)
@@ -76,8 +77,16 @@ class MagnumSal(private val eventStream: EventStream) {
 
     private fun revealMineChamberIfPossible(at: PositionInMine) {
         if (at.isInACorridor() && isNotRevealed(at)) {
-            eventStream.push(MineChamberRevealed(MineChamber(at, listOf(SaltQuality.BROWN), 0)))
+            eventStream.push(MineChamberRevealed(revealNewMineChamber(at)))
         }
+    }
+
+    private fun revealNewMineChamber(at: PositionInMine): MineChamber {
+        val availableChambers = allChambers - revealedMineChambers.map { it.chamber.asTile() }
+        val levelToReveal = at.level
+                ?: throw IllegalStateException("Somehow a MineChamber was created at a depth where there is no corridor...")
+        val (_, salt, water, id) = availableChambers.filter { it.level == levelToReveal }[0]
+        return MineChamber(at, salt, water, id)
     }
 
     private fun isNotRevealed(at: PositionInMine) = at !in revealedMineChambers.map { it.chamber.at }

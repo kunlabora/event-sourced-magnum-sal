@@ -5,6 +5,13 @@ import kotlin.math.absoluteValue
 
 data class PositionInMine(val depth: Int, val width: Int) {
 
+    val level: Level?
+        get() = when(this.depth) {
+            2 -> Level.I
+            4 -> Level.II
+            6 -> Level.III
+            else -> null
+        }
     private val ends
         get() = listOf(at(2, 4), at(2, -4), at(4, 3), at(4, -3), at(6, 2), at(6, -2), at(6, 0))
 
