@@ -1,11 +1,12 @@
 package be.kunlabora.magnumsal
 
-import be.kunlabora.magnumsal.PositionInMine.Companion.at
 import be.kunlabora.magnumsal.PlayerColor.*
+import be.kunlabora.magnumsal.PositionInMine.Companion.at
 import be.kunlabora.magnumsal.exception.IllegalTransitionException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 
@@ -18,13 +19,11 @@ class TurnOrderRuleTest {
     }
 
     @Test
-    fun `Illegal case in a game with 2 players, first player goes twice after one round`() {
+    fun `Illegal case in a game with 2 players, first player goes twice in first round`() {
         val magnumSal = MagnumSal(eventStream)
                 .withPlayersInOrder("Bruno" using White, "Tim" using Black)
 
         magnumSal.placeWorkerInMine(White, at(1, 0))
-        magnumSal.placeWorkerInMine(Black, at(1, 0))
-        magnumSal.placeWorkerInMine(White, at(2, 0))
 
         assertThatExceptionOfType(IllegalTransitionException::class.java)
                 .isThrownBy {
@@ -36,7 +35,24 @@ class TurnOrderRuleTest {
     }
 
     @Test
-    fun `Illegal case in a game with 3 players, third player goes twice`() {
+    fun `Illegal case in a game with 2 players, second player goes twice in first round`() {
+        val magnumSal = MagnumSal(eventStream)
+                .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+
+        magnumSal.placeWorkerInMine(White, at(1, 0))
+        magnumSal.placeWorkerInMine(Black, at(1, 0))
+
+        assertThatExceptionOfType(IllegalTransitionException::class.java)
+                .isThrownBy {
+                    TurnOrderRule(eventStream).onlyInPlayersTurn(Black) {
+                        fail { "this should not be executed, because it's not $Black's turn" }
+                    }
+                }
+                .withMessage("Transition requires it to be your turn")
+    }
+
+    @Test
+    fun `Illegal case in a game with 3 players, third player goes twice in first round`() {
         val magnumSal = MagnumSal(eventStream)
                 .withPlayersInOrder("Bruno" using White, "Tim" using Black, "Snarf" using Orange)
 
@@ -56,7 +72,7 @@ class TurnOrderRuleTest {
     }
 
     @Test
-    fun `Illegal case in a game with 4 players, fourth player goes twice`() {
+    fun `Illegal case in a game with 4 players, fourth player goes twice in first round`() {
         val magnumSal = MagnumSal(eventStream)
                 .withPlayersInOrder("Bruno" using White, "Tim" using Black, "Snarf" using Orange, "Gargamel" using Purple)
 
@@ -74,5 +90,56 @@ class TurnOrderRuleTest {
                 .withMessage("Transition requires it to be your turn")
 
         assertThat(eventStream).containsOnlyOnce(MagnumSalEvent.MinerPlaced(Purple, at(1, 0)))
+    }
+
+    @Test
+    fun `Legal case in a game with 2 players, first player goes twice after first round`() {
+        val magnumSal = MagnumSal(eventStream)
+                .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+
+        magnumSal.placeWorkerInMine(White, at(1, 0))
+        magnumSal.placeWorkerInMine(Black, at(1, 0))
+        magnumSal.placeWorkerInMine(White, at(2, 0))
+
+        var success = false
+        TurnOrderRule(eventStream).onlyInPlayersTurn(White) { success = true }
+
+        assertThat(success).isTrue()
+    }
+
+    @Test
+    fun `Legal case in a game with 2 players, second player goes twice after first round`() {
+        val magnumSal = MagnumSal(eventStream)
+                .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+
+        magnumSal.placeWorkerInMine(White, at(1, 0))
+        magnumSal.placeWorkerInMine(Black, at(1, 0))
+        magnumSal.placeWorkerInMine(White, at(2, 0))
+        magnumSal.placeWorkerInMine(White, at(2, 0))
+
+        var success = false
+        TurnOrderRule(eventStream).onlyInPlayersTurn(Black) { success = true }
+
+        assertThat(success).isTrue()
+    }
+
+    @Test
+    fun `Legal case in a game with 4 players, third player goes twice after first round`() {
+        val magnumSal = MagnumSal(eventStream)
+                .withPlayersInOrder("Bruno" using White, "Tim" using Black, "Snarf" using Orange, "Azrael" using Purple)
+
+        magnumSal.placeWorkerInMine(White, at(1, 0))
+        magnumSal.placeWorkerInMine(Black, at(1, 0))
+        magnumSal.placeWorkerInMine(Orange, at(1, 0))
+        magnumSal.placeWorkerInMine(Purple, at(1, 0))
+        magnumSal.placeWorkerInMine(White, at(2, 0))
+        magnumSal.placeWorkerInMine(White, at(2, 0))
+        magnumSal.placeWorkerInMine(Black, at(2, 0))
+        magnumSal.placeWorkerInMine(Black, at(2, 0))
+
+        var success = false
+        TurnOrderRule(eventStream).onlyInPlayersTurn(Orange) { success = true }
+
+        assertThat(success).isTrue()
     }
 }
