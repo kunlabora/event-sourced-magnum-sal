@@ -11,7 +11,7 @@ data class MineTile(val level: Level, val salt: List<SaltQuality>, val waterCube
 infix fun Level.with(salt: List<SaltQuality>): MineTile = MineTile(this, salt)
 infix fun MineTile.and(waterCubes: WaterCubes): MineTile = this.copy(waterCubes = waterCubes)
 
-val LevelOneMineTiles = listOf(
+private val LevelOneMineTiles = listOf(
         Level.I with listOf(BROWN, BROWN, GREEN) and 1,
         Level.I with listOf(BROWN, BROWN, GREEN) and 1,
         Level.I with listOf(BROWN, GREEN) and 1,
@@ -21,7 +21,7 @@ val LevelOneMineTiles = listOf(
         Level.I with listOf(BROWN, GREEN, GREEN) and 1,
         Level.I with listOf(BROWN, BROWN) and 0
 )
-val LevelTwoMineTiles = listOf(
+private val LevelTwoMineTiles = listOf(
         Level.II with listOf(BROWN, BROWN, BROWN, GREEN) and 2,
         Level.II with listOf(GREEN, GREEN, WHITE) and 2,
         Level.II with listOf(BROWN, WHITE, WHITE) and 3,
@@ -29,7 +29,7 @@ val LevelTwoMineTiles = listOf(
         Level.II with listOf(BROWN, BROWN, GREEN, WHITE) and 2,
         Level.II with listOf(BROWN, GREEN, GREEN, GREEN) and 2
 )
-val LevelThreeMineTiles = listOf(
+private val LevelThreeMineTiles = listOf(
         Level.III with listOf(GREEN, GREEN, GREEN, WHITE, WHITE) and 3,
         Level.III with listOf(GREEN, WHITE, WHITE, WHITE) and 3,
         Level.III with listOf(GREEN, GREEN, WHITE, WHITE, WHITE) and 3,
