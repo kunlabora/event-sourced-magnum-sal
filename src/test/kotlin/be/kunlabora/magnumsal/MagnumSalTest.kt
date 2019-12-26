@@ -422,7 +422,15 @@ class MagnumSalTest {
 
         @Test
         fun `Cannot mine from a Mine Chamber when no own miners present`() {
+            val magnumSal = MagnumSal(eventStream)
+                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            magnumSal.placeWorkerInMine(White, at(1,0))
+            magnumSal.placeWorkerInMine(Black, at(2,0))
+            magnumSal.placeWorkerInMine(White, at(2,1))
 
+            assertThatExceptionOfType(IllegalTransitionException::class.java)
+                    .isThrownBy { magnumSal.mine(Black, at(2,1)) }
+                    .withMessage("Transition requires you to have a miner at ${at(2,1)}")
         }
 
         @Test
