@@ -74,7 +74,7 @@ class MagnumSal(private val eventStream: EventStream, private val allMineChamber
         }
     }
 
-    fun mine(player: PlayerColor, at: PositionInMine, saltToMine: List<Salt>) = onlyInPlayersTurn(player) {
+    fun mine(player: PlayerColor, at: PositionInMine, saltToMine: Salts) = onlyInPlayersTurn(player) {
         transitionRequires("you to mine from a MineChamber") {
             at.isInACorridor()
         }
@@ -87,6 +87,19 @@ class MagnumSal(private val eventStream: EventStream, private val allMineChamber
         transitionRequires("you to have enough miners at $at") {
             strengthAt(player, at) >= saltToMine.size
         }
+        transitionRequires("there to be $saltToMine in $at") {
+            saltIsAvailableAt(saltToMine, at)
+        }
+    }
+
+    private fun saltIsAvailableAt(saltToMine: Salts, at: PositionInMine): Boolean {
+        val cubesPerQualityToMine = saltToMine.cubesPerQuality()
+        val cubesPerQualityInChamber = Salts(revealedMineChambers.single { it.at == at }.tile.salt).cubesPerQuality()
+        cubesPerQualityToMine.forEach { (quality, cubes) ->
+            val cubesInChamber = cubesPerQualityInChamber[quality]
+            cubesInChamber?.let { if(it <= cubes) return false } ?: return false
+        }
+        return true
     }
 
     private fun strengthAt(player: PlayerColor, at: PositionInMine): Int {
