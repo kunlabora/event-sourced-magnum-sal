@@ -4,6 +4,8 @@ import be.kunlabora.magnumsal.MagnumSalEvent.*
 import be.kunlabora.magnumsal.PositionInMine.Companion.at
 import be.kunlabora.magnumsal.PlayerColor.*
 import be.kunlabora.magnumsal.exception.IllegalTransitionException
+import be.kunlabora.magnumsal.gamepieces.AllMineChamberTiles
+import be.kunlabora.magnumsal.gamepieces.Level
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.BeforeEach

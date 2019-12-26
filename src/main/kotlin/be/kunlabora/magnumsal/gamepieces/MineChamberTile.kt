@@ -1,13 +1,26 @@
-package be.kunlabora.magnumsal
+package be.kunlabora.magnumsal.gamepieces
 
-import be.kunlabora.magnumsal.SaltQuality.*
+import be.kunlabora.magnumsal.gamepieces.SaltQuality.*
 import java.util.*
 
 enum class Level {
     I, II, III
 }
 
-data class MineChamberTile(val level: Level, val salt: List<SaltQuality>, val waterCubes: WaterCubes = 0, val id: UUID = UUID.randomUUID())
+typealias WaterCubes = Int
+
+enum class SaltQuality {
+    BROWN,
+    GREEN,
+    WHITE
+}
+
+data class MineChamberTile(val level: Level, val salt: List<SaltQuality>, val waterCubes: WaterCubes = 0, val id: UUID = UUID.randomUUID()) {
+    init {
+        require(waterCubes in 0..4) { "A MineChamberTile must have between 0 and 4 cubes of Water" }
+        require(salt.isNotEmpty()) { "A MineChamberTile must have at least one Salt" }
+    }
+}
 infix fun Level.with(salt: List<SaltQuality>): MineChamberTile = MineChamberTile(this, salt)
 infix fun MineChamberTile.and(waterCubes: WaterCubes): MineChamberTile = this.copy(waterCubes = waterCubes)
 

@@ -1,5 +1,6 @@
 package be.kunlabora.magnumsal
 
+import be.kunlabora.magnumsal.gamepieces.Level
 import java.lang.IllegalArgumentException
 import kotlin.math.absoluteValue
 

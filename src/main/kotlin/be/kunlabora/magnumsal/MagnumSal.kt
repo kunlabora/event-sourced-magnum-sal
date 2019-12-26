@@ -4,13 +4,14 @@ import be.kunlabora.magnumsal.MagnumSalEvent.*
 import be.kunlabora.magnumsal.MinerMovement.PlaceMiner
 import be.kunlabora.magnumsal.MinerMovement.RemoveMiner
 import be.kunlabora.magnumsal.exception.transitionRequires
+import be.kunlabora.magnumsal.gamepieces.AllMineChamberTiles
 
 sealed class MagnumSalEvent : Event {
     data class PlayerOrderDetermined(val player1: PlayerColor, val player2: PlayerColor, val player3: PlayerColor? = null, val player4: PlayerColor? = null) : MagnumSalEvent()
     data class PlayerJoined(val name: String, val color: PlayerColor) : MagnumSalEvent()
     data class MinerPlaced(val player: PlayerColor, val positionInMine: PositionInMine) : MagnumSalEvent()
     data class MinerRemoved(val player: PlayerColor, val positionInMine: PositionInMine) : MagnumSalEvent()
-    data class MineChamberRevealed(val chamber: MineChamber) : MagnumSalEvent()
+    data class MineChamberRevealed(val chamber: RevealedMineChamber) : MagnumSalEvent()
 }
 
 class MagnumSal(private val eventStream: EventStream) {
@@ -79,16 +80,16 @@ class MagnumSal(private val eventStream: EventStream) {
         }
     }
 
-    private fun revealNewMineChamber(at: PositionInMine): MineChamber {
+    private fun isNotRevealed(at: PositionInMine) = at !in revealedMineChambers.map { it.chamber.at }
+
+    private fun revealNewMineChamber(at: PositionInMine): RevealedMineChamber {
         val revealedMineChamberTiles = revealedMineChambers.map { it.chamber.asTile() }
         val availableMineChamberTiles = AllMineChamberTiles.shuffled() - revealedMineChamberTiles
         val levelToReveal = at.level
-                ?: throw IllegalStateException("Somehow a MineChamber was created at a depth where there is no corridor...")
-        val (_, salt, water, id) = availableMineChamberTiles.filter { it.level == levelToReveal }[0]
-        return MineChamber(at, salt, water, id)
+                ?: throw IllegalStateException("A MineChamber was being revealed at a depth where there is no corridor.")
+        val tile = availableMineChamberTiles.filter { it.level == levelToReveal }[0]
+        return RevealedMineChamber(at, tile)
     }
-
-    private fun isNotRevealed(at: PositionInMine) = at !in revealedMineChambers.map { it.chamber.at }
 
     private fun hasWorkerAt(player: PlayerColor, at: PositionInMine): Boolean = miners.any { it == Miner(player, at) }
 
