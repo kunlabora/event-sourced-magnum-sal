@@ -9,6 +9,7 @@ import be.kunlabora.magnumsal.gamepieces.Level
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -379,6 +380,55 @@ class MagnumSalTest {
                     .containsAll(AllMineChamberTiles.filter { it.level == Level.III })
                     .doesNotContainAnyElementsOf(AllMineChamberTiles.filter { it.level == Level.I })
                     .doesNotContainAnyElementsOf(AllMineChamberTiles.filter { it.level == Level.II })
+        }
+    }
+
+    @Nested
+    inner class MiningFromTheMine {
+        @Test
+        fun `Cannot mine from the mineshaft`() {
+
+        }
+
+        @Test
+        fun `Cannot mine from an unrevealed Mine Chamber`() {
+
+        }
+
+        @Test
+        fun `Cannot mine from a Mine Chamber when no own miners present`() {
+
+        }
+
+        @Test
+        fun `Cannot mine from a Mine Chamber with water when not enough own miners present`() {
+
+        }
+
+        //Mining requires strength
+        @Test
+        fun `Mining from a Mine Chamber without water and with own miners present allows to mine an amount of salt equal to own miners`() {
+
+        }
+
+        //Mining tires miners
+        @Test
+        @Disabled
+        fun `Mining from a Mine Chamber without water, tires miners that mined salt`() {
+
+        }
+
+        @Test
+        @Disabled
+        fun `Mining from a Mine Chamber with water, tires miners that mined salt and had to hold back the water`() {
+
+        }
+
+        //Mining costs zloty
+        @Test
+        @Disabled
+        fun `Cannot mine from a Mine Chamber when player does not have enough money to pay the chain`() {
+
         }
     }
 }
