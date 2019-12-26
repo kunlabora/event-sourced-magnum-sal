@@ -1,5 +1,6 @@
 package be.kunlabora.magnumsal
 
+import be.kunlabora.magnumsal.PlayerColor.*
 import be.kunlabora.magnumsal.PositionInMine.Companion.at
 
 data class Player(val name: PlayerName, val color: PlayerColor)
@@ -43,22 +44,52 @@ fun MagnumSal.distributeWorkersInTheMineShaft(amountOfWorkersToUse: Int, playerO
 }
 
 fun MagnumSal.revealAllLevelIMineChambers(): MagnumSal {
-    this.withPlayersInOrder("Bruno" using PlayerColor.White, "Tim" using PlayerColor.Black)
-    this.placeWorkerInMine(PlayerColor.White, at(1, 0))
-    this.placeWorkerInMine(PlayerColor.Black, at(2, 0))
-    this.placeWorkerInMine(PlayerColor.White, at(2, 1))
-    this.placeWorkerInMine(PlayerColor.Black, at(2, 2))
-    this.placeWorkerInMine(PlayerColor.White, at(2, 3))
-    this.placeWorkerInMine(PlayerColor.Black, at(2, 4))
-    this.placeWorkerInMine(PlayerColor.White, at(2, 1))
-    this.removeWorkerFromMine(PlayerColor.Black, at(2, 4))
-    this.removeWorkerFromMine(PlayerColor.White, at(2, 3))
-    this.removeWorkerFromMine(PlayerColor.Black, at(2, 2))
-    this.removeWorkerFromMine(PlayerColor.White, at(2, 1))
-    this.placeWorkerInMine(PlayerColor.Black, at(2, -1))
-    this.placeWorkerInMine(PlayerColor.White, at(2, -2))
-    this.placeWorkerInMine(PlayerColor.Black, at(2, -3))
-    this.placeWorkerInMine(PlayerColor.White, at(2, -4))
+    this.withPlayersInOrder("Bruno" using White, "Tim" using Black)
+    this.placeWorkerInMine(White, at(1, 0))
+    this.placeWorkerInMine(Black, at(2, 0))
+    this.placeWorkerInMine(White, at(2, 1))
+    this.placeWorkerInMine(Black, at(2, 2))
+    this.placeWorkerInMine(White, at(2, 3))
+    this.placeWorkerInMine(Black, at(2, 4))
+    this.placeWorkerInMine(White, at(2, 1))
+    this.removeWorkerFromMine(Black, at(2, 4))
+    this.removeWorkerFromMine(White, at(2, 3))
+    this.removeWorkerFromMine(Black, at(2, 2))
+    this.removeWorkerFromMine(White, at(2, 1))
+    this.placeWorkerInMine(Black, at(2, -1))
+    this.placeWorkerInMine(White, at(2, -2))
+    this.placeWorkerInMine(Black, at(2, -3))
+    this.placeWorkerInMine(White, at(2, -4))
+    return this
+}
+
+fun MagnumSal.revealAllLevelIIMineChambers(): MagnumSal {
+    this.withPlayersInOrder("Bruno" using White, "Tim" using Black, "Snarf" using Orange)
+    this.placeWorkerInMine(White, at(1, 0))
+    this.placeWorkerInMine(Black, at(2, 0))
+    this.placeWorkerInMine(Orange, at(3, 0))
+    this.placeWorkerInMine(White, at(4, 0))
+    this.placeWorkerInMine(Black, at(4, 1))
+    this.placeWorkerInMine(Orange, at(4, 2))
+    this.placeWorkerInMine(White, at(4, 3))
+    this.placeWorkerInMine(Black, at(4, -1))
+    this.placeWorkerInMine(Orange, at(4, -2))
+    this.placeWorkerInMine(White, at(4, -3))
+    return this
+}
+
+fun MagnumSal.revealAllLevelIIIMineChambers(): MagnumSal {
+    this.withPlayersInOrder("Bruno" using White, "Tim" using Black, "Snarf" using Orange)
+    this.placeWorkerInMine(White, at(1, 0))
+    this.placeWorkerInMine(Black, at(2, 0))
+    this.placeWorkerInMine(Orange, at(3, 0))
+    this.placeWorkerInMine(White, at(4, 0))
+    this.placeWorkerInMine(Black, at(5, 0))
+    this.placeWorkerInMine(Orange, at(6, 0))
+    this.placeWorkerInMine(White, at(6, 1))
+    this.placeWorkerInMine(Black, at(6, 2))
+    this.placeWorkerInMine(Orange, at(6, -1))
+    this.placeWorkerInMine(White, at(6, -2))
     return this
 }
 

@@ -351,5 +351,25 @@ class MagnumSalTest {
                     .usingElementComparatorIgnoringFields("at")
                     .containsAll(AllMineChamberTiles.filter { it.level == Level.I })
         }
+
+        @Test
+        fun `Uncovering all tiles at depth 4, should only reveal level II mine chambers`() {
+            MagnumSal(eventStream).revealAllLevelIIMineChambers()
+
+            val uncoveredLevelIChambers = eventStream.filterEvents<MineChamberRevealed>().map { it.chamber.asTile() }
+            assertThat(uncoveredLevelIChambers)
+                    .usingElementComparatorIgnoringFields("at")
+                    .containsAll(AllMineChamberTiles.filter { it.level == Level.II })
+        }
+
+        @Test
+        fun `Uncovering all tiles at depth 6, should only reveal level III mine chambers`() {
+            MagnumSal(eventStream).revealAllLevelIIIMineChambers()
+
+            val uncoveredLevelIChambers = eventStream.filterEvents<MineChamberRevealed>().map { it.chamber.asTile() }
+            assertThat(uncoveredLevelIChambers)
+                    .usingElementComparatorIgnoringFields("at")
+                    .containsAll(AllMineChamberTiles.filter { it.level == Level.III })
+        }
     }
 }
