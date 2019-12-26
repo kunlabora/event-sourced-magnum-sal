@@ -1,10 +1,23 @@
 package be.kunlabora.magnumsal.gamepieces
 
+import be.kunlabora.magnumsal.PositionInMine
 import be.kunlabora.magnumsal.gamepieces.SaltQuality.*
 import java.util.*
 
 enum class Level {
-    I, II, III
+    I, II, III;
+
+    companion object {
+        fun from(at: PositionInMine) : Level? {
+            if (!at.isInACorridor()) return null
+            return when(at.depth) {
+                2 -> I
+                4 -> II
+                6 -> III
+                else -> null
+            }
+        }
+    }
 }
 
 typealias WaterCubes = Int

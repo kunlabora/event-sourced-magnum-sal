@@ -319,20 +319,21 @@ class MagnumSalTest {
 
     @Nested
     inner class ExploringTheMine {
+
         @Test
-        fun `Placing a Miner on an undiscovered tile, reveals the contents of the mine chamber`() {
+        fun `Placing a Miner on an undiscovered mine chamber tile, reveals the contents of the mine chamber`() {
             val magnumSal = MagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, 1))
 
-            assertThat(eventStream.filterEvents<MineChamberRevealed>().map { it.chamber.at })
+            assertThat(eventStream.filterEvents<MineChamberRevealed>().map { it.at })
                     .containsOnlyOnce(at(2,1))
         }
 
         @Test
-        fun `Placing a second Miner on a discovered tile, does not reveal the contents of the mine chamber again`() {
+        fun `Placing a second Miner on a discovered mine chamber tile, does not reveal the contents of the mine chamber again`() {
             val magnumSal = MagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
             magnumSal.placeWorkerInMine(White, at(1, 0))
@@ -340,15 +341,15 @@ class MagnumSalTest {
             magnumSal.placeWorkerInMine(White, at(2, 1))
             magnumSal.placeWorkerInMine(Black, at(2, 1))
 
-            assertThat(eventStream.filterEvents<MineChamberRevealed>().map { it.chamber.at })
+            assertThat(eventStream.filterEvents<MineChamberRevealed>().map { it.at })
                     .containsOnlyOnce(at(2,1))
         }
 
         @Test
-        fun `Uncovering all tiles at depth 2, should only reveal level I mine chambers`() {
+        fun `Uncovering all mine chamber tiles at depth 2, should only reveal level I mine chambers`() {
             MagnumSal(eventStream).revealAllLevelIMineChambers()
 
-            val uncoveredLevelIChambers = eventStream.filterEvents<MineChamberRevealed>().map { it.chamber.asTile() }
+            val uncoveredLevelIChambers = eventStream.filterEvents<MineChamberRevealed>().map { it.tile }
             assertThat(uncoveredLevelIChambers)
                     .usingElementComparatorIgnoringFields("at")
                     .containsAll(AllMineChamberTiles.filter { it.level == Level.I })
@@ -357,10 +358,10 @@ class MagnumSalTest {
         }
 
         @Test
-        fun `Uncovering all tiles at depth 4, should only reveal level II mine chambers`() {
+        fun `Uncovering all mine chamber tiles at depth 4, should only reveal level II mine chambers`() {
             MagnumSal(eventStream).revealAllLevelIIMineChambers()
 
-            val uncoveredLevelIChambers = eventStream.filterEvents<MineChamberRevealed>().map { it.chamber.asTile() }
+            val uncoveredLevelIChambers = eventStream.filterEvents<MineChamberRevealed>().map { it.tile }
             assertThat(uncoveredLevelIChambers)
                     .usingElementComparatorIgnoringFields("at")
                     .containsAll(AllMineChamberTiles.filter { it.level == Level.II })
@@ -369,10 +370,10 @@ class MagnumSalTest {
         }
 
         @Test
-        fun `Uncovering all tiles at depth 6, should only reveal level III mine chambers`() {
+        fun `Uncovering all mine chamber tiles at depth 6, should only reveal level III mine chambers`() {
             MagnumSal(eventStream).revealAllLevelIIIMineChambers()
 
-            val uncoveredLevelIChambers = eventStream.filterEvents<MineChamberRevealed>().map { it.chamber.asTile() }
+            val uncoveredLevelIChambers = eventStream.filterEvents<MineChamberRevealed>().map { it.tile }
             assertThat(uncoveredLevelIChambers)
                     .usingElementComparatorIgnoringFields("at")
                     .containsAll(AllMineChamberTiles.filter { it.level == Level.III })
