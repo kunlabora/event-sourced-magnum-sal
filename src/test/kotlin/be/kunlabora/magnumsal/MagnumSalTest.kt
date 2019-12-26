@@ -441,10 +441,14 @@ class MagnumSalTest {
             magnumSal.placeWorkerInMine(Black, at(2,0))
             magnumSal.placeWorkerInMine(White, at(2,1))
             magnumSal.placeWorkerInMine(Black, at(2,2))
+            magnumSal.placeWorkerInMine(White, at(2,1))
+            magnumSal.placeWorkerInMine(Black, at(2,2))
+            magnumSal.placeWorkerInMine(White, at(2,1))
+            magnumSal.placeWorkerInMine(Black, at(2,2))
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.mine(White, at(2,1), Salts(listOf(Salt.GREEN))) }
-                    .withMessage("Transition requires there to be 1 Green salt in ${at(2,1)}")
+                    .isThrownBy { magnumSal.mine(White, at(2,1), Salts(listOf(Salt.GREEN, Salt.GREEN, Salt.WHITE))) }
+                    .withMessage("Transition requires there to be 2 Green salt, 1 White salt in ${at(2,1)}")
         }
 
         //Mining requires strength
