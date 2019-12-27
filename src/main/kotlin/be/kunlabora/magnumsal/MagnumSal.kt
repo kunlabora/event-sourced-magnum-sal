@@ -94,10 +94,8 @@ class MagnumSal(private val eventStream: EventStream, private val allMineChamber
         eventStream.push(SaltMined(player, at, saltToMine))
     }
 
-    private fun saltIsAvailableAt(saltToMine: Salts, at: PositionInMine): Boolean {
-        val saltInMineChamber = saltLeftInMineChamber(at)
-        return saltToMine.canBeMinedFrom(saltInMineChamber)
-    }
+    private fun saltIsAvailableAt(saltToMine: Salts, at: PositionInMine): Boolean =
+            saltToMine.canBeMinedFrom(saltLeftInMineChamber(at))
 
     private fun saltLeftInMineChamber(at: PositionInMine): Salts {
         val saltsOnTile = Salts(revealedMineChambers.single { it.at == at }.tile.salt)
