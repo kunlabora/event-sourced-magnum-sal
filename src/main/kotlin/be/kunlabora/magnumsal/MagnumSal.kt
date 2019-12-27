@@ -79,14 +79,14 @@ class MagnumSal(private val eventStream: EventStream, private val allMineChamber
     }
 
     fun mine(player: PlayerColor, at: PositionInMine, saltToMine: Salts) = onlyInPlayersTurn(player) {
+        transitionRequires("you to have a miner at $at") {
+            hasWorkerAt(player, at)
+        }
         transitionRequires("you to mine from a MineChamber") {
             at.isInACorridor()
         }
         transitionRequires("you to mine from a revealed MineChamber") {
             at in revealedMineChambers.map { it.at }
-        }
-        transitionRequires("you to have a miner at $at") {
-            hasWorkerAt(player, at)
         }
         transitionRequires("you to have enough miners at $at") {
             strengthAt(player, at) >= saltToMine.size
