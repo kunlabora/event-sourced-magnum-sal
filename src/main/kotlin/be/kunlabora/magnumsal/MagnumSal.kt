@@ -85,7 +85,7 @@ class MagnumSal(private val eventStream: EventStream, private val allMineChamber
         transitionRequires("you to mine from a MineChamber") {
             at.isInACorridor()
         }
-        transitionRequires("you to have enough miners at $at") {
+        transitionRequires("you to have enough rested miners at $at") {
             strengthAt(player, at) >= saltToMine.size
         }
         transitionRequires("there to be $saltToMine in $at") {
@@ -99,14 +99,28 @@ class MagnumSal(private val eventStream: EventStream, private val allMineChamber
 
     private fun saltLeftInMineChamber(at: PositionInMine): Salts {
         val saltsOnTile = Salts(revealedMineChambers.single { it.at == at }.tile.salt)
-        val saltsAlreadyMined = eventStream.filterEvents<SaltMined>().singleOrNull { it.from == at }?.saltMined
-        return saltsAlreadyMined?.let { saltsOnTile - it } ?: saltsOnTile
+        return eventStream.filterEvents<SaltMined>().filter { it.from == at }.fold(saltsOnTile){ acc, it -> acc - it.saltMined }
     }
 
     private fun strengthAt(player: PlayerColor, at: PositionInMine): Int {
-        val waterInChamber = revealedMineChambers.single { it.at == at }.tile.waterCubes
         val playerMiners = miners.count { it == Miner(player, at) }
-        return playerMiners - waterInChamber
+        val tiredWorkers: Int = tiredWorkersAt(player, at)
+        val waterRemainingInChamber = waterRemainingInChamber(at)
+        return (playerMiners - tiredWorkers - waterRemainingInChamber)
+    }
+
+    private fun waterRemainingInChamber(at: PositionInMine) =
+            revealedMineChambers.single { it.at == at }.tile.waterCubes
+
+    //TODO: replace by firing a MinerGotTired event after successfully mining (and holding back water). Might be a good event migration exercise.
+    private fun tiredWorkersAt(player: PlayerColor, at: PositionInMine): Int {
+        val playersSaltMiningActions = eventStream.filterEvents<SaltMined>()
+                .filter { it.from == at && it.player == player }
+        val minersTiredFromMining = playersSaltMiningActions
+                .fold(0) { acc, it -> acc + it.saltMined.size }
+        val minersTiredFromHoldingBackWater = playersSaltMiningActions
+                .count() * waterRemainingInChamber(at)
+        return minersTiredFromMining + minersTiredFromHoldingBackWater
     }
 
     private fun revealMineChamberIfPossible(at: PositionInMine) {
