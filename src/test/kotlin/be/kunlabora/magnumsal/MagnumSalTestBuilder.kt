@@ -10,6 +10,20 @@ data class Player(val name: PlayerName, val color: PlayerColor)
 infix fun PlayerName.using(color: PlayerColor): Player = Player(this, color)
 typealias PlayerName = String
 
+/**
+ * Use TestMagnumSal for testing MagnumSal.
+ * Has a bunch of insta-setup scenario's for all your most longed after testing purposes.
+ * Internally uses an actual MagnumSal instance, so only _legal_ actions can be executed.
+ * Comes with a fun build() that returns the built MagnumSal instance, so you can continue executing _legal_ actions necessary for your tests.
+ */
+class TestMagnumSal(val eventStream: EventStream) {
+    var magnumSal = MagnumSal(eventStream)
+
+    fun build(): MagnumSal {
+        return magnumSal
+    }
+}
+
 fun TestMagnumSal.withPlayers(player1: Player,
                               player2: Player,
                               player3: Player? = null,
@@ -122,6 +136,14 @@ fun TestMagnumSal.revealAllLevelIIIMineChambers(): TestMagnumSal {
     return this
 }
 
+fun TestMagnumSal.withOnlyMineChamberTilesOf(tile: MineChamberTile): TestMagnumSal {
+    val tiles = AllMineChamberTiles
+            .filter { it.level == tile.level }
+            .map { it.copy(salt = tile.salt, waterCubes = tile.waterCubes) }
+    magnumSal = MagnumSal(this.eventStream, tiles)
+    return this
+}
+
 // Util
 fun visualize(miners: Miners) {
     println("#".repeat(10) + " MineShaft Top " + "#".repeat(10))
@@ -131,20 +153,4 @@ fun visualize(miners: Miners) {
                 println("$at: $amountOfMinersPerPlayer")
             }
     println("#".repeat(10) + " MineShaft End " + "#".repeat(10))
-}
-
-class TestMagnumSal(val eventStream: EventStream) {
-    var magnumSal = MagnumSal(eventStream)
-
-    fun build(): MagnumSal {
-        return magnumSal
-    }
-}
-
-fun TestMagnumSal.withOnlyMineChamberTilesOf(tile: MineChamberTile): TestMagnumSal {
-    val tiles = AllMineChamberTiles
-            .filter { it.level == tile.level }
-            .map { it.copy(salt = tile.salt, waterCubes = tile.waterCubes) }
-    magnumSal = MagnumSal(this.eventStream, tiles)
-    return this
 }
