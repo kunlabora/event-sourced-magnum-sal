@@ -8,10 +8,8 @@ import be.kunlabora.magnumsal.PlayerColor.Black
 import be.kunlabora.magnumsal.PlayerColor.White
 import be.kunlabora.magnumsal.PositionInMine.Companion.at
 import be.kunlabora.magnumsal.exception.IllegalTransitionException
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -28,7 +26,7 @@ class ChainRuleTest {
     inner class PlacingWorkersInTheMine {
         @Test
         fun `Illegal case where placing a worker in the mineshaft at depth 2 without a miner at the top would break the chain`() {
-            MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            TestMagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black).build()
             val chainRule = ChainRule(eventStream)
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
@@ -37,7 +35,7 @@ class ChainRuleTest {
 
         @Test
         fun `Illegal case where placing a worker in the mineshaft at depth 3 without miners at depth 2 and 1 would break the chain`() {
-            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            val magnumSal = TestMagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black).build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             val chainRule = ChainRule(eventStream)
 
@@ -47,7 +45,7 @@ class ChainRuleTest {
 
         @Test
         fun `Illegal case where placing a worker in a corridor at depth 2 without a miner in the mineshaft at depth 2 would break the chain`() {
-            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            val magnumSal = TestMagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black).build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             val chainRule = ChainRule(eventStream)
 
@@ -57,7 +55,7 @@ class ChainRuleTest {
 
         @Test
         fun `Legal case where placing a worker in a corridor at depth 2 with a miner in the mineshaft at depth 2 would not break the chain`() {
-            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            val magnumSal = TestMagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black).build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             val chainRule = ChainRule(eventStream)
@@ -69,7 +67,7 @@ class ChainRuleTest {
 
         @Test
         fun `Illegal case where placing a worker 3 positions along the right corridor without a miner in a previous chamber of the same corridor would break the chain`() {
-            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            val magnumSal = TestMagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black).build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, 1))
@@ -81,7 +79,7 @@ class ChainRuleTest {
 
         @Test
         fun `Legal case where placing a worker 3 positions along the right corridor with a miner in a previous chamber of the same corridor would break the chain`() {
-            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            val magnumSal = TestMagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black).build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, 1))
@@ -95,7 +93,7 @@ class ChainRuleTest {
 
         @Test
         fun `Illegal case where placing a worker 3 positions along the left corridor without a miner in a previous chamber of the same corridor would break the chain`() {
-            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            val magnumSal = TestMagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black).build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, -1))
@@ -107,7 +105,7 @@ class ChainRuleTest {
 
         @Test
         fun `Legal case where placing a worker 3 positions along the left corridor with a miner in a previous chamber of the same corridor would break the chain`() {
-            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            val magnumSal = TestMagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black).build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, -1))
@@ -124,7 +122,7 @@ class ChainRuleTest {
     inner class RemovingMinersFromTheMine {
         @Test
         fun `Illegal case where removing a miner from the mineshaft would break the chain - simplest case`() {
-            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            val magnumSal = TestMagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black).build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             val chainRule = ChainRule(eventStream)
@@ -135,7 +133,7 @@ class ChainRuleTest {
 
         @Test
         fun `Illegal case with a history of placing and removing miners where removing a miner from the mineshaft would break the chain`() {
-            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            val magnumSal = TestMagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black).build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(1, 0))
             magnumSal.placeWorkerInMine(White, at(2, 0))
@@ -149,7 +147,7 @@ class ChainRuleTest {
 
         @Test
         fun `Legal case with a completely filled mineshaft where removing a miner from the bottom would not break the chain`() {
-            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            val magnumSal = TestMagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black).build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(3, 0))
@@ -167,7 +165,7 @@ class ChainRuleTest {
 
         @Test
         fun `Illegal case where removing a miner from a corridor would break the chain - simplest case`() {
-            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            val magnumSal = TestMagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black).build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, 1))
@@ -182,7 +180,7 @@ class ChainRuleTest {
 
         @Test
         fun `Illegal case where removing a miner from the mineshaft cross-section with an occupied right corridor would break the chain`() {
-            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            val magnumSal = TestMagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black).build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, 1))
@@ -194,7 +192,7 @@ class ChainRuleTest {
 
         @Test
         fun `Illegal case where removing a miner from the mineshaft cross-section with an occupied left corridor would break the chain`() {
-            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            val magnumSal = TestMagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black).build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, -1))
@@ -206,7 +204,7 @@ class ChainRuleTest {
 
         @Test
         fun `Legal case with a completely filled corridor where removing a miner from the end of the corridor would not break the chain`() {
-            val magnumSal = MagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black)
+            val magnumSal = TestMagnumSal(eventStream).withPlayersInOrder("Bruno" using White, "Tim" using Black).build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, 1))

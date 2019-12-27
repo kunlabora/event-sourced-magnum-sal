@@ -29,7 +29,7 @@ class MagnumSalTest {
     inner class AddingPlayers {
         @Test
         fun `Cannot add two players with the same color`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream).build()
             magnumSal.addPlayer("Tim", Black)
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
@@ -42,12 +42,13 @@ class MagnumSalTest {
 
         @Test
         fun `Cannot add a fifth player`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayersInOrder(
                             "Bruno" using White,
                             "Tim" using Black,
                             "Nele" using Orange,
                             "Jan" using Purple)
+                    .build()
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { magnumSal.addPlayer("Snarf", Orange) }
@@ -61,7 +62,7 @@ class MagnumSalTest {
     inner class DeterminingPlayOrder {
         @Test
         fun `Cannot determine a player order when only one player joined`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream).build()
             magnumSal.addPlayer("Tim", Black)
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
@@ -72,8 +73,9 @@ class MagnumSalTest {
 
         @Test
         fun `Cannot determine a player order with colors that players didn't choose`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayers("Bruno" using White, "Tim" using Black)
+                    .build()
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { magnumSal.determinePlayOrder(Orange, Black) }
@@ -83,8 +85,9 @@ class MagnumSalTest {
 
         @Test
         fun `Cannot determine a player order with two same colors`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayers("Bruno" using White, "Tim" using Black)
+                    .build()
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { magnumSal.determinePlayOrder(Black, Black) }
@@ -95,8 +98,9 @@ class MagnumSalTest {
 
         @Test
         fun `Can determine a player order when at least two players joined`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayers("Bruno" using White, "Tim" using Black)
+                    .build()
 
             magnumSal.determinePlayOrder(White, Black)
 
@@ -105,10 +109,11 @@ class MagnumSalTest {
 
         @Test
         fun `Can determine a player order for three players`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayers("Bruno" using White,
                             "Tim" using Black,
                             "Snarf" using Purple)
+                    .build()
 
             magnumSal.determinePlayOrder(Black, Purple, White)
 
@@ -117,11 +122,12 @@ class MagnumSalTest {
 
         @Test
         fun `Can determine a player order for four players`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayers("Bruno" using White,
                             "Tim" using Black,
                             "Gargamel" using Orange,
                             "Snarf" using Purple)
+                    .build()
 
             magnumSal.determinePlayOrder(Orange, Black, Purple, White)
 
@@ -133,8 +139,9 @@ class MagnumSalTest {
     inner class PlacingWorkersInTheMine {
         @Test
         fun `Can place a worker in Shaft 1`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .build()
 
             magnumSal.placeWorkerInMine(White, at(1, 0))
 
@@ -143,8 +150,9 @@ class MagnumSalTest {
 
         @Test
         fun `Cannot place a worker in Shaft 2 when Shaft 1 is unoccupied`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .build()
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { magnumSal.placeWorkerInMine(White, at(2, 0)) }
@@ -154,8 +162,9 @@ class MagnumSalTest {
 
         @Test
         fun `Second player can also place a worker in shaft 1`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
 
             magnumSal.placeWorkerInMine(Black, at(1, 0))
@@ -165,8 +174,9 @@ class MagnumSalTest {
 
         @Test
         fun `Second player can place a worker in shaft 2`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
 
             magnumSal.placeWorkerInMine(Black, at(2, 0))
@@ -176,8 +186,9 @@ class MagnumSalTest {
 
         @Test
         fun `Second player cannot place a worker in shaft 3`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { magnumSal.placeWorkerInMine(Black, at(3, 0)) }
@@ -187,8 +198,9 @@ class MagnumSalTest {
 
         @Test
         fun `Cannot place two workers in one turn`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .build()
 
             magnumSal.placeWorkerInMine(White, at(1, 0))
             assertThatExceptionOfType(IllegalTransitionException::class.java)
@@ -201,8 +213,9 @@ class MagnumSalTest {
 
         @Test
         fun `Cannot place a worker when it's not your turn`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .build()
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { magnumSal.placeWorkerInMine(Black, at(1, 0)) }
@@ -213,9 +226,10 @@ class MagnumSalTest {
 
         @Test
         fun `Cannot place a worker when you're out of workers`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
                     .distributeWorkersInTheMineShaft(5, listOf(White, Black))
+                    .build()
 
             visualize(Miners.from(eventStream))
 
@@ -230,8 +244,9 @@ class MagnumSalTest {
 
         @Test
         fun `Players can fill up the shaft`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .build()
 
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
@@ -255,8 +270,9 @@ class MagnumSalTest {
     inner class RemovingMinersFromTheMine {
         @Test
         fun `can remove worker if it does not break the chain`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(1, 0))
 
@@ -267,8 +283,9 @@ class MagnumSalTest {
 
         @Test
         fun `cannot remove worker if it would break the chain 2nd scenario`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(1, 0))
             magnumSal.placeWorkerInMine(White, at(2, 0))
@@ -283,8 +300,9 @@ class MagnumSalTest {
 
         @Test
         fun `cannot remove worker if it's not your turn`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(1, 0))
             magnumSal.removeWorkerFromMine(White, at(1, 0))
@@ -297,8 +315,9 @@ class MagnumSalTest {
 
         @Test
         fun `cannot remove worker if there's no worker`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(1, 0))
 
@@ -310,8 +329,9 @@ class MagnumSalTest {
 
         @Test
         fun `cannot remove worker if it's not your worker`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
@@ -326,8 +346,9 @@ class MagnumSalTest {
 
         @Test
         fun `Placing a Miner on an undiscovered mine chamber tile, reveals the contents of the mine chamber`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, 1))
@@ -338,8 +359,9 @@ class MagnumSalTest {
 
         @Test
         fun `Placing a second Miner on a discovered mine chamber tile, does not reveal the contents of the mine chamber again`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, 1))
@@ -351,7 +373,7 @@ class MagnumSalTest {
 
         @Test
         fun `Uncovering all mine chamber tiles at depth 2, should only reveal level I mine chambers`() {
-            MagnumSal(eventStream).revealAllLevelIMineChambers()
+            TestMagnumSal(eventStream).revealAllLevelIMineChambers()
 
             val uncoveredLevelIChambers = eventStream.filterEvents<MineChamberRevealed>().map { it.tile }
             assertThat(uncoveredLevelIChambers)
@@ -363,7 +385,7 @@ class MagnumSalTest {
 
         @Test
         fun `Uncovering all mine chamber tiles at depth 4, should only reveal level II mine chambers`() {
-            MagnumSal(eventStream).revealAllLevelIIMineChambers()
+            TestMagnumSal(eventStream).revealAllLevelIIMineChambers()
 
             val uncoveredLevelIChambers = eventStream.filterEvents<MineChamberRevealed>().map { it.tile }
             assertThat(uncoveredLevelIChambers)
@@ -375,7 +397,7 @@ class MagnumSalTest {
 
         @Test
         fun `Uncovering all mine chamber tiles at depth 6, should only reveal level III mine chambers`() {
-            MagnumSal(eventStream).revealAllLevelIIIMineChambers()
+            TestMagnumSal(eventStream).revealAllLevelIIIMineChambers()
 
             val uncoveredLevelIChambers = eventStream.filterEvents<MineChamberRevealed>().map { it.tile }
             assertThat(uncoveredLevelIChambers)
@@ -390,8 +412,9 @@ class MagnumSalTest {
     inner class MiningFromTheMine {
         @Test
         fun `Cannot mine when it's not your turn`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
@@ -401,8 +424,9 @@ class MagnumSalTest {
 
         @Test
         fun `Cannot mine from the mineshaft`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
 
@@ -413,8 +437,9 @@ class MagnumSalTest {
 
         @Test
         fun `Cannot mine from a Mine Chamber when no own miners present`() {
-            val magnumSal = MagnumSal(eventStream)
+            val magnumSal = TestMagnumSal(eventStream)
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, 1))
@@ -430,6 +455,7 @@ class MagnumSalTest {
             val magnumSal = TestMagnumSal(eventStream)
                     .withOnlyMineChamberTilesOf(MineChamberTile(Level.I, Salts(BROWN), 0))
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, 1))
@@ -450,6 +476,7 @@ class MagnumSalTest {
             val magnumSal = TestMagnumSal(eventStream)
                     .withOnlyMineChamberTilesOf(MineChamberTile(Level.I, Salts(BROWN, GREEN, WHITE), 0))
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, 1))
@@ -465,7 +492,7 @@ class MagnumSalTest {
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { magnumSal.mine(White, at(2, 1), Salts(BROWN)) }
-                    .withMessage("Transition requires there to be 1 Brown salt in ${at(2,1)}")
+                    .withMessage("Transition requires there to be 1 Brown salt in ${at(2, 1)}")
 
             assertThat(eventStream.filterEvents<SaltMined>())
                     .doesNotContain(SaltMined(White, at(2, 1), Salts(BROWN)))
@@ -477,6 +504,7 @@ class MagnumSalTest {
             val magnumSal = TestMagnumSal(eventStream)
                     .withOnlyMineChamberTilesOf(MineChamberTile(Level.I, Salts(BROWN), 1))
                     .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                    .build()
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, 1))
@@ -491,6 +519,7 @@ class MagnumSalTest {
             val magnumSal = TestMagnumSal(eventStream)
                     .withOnlyMineChamberTilesOf(MineChamberTile(Level.I, Salts(BROWN), 4))
                     .withFourWhiteMinersAtFirstRightMineChamber()
+                    .build()
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { magnumSal.mine(White, at(2, 1), Salts(BROWN)) }
@@ -502,6 +531,7 @@ class MagnumSalTest {
             val magnumSal = TestMagnumSal(eventStream)
                     .withOnlyMineChamberTilesOf(MineChamberTile(Level.I, Salts(GREEN, GREEN, WHITE), 1))
                     .withFourWhiteMinersAtFirstRightMineChamber()
+                    .build()
 
             assertThat(Miners.from(eventStream).filter { it.player == White && it.at == at(2, 1) }).hasSize(4)
 
@@ -515,6 +545,7 @@ class MagnumSalTest {
             val magnumSal = TestMagnumSal(eventStream)
                     .withOnlyMineChamberTilesOf(MineChamberTile(Level.I, Salts(GREEN, GREEN, WHITE), 1))
                     .withFourWhiteMinersAtFirstRightMineChamber()
+                    .build()
 
             magnumSal.mine(White, at(2, 1), Salts(WHITE))
 
@@ -529,6 +560,7 @@ class MagnumSalTest {
             val magnumSal = TestMagnumSal(eventStream)
                     .withOnlyMineChamberTilesOf(MineChamberTile(Level.I, Salts(BROWN, BROWN, GREEN, GREEN, WHITE, WHITE), 0))
                     .withFourWhiteMinersAtFirstRightMineChamber()
+                    .build()
 
             magnumSal.mine(White, at(2, 1), Salts(BROWN, BROWN, GREEN, GREEN))
 
@@ -542,6 +574,7 @@ class MagnumSalTest {
             val magnumSal = TestMagnumSal(eventStream)
                     .withOnlyMineChamberTilesOf(MineChamberTile(Level.I, Salts(BROWN, BROWN, GREEN, GREEN, WHITE, WHITE), 2))
                     .withFourWhiteMinersAtFirstRightMineChamber()
+                    .build()
 
             // tire 3 workers: 1 from mining and 2 from holding back water
             magnumSal.mine(White, at(2, 1), Salts(BROWN))

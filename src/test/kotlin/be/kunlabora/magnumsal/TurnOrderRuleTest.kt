@@ -6,7 +6,6 @@ import be.kunlabora.magnumsal.exception.IllegalTransitionException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 
@@ -20,8 +19,9 @@ class TurnOrderRuleTest {
 
     @Test
     fun `Illegal case in a game with 2 players, first player goes twice in first round`() {
-        val magnumSal = MagnumSal(eventStream)
+        val magnumSal = TestMagnumSal(eventStream)
                 .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                .build()
 
         magnumSal.placeWorkerInMine(White, at(1, 0))
 
@@ -36,8 +36,9 @@ class TurnOrderRuleTest {
 
     @Test
     fun `Illegal case in a game with 2 players, second player goes twice in first round`() {
-        val magnumSal = MagnumSal(eventStream)
+        val magnumSal = TestMagnumSal(eventStream)
                 .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                .build()
 
         magnumSal.placeWorkerInMine(White, at(1, 0))
         magnumSal.placeWorkerInMine(Black, at(1, 0))
@@ -53,8 +54,9 @@ class TurnOrderRuleTest {
 
     @Test
     fun `Illegal case in a game with 3 players, third player goes twice in first round`() {
-        val magnumSal = MagnumSal(eventStream)
+        val magnumSal = TestMagnumSal(eventStream)
                 .withPlayersInOrder("Bruno" using White, "Tim" using Black, "Snarf" using Orange)
+                .build()
 
         magnumSal.placeWorkerInMine(White, at(1, 0))
         magnumSal.placeWorkerInMine(Black, at(1, 0))
@@ -73,8 +75,9 @@ class TurnOrderRuleTest {
 
     @Test
     fun `Illegal case in a game with 4 players, fourth player goes twice in first round`() {
-        val magnumSal = MagnumSal(eventStream)
+        val magnumSal = TestMagnumSal(eventStream)
                 .withPlayersInOrder("Bruno" using White, "Tim" using Black, "Snarf" using Orange, "Gargamel" using Purple)
+                .build()
 
         magnumSal.placeWorkerInMine(White, at(1, 0))
         magnumSal.placeWorkerInMine(Black, at(1, 0))
@@ -94,8 +97,9 @@ class TurnOrderRuleTest {
 
     @Test
     fun `Legal case in a game with 2 players, first player goes twice after first round`() {
-        val magnumSal = MagnumSal(eventStream)
+        val magnumSal = TestMagnumSal(eventStream)
                 .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                .build()
 
         magnumSal.placeWorkerInMine(White, at(1, 0))
         magnumSal.placeWorkerInMine(Black, at(1, 0))
@@ -109,8 +113,9 @@ class TurnOrderRuleTest {
 
     @Test
     fun `Legal case in a game with 2 players, second player goes twice after first round`() {
-        val magnumSal = MagnumSal(eventStream)
+        val magnumSal = TestMagnumSal(eventStream)
                 .withPlayersInOrder("Bruno" using White, "Tim" using Black)
+                .build()
 
         magnumSal.placeWorkerInMine(White, at(1, 0))
         magnumSal.placeWorkerInMine(Black, at(1, 0))
@@ -125,8 +130,9 @@ class TurnOrderRuleTest {
 
     @Test
     fun `Legal case in a game with 4 players, fourth player goes twice after first round`() {
-        val magnumSal = MagnumSal(eventStream)
+        val magnumSal = TestMagnumSal(eventStream)
                 .withPlayersInOrder("Bruno" using White, "Tim" using Black, "Snarf" using Orange, "Azrael" using Purple)
+                .build()
 
         magnumSal.placeWorkerInMine(White, at(1, 0))
         magnumSal.placeWorkerInMine(Black, at(1, 0))

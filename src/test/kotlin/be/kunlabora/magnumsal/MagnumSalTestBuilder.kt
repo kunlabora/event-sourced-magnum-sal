@@ -10,115 +10,115 @@ data class Player(val name: PlayerName, val color: PlayerColor)
 infix fun PlayerName.using(color: PlayerColor): Player = Player(this, color)
 typealias PlayerName = String
 
-fun MagnumSal.withPlayers(player1: Player,
-                          player2: Player,
-                          player3: Player? = null,
-                          player4: Player? = null): MagnumSal {
+fun TestMagnumSal.withPlayers(player1: Player,
+                              player2: Player,
+                              player3: Player? = null,
+                              player4: Player? = null): TestMagnumSal {
     listOfNotNull(player1, player2, player3, player4).forEach {
-        this.addPlayer(it.name, it.color)
+        magnumSal.addPlayer(it.name, it.color)
     }
     return this
 }
 
-fun MagnumSal.withPlayerOrder(player1: PlayerColor,
-                              player2: PlayerColor,
-                              player3: PlayerColor?,
-                              player4: PlayerColor?): MagnumSal {
-    this.determinePlayOrder(player1, player2, player3, player4)
+fun TestMagnumSal.withPlayerOrder(player1: PlayerColor,
+                                  player2: PlayerColor,
+                                  player3: PlayerColor?,
+                                  player4: PlayerColor?): TestMagnumSal {
+    magnumSal.determinePlayOrder(player1, player2, player3, player4)
     return this
 }
 
-fun MagnumSal.withPlayersInOrder(player1: Player,
-                                 player2: Player,
-                                 player3: Player? = null,
-                                 player4: Player? = null): MagnumSal {
+fun TestMagnumSal.withPlayersInOrder(player1: Player,
+                                     player2: Player,
+                                     player3: Player? = null,
+                                     player4: Player? = null): TestMagnumSal {
     return withPlayers(player1, player2, player3, player4)
             .withPlayerOrder(player1.color, player2.color, player3?.color, player4?.color)
 }
 
-fun MagnumSal.distributeWorkersInTheMineShaft(amountOfWorkersToUse: Int, playerOrder: List<PlayerColor>): MagnumSal {
+fun TestMagnumSal.distributeWorkersInTheMineShaft(amountOfWorkersToUse: Int, playerOrder: List<PlayerColor>): TestMagnumSal {
     require(amountOfWorkersToUse > 0) { "Distributing the mine shaft with 0 workers does not seem logical now does it?" }
     for (player in playerOrder) {
-        this.placeWorkerInMine(player, at(1, 0))
+        magnumSal.placeWorkerInMine(player, at(1, 0))
     }
     for (pos in IntProgression.fromClosedRange(2, amountOfWorkersToUse, 2)) {
         for (player in playerOrder) {
-            this.placeWorkerInMine(player, at(pos, 0))
-            this.placeWorkerInMine(player, at(pos + 1, 0))
+            magnumSal.placeWorkerInMine(player, at(pos, 0))
+            magnumSal.placeWorkerInMine(player, at(pos + 1, 0))
         }
     }
     return this
 }
 
-fun MagnumSal.withFourWhiteMinersAtFirstRightMineChamber(): MagnumSal {
+fun TestMagnumSal.withFourWhiteMinersAtFirstRightMineChamber(): TestMagnumSal {
     this.withPlayersInOrder("Bruno" using White, "Tim" using Black)
-    this.placeWorkerInMine(White, at(1, 0))
-    this.placeWorkerInMine(Black, at(1, 0))
+    magnumSal.placeWorkerInMine(White, at(1, 0))
+    magnumSal.placeWorkerInMine(Black, at(1, 0))
 
-    this.placeWorkerInMine(White, at(2, 0))
-    this.placeWorkerInMine(White, at(2, 1)) // 1
+    magnumSal.placeWorkerInMine(White, at(2, 0))
+    magnumSal.placeWorkerInMine(White, at(2, 1)) // 1
 
-    this.placeWorkerInMine(Black, at(2, 0))
-    this.placeWorkerInMine(Black, at(2, 0))
+    magnumSal.placeWorkerInMine(Black, at(2, 0))
+    magnumSal.placeWorkerInMine(Black, at(2, 0))
 
-    this.placeWorkerInMine(White, at(2, 1)) // 2
-    this.placeWorkerInMine(White, at(2, 1)) // 3
+    magnumSal.placeWorkerInMine(White, at(2, 1)) // 2
+    magnumSal.placeWorkerInMine(White, at(2, 1)) // 3
 
-    this.placeWorkerInMine(Black, at(2, 0))
-    this.removeWorkerFromMine(Black, at(2, 0))
+    magnumSal.placeWorkerInMine(Black, at(2, 0))
+    magnumSal.removeWorkerFromMine(Black, at(2, 0))
 
-    this.removeWorkerFromMine(White, at(2, 0))
-    this.placeWorkerInMine(White, at(2, 1)) // 4
+    magnumSal.removeWorkerFromMine(White, at(2, 0))
+    magnumSal.placeWorkerInMine(White, at(2, 1)) // 4
 
-    this.placeWorkerInMine(Black, at(2, 0))
-    this.removeWorkerFromMine(Black, at(2, 0))
+    magnumSal.placeWorkerInMine(Black, at(2, 0))
+    magnumSal.removeWorkerFromMine(Black, at(2, 0))
 
     return this
 }
 
-fun MagnumSal.revealAllLevelIMineChambers(): MagnumSal {
+fun TestMagnumSal.revealAllLevelIMineChambers(): TestMagnumSal {
     this.withPlayersInOrder("Bruno" using White, "Tim" using Black, "Snarf" using Orange, "Azrael" using Purple)
-    this.placeWorkerInMine(White, at(1, 0))
-    this.placeWorkerInMine(Black, at(2, 0))
-    this.placeWorkerInMine(Orange, at(2, 1))
-    this.placeWorkerInMine(Purple, at(2, 2))
-    this.placeWorkerInMine(White, at(2, 3))
-    this.placeWorkerInMine(White, at(2, 4))
-    this.placeWorkerInMine(Black, at(2, 1))
-    this.placeWorkerInMine(Black, at(2, -1))
-    this.placeWorkerInMine(Orange, at(2, -2))
-    this.placeWorkerInMine(Orange, at(2, -3))
-    this.placeWorkerInMine(Purple, at(2, -4))
+    magnumSal.placeWorkerInMine(White, at(1, 0))
+    magnumSal.placeWorkerInMine(Black, at(2, 0))
+    magnumSal.placeWorkerInMine(Orange, at(2, 1))
+    magnumSal.placeWorkerInMine(Purple, at(2, 2))
+    magnumSal.placeWorkerInMine(White, at(2, 3))
+    magnumSal.placeWorkerInMine(White, at(2, 4))
+    magnumSal.placeWorkerInMine(Black, at(2, 1))
+    magnumSal.placeWorkerInMine(Black, at(2, -1))
+    magnumSal.placeWorkerInMine(Orange, at(2, -2))
+    magnumSal.placeWorkerInMine(Orange, at(2, -3))
+    magnumSal.placeWorkerInMine(Purple, at(2, -4))
     return this
 }
 
-fun MagnumSal.revealAllLevelIIMineChambers(): MagnumSal {
+fun TestMagnumSal.revealAllLevelIIMineChambers(): TestMagnumSal {
     this.withPlayersInOrder("Bruno" using White, "Tim" using Black, "Snarf" using Orange)
-    this.placeWorkerInMine(White, at(1, 0))
-    this.placeWorkerInMine(Black, at(2, 0))
-    this.placeWorkerInMine(Orange, at(3, 0))
-    this.placeWorkerInMine(White, at(4, 0))
-    this.placeWorkerInMine(White, at(4, 1))
-    this.placeWorkerInMine(Black, at(4, 2))
-    this.placeWorkerInMine(Black, at(4, 3))
-    this.placeWorkerInMine(Orange, at(4, -1))
-    this.placeWorkerInMine(Orange, at(4, -2))
-    this.placeWorkerInMine(White, at(4, -3))
+    magnumSal.placeWorkerInMine(White, at(1, 0))
+    magnumSal.placeWorkerInMine(Black, at(2, 0))
+    magnumSal.placeWorkerInMine(Orange, at(3, 0))
+    magnumSal.placeWorkerInMine(White, at(4, 0))
+    magnumSal.placeWorkerInMine(White, at(4, 1))
+    magnumSal.placeWorkerInMine(Black, at(4, 2))
+    magnumSal.placeWorkerInMine(Black, at(4, 3))
+    magnumSal.placeWorkerInMine(Orange, at(4, -1))
+    magnumSal.placeWorkerInMine(Orange, at(4, -2))
+    magnumSal.placeWorkerInMine(White, at(4, -3))
     return this
 }
 
-fun MagnumSal.revealAllLevelIIIMineChambers(): MagnumSal {
+fun TestMagnumSal.revealAllLevelIIIMineChambers(): TestMagnumSal {
     this.withPlayersInOrder("Bruno" using White, "Tim" using Black, "Snarf" using Orange)
-    this.placeWorkerInMine(White, at(1, 0))
-    this.placeWorkerInMine(Black, at(2, 0))
-    this.placeWorkerInMine(Orange, at(3, 0))
-    this.placeWorkerInMine(White, at(4, 0))
-    this.placeWorkerInMine(White, at(5, 0))
-    this.placeWorkerInMine(Black, at(6, 0))
-    this.placeWorkerInMine(Black, at(6, 1))
-    this.placeWorkerInMine(Orange, at(6, 2))
-    this.placeWorkerInMine(Orange, at(6, -1))
-    this.placeWorkerInMine(White, at(6, -2))
+    magnumSal.placeWorkerInMine(White, at(1, 0))
+    magnumSal.placeWorkerInMine(Black, at(2, 0))
+    magnumSal.placeWorkerInMine(Orange, at(3, 0))
+    magnumSal.placeWorkerInMine(White, at(4, 0))
+    magnumSal.placeWorkerInMine(White, at(5, 0))
+    magnumSal.placeWorkerInMine(Black, at(6, 0))
+    magnumSal.placeWorkerInMine(Black, at(6, 1))
+    magnumSal.placeWorkerInMine(Orange, at(6, 2))
+    magnumSal.placeWorkerInMine(Orange, at(6, -1))
+    magnumSal.placeWorkerInMine(White, at(6, -2))
     return this
 }
 
@@ -133,11 +133,18 @@ fun visualize(miners: Miners) {
     println("#".repeat(10) + " MineShaft End " + "#".repeat(10))
 }
 
-class TestMagnumSal(val eventStream: EventStream)
+class TestMagnumSal(val eventStream: EventStream) {
+    var magnumSal = MagnumSal(eventStream)
 
-fun TestMagnumSal.withOnlyMineChamberTilesOf(tile: MineChamberTile): MagnumSal {
+    fun build(): MagnumSal {
+        return magnumSal
+    }
+}
+
+fun TestMagnumSal.withOnlyMineChamberTilesOf(tile: MineChamberTile): TestMagnumSal {
     val tiles = AllMineChamberTiles
             .filter { it.level == tile.level }
             .map { it.copy(salt = tile.salt, waterCubes = tile.waterCubes) }
-    return MagnumSal(this.eventStream, tiles)
+    magnumSal = MagnumSal(this.eventStream, tiles)
+    return this
 }
