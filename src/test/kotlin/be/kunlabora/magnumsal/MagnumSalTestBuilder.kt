@@ -37,52 +37,58 @@ fun MagnumSal.withPlayersInOrder(player1: Player,
 }
 
 fun MagnumSal.distributeWorkersInTheMineShaft(amountOfWorkersToUse: Int, playerOrder: List<PlayerColor>): MagnumSal {
-    for (pos in 1..amountOfWorkersToUse) {
+    require(amountOfWorkersToUse > 0) { "Distributing the mine shaft with 0 workers does not seem logical now does it?" }
+    for (player in playerOrder) {
+        this.placeWorkerInMine(player, at(1, 0))
+    }
+    for (pos in IntProgression.fromClosedRange(2, amountOfWorkersToUse, 2)) {
         for (player in playerOrder) {
             this.placeWorkerInMine(player, at(pos, 0))
+            this.placeWorkerInMine(player, at(pos + 1, 0))
         }
     }
     return this
 }
 
 fun MagnumSal.withFourWhiteMinersAtFirstRightMineChamber(): MagnumSal {
+    this.withPlayersInOrder("Bruno" using White, "Tim" using Black)
     this.placeWorkerInMine(White, at(1, 0))
     this.placeWorkerInMine(Black, at(1, 0))
+
     this.placeWorkerInMine(White, at(2, 0))
+    this.placeWorkerInMine(White, at(2, 1)) // 1
+
     this.placeWorkerInMine(Black, at(2, 0))
-    this.removeWorkerFromMine(White, at(1, 0))
     this.placeWorkerInMine(Black, at(2, 0))
+
+    this.placeWorkerInMine(White, at(2, 1)) // 2
+    this.placeWorkerInMine(White, at(2, 1)) // 3
+
+    this.placeWorkerInMine(Black, at(2, 0))
+    this.removeWorkerFromMine(Black, at(2, 0))
+
     this.removeWorkerFromMine(White, at(2, 0))
+    this.placeWorkerInMine(White, at(2, 1)) // 4
+
     this.placeWorkerInMine(Black, at(2, 0))
-    this.placeWorkerInMine(White, at(2, 1))
-    this.placeWorkerInMine(Black, at(2, 0))
-    this.placeWorkerInMine(White, at(2, 1))
-    this.removeWorkerFromMine(Black, at(2, 0))
-    this.placeWorkerInMine(White, at(2, 1))
-    this.removeWorkerFromMine(Black, at(2, 0))
-    this.placeWorkerInMine(White, at(2, 1))
     this.removeWorkerFromMine(Black, at(2, 0))
 
     return this
 }
 
 fun MagnumSal.revealAllLevelIMineChambers(): MagnumSal {
-    this.withPlayersInOrder("Bruno" using White, "Tim" using Black)
+    this.withPlayersInOrder("Bruno" using White, "Tim" using Black, "Snarf" using Orange, "Azrael" using Purple)
     this.placeWorkerInMine(White, at(1, 0))
     this.placeWorkerInMine(Black, at(2, 0))
-    this.placeWorkerInMine(White, at(2, 1))
-    this.placeWorkerInMine(Black, at(2, 2))
+    this.placeWorkerInMine(Orange, at(2, 1))
+    this.placeWorkerInMine(Purple, at(2, 2))
     this.placeWorkerInMine(White, at(2, 3))
-    this.placeWorkerInMine(Black, at(2, 4))
-    this.placeWorkerInMine(White, at(2, 1))
-    this.removeWorkerFromMine(Black, at(2, 4))
-    this.removeWorkerFromMine(White, at(2, 3))
-    this.removeWorkerFromMine(Black, at(2, 2))
-    this.removeWorkerFromMine(White, at(2, 1))
+    this.placeWorkerInMine(White, at(2, 4))
+    this.placeWorkerInMine(Black, at(2, 1))
     this.placeWorkerInMine(Black, at(2, -1))
-    this.placeWorkerInMine(White, at(2, -2))
-    this.placeWorkerInMine(Black, at(2, -3))
-    this.placeWorkerInMine(White, at(2, -4))
+    this.placeWorkerInMine(Orange, at(2, -2))
+    this.placeWorkerInMine(Orange, at(2, -3))
+    this.placeWorkerInMine(Purple, at(2, -4))
     return this
 }
 
@@ -92,10 +98,10 @@ fun MagnumSal.revealAllLevelIIMineChambers(): MagnumSal {
     this.placeWorkerInMine(Black, at(2, 0))
     this.placeWorkerInMine(Orange, at(3, 0))
     this.placeWorkerInMine(White, at(4, 0))
-    this.placeWorkerInMine(Black, at(4, 1))
-    this.placeWorkerInMine(Orange, at(4, 2))
-    this.placeWorkerInMine(White, at(4, 3))
-    this.placeWorkerInMine(Black, at(4, -1))
+    this.placeWorkerInMine(White, at(4, 1))
+    this.placeWorkerInMine(Black, at(4, 2))
+    this.placeWorkerInMine(Black, at(4, 3))
+    this.placeWorkerInMine(Orange, at(4, -1))
     this.placeWorkerInMine(Orange, at(4, -2))
     this.placeWorkerInMine(White, at(4, -3))
     return this
@@ -107,10 +113,10 @@ fun MagnumSal.revealAllLevelIIIMineChambers(): MagnumSal {
     this.placeWorkerInMine(Black, at(2, 0))
     this.placeWorkerInMine(Orange, at(3, 0))
     this.placeWorkerInMine(White, at(4, 0))
-    this.placeWorkerInMine(Black, at(5, 0))
-    this.placeWorkerInMine(Orange, at(6, 0))
-    this.placeWorkerInMine(White, at(6, 1))
-    this.placeWorkerInMine(Black, at(6, 2))
+    this.placeWorkerInMine(White, at(5, 0))
+    this.placeWorkerInMine(Black, at(6, 0))
+    this.placeWorkerInMine(Black, at(6, 1))
+    this.placeWorkerInMine(Orange, at(6, 2))
     this.placeWorkerInMine(Orange, at(6, -1))
     this.placeWorkerInMine(White, at(6, -2))
     return this

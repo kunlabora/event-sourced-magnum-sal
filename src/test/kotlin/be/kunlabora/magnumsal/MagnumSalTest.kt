@@ -272,8 +272,8 @@ class MagnumSalTest {
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(1, 0))
             magnumSal.placeWorkerInMine(White, at(2, 0))
-            magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.removeWorkerFromMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(Black, at(2, 0))
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { magnumSal.removeWorkerFromMine(Black, at(1, 0)) }
@@ -343,7 +343,7 @@ class MagnumSalTest {
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, 1))
-            magnumSal.placeWorkerInMine(Black, at(2, 1))
+            magnumSal.placeWorkerInMine(White, at(2, 1))
 
             assertThat(eventStream.filterEvents<MineChamberRevealed>().map { it.at })
                     .containsOnlyOnce(at(2,1))
@@ -430,6 +430,7 @@ class MagnumSalTest {
             magnumSal.placeWorkerInMine(White, at(1,0))
             magnumSal.placeWorkerInMine(Black, at(2,0))
             magnumSal.placeWorkerInMine(White, at(2,1))
+            magnumSal.placeWorkerInMine(White, at(2,2))
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { magnumSal.mine(Black, at(2,1), Salts(BROWN)) }
@@ -444,14 +445,15 @@ class MagnumSalTest {
             magnumSal.placeWorkerInMine(White, at(1,0))
             magnumSal.placeWorkerInMine(Black, at(2,0))
             magnumSal.placeWorkerInMine(White, at(2,1))
-            magnumSal.placeWorkerInMine(Black, at(2,2))
-            magnumSal.placeWorkerInMine(White, at(2,1))
-            magnumSal.placeWorkerInMine(Black, at(2,2))
-            magnumSal.placeWorkerInMine(White, at(2,1))
-            magnumSal.placeWorkerInMine(Black, at(2,2))
+            magnumSal.placeWorkerInMine(White, at(2,2))
+            magnumSal.placeWorkerInMine(Black, at(2,1))
+            magnumSal.placeWorkerInMine(Black, at(2,1))
+            magnumSal.placeWorkerInMine(White, at(2,2))
+            magnumSal.placeWorkerInMine(White, at(2,2))
+            magnumSal.placeWorkerInMine(Black, at(2,1))
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
-                    .isThrownBy { magnumSal.mine(White, at(2,1), Salts(GREEN, GREEN, WHITE)) }
+                    .isThrownBy { magnumSal.mine(Black, at(2,1), Salts(GREEN, GREEN, WHITE)) }
                     .withMessage("Transition requires there to be 2 Green salt, 1 White salt in ${at(2,1)}")
         }
 
@@ -464,7 +466,6 @@ class MagnumSalTest {
             magnumSal.placeWorkerInMine(White, at(1,0))
             magnumSal.placeWorkerInMine(Black, at(2,0))
             magnumSal.placeWorkerInMine(White, at(2,1))
-            magnumSal.placeWorkerInMine(Black, at(2,2))
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
                     .isThrownBy { magnumSal.mine(White, at(2,1), Salts(BROWN)) }
@@ -475,7 +476,6 @@ class MagnumSalTest {
         fun `Mining from a Mine Chamber without water and with own miners present allows to mine an amount of salt equal to own miners`() {
             val magnumSal = TestMagnumSal(eventStream)
                     .withOnlyMineChamberTilesOf(MineChamberTile(Level.I, Salts(GREEN, GREEN, WHITE), 1))
-                    .withPlayersInOrder("Bruno" using White, "Tim" using Black)
                     .withFourWhiteMinersAtFirstRightMineChamber()
 
             assertThat(Miners.from(eventStream).filter { it.player == White && it.at == at(2,1)}).hasSize(4)

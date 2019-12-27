@@ -27,9 +27,9 @@ class WorkerLimitRuleTest {
                 .distributeWorkersInTheMineShaft(5, listOf(White, Black))
         val workerLimitRule = WorkerLimitRule(eventStream)
         magnumSal.removeWorkerFromMine(White, at(5, 0))
-        magnumSal.removeWorkerFromMine(Black, at(5, 0))
-
         magnumSal.placeWorkerInMine(White, at(5, 0))
+
+        magnumSal.removeWorkerFromMine(Black, at(5, 0))
         magnumSal.placeWorkerInMine(Black, at(5, 0))
 
         assertThatExceptionOfType(IllegalTransitionException::class.java)

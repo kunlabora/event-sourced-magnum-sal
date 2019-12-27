@@ -85,12 +85,12 @@ class ChainRuleTest {
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, 1))
-            magnumSal.placeWorkerInMine(Black, at(2, 2))
+            magnumSal.placeWorkerInMine(White, at(2, 2))
             val chainRule = ChainRule(eventStream)
 
-            chainRule.withoutBreakingTheChain(PlaceMiner(White, at(2, 3))) { eventStream.push(MinerPlaced(White, at(2,3))) }
+            chainRule.withoutBreakingTheChain(PlaceMiner(Black, at(2, 3))) { eventStream.push(MinerPlaced(Black, at(2,3))) }
 
-            assertThat(eventStream).containsOnlyOnce(MinerPlaced(White, at(2,3)))
+            assertThat(eventStream).containsOnlyOnce(MinerPlaced(Black, at(2,3)))
         }
 
         @Test
@@ -111,12 +111,12 @@ class ChainRuleTest {
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, -1))
-            magnumSal.placeWorkerInMine(Black, at(2, -2))
+            magnumSal.placeWorkerInMine(White, at(2, -2))
             val chainRule = ChainRule(eventStream)
 
-            chainRule.withoutBreakingTheChain(PlaceMiner(White, at(2, -3))) { eventStream.push(MinerPlaced(White, at(2,-3))) }
+            chainRule.withoutBreakingTheChain(PlaceMiner(Black, at(2, -3))) { eventStream.push(MinerPlaced(Black, at(2,-3))) }
 
-            assertThat(eventStream).containsOnlyOnce(MinerPlaced(White, at(2,-3)))
+            assertThat(eventStream).containsOnlyOnce(MinerPlaced(Black, at(2,-3)))
         }
     }
 
@@ -139,8 +139,8 @@ class ChainRuleTest {
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(1, 0))
             magnumSal.placeWorkerInMine(White, at(2, 0))
-            magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.removeWorkerFromMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(Black, at(2, 0))
             val chainRule = ChainRule(eventStream)
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
@@ -153,14 +153,16 @@ class ChainRuleTest {
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(3, 0))
-            magnumSal.placeWorkerInMine(Black, at(4, 0))
-            magnumSal.placeWorkerInMine(White, at(5, 0))
+            magnumSal.placeWorkerInMine(White, at(4, 0))
+            magnumSal.placeWorkerInMine(Black, at(5, 0))
             magnumSal.placeWorkerInMine(Black, at(6, 0))
+            magnumSal.placeWorkerInMine(White, at(1, 0))
+            magnumSal.placeWorkerInMine(White, at(2, 0))
             val chainRule = ChainRule(eventStream)
 
-            chainRule.withoutBreakingTheChain(RemoveMiner(White, at(6, 0))) { eventStream.push(MinerRemoved(White, at(6, 0))) }
+            chainRule.withoutBreakingTheChain(RemoveMiner(Black, at(6, 0))) { eventStream.push(MinerRemoved(Black, at(6, 0))) }
 
-            assertThat(eventStream).containsOnlyOnce(MinerRemoved(White, at(6, 0)))
+            assertThat(eventStream).containsOnlyOnce(MinerRemoved(Black, at(6, 0)))
         }
 
         @Test
@@ -169,7 +171,9 @@ class ChainRuleTest {
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, 1))
-            magnumSal.placeWorkerInMine(Black, at(2, 2))
+            magnumSal.placeWorkerInMine(White, at(2, 2))
+            magnumSal.placeWorkerInMine(Black, at(2, 3))
+            magnumSal.placeWorkerInMine(Black, at(2, 4))
             val chainRule = ChainRule(eventStream)
 
             assertThatExceptionOfType(IllegalTransitionException::class.java)
@@ -206,14 +210,16 @@ class ChainRuleTest {
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(2, 1))
-            magnumSal.placeWorkerInMine(Black, at(2, 2))
-            magnumSal.placeWorkerInMine(White, at(2, 3))
+            magnumSal.placeWorkerInMine(White, at(2, 2))
+            magnumSal.placeWorkerInMine(Black, at(2, 3))
             magnumSal.placeWorkerInMine(Black, at(2, 4))
+            magnumSal.placeWorkerInMine(White, at(2, 1))
+            magnumSal.placeWorkerInMine(White, at(2, 2))
             val chainRule = ChainRule(eventStream)
 
-            chainRule.withoutBreakingTheChain(RemoveMiner(White, at(2, 4))) { eventStream.push(MinerRemoved(White, at(2, 4))) }
+            chainRule.withoutBreakingTheChain(RemoveMiner(Black, at(2, 4))) { eventStream.push(MinerRemoved(Black, at(2, 4))) }
 
-            assertThat(eventStream).containsOnlyOnce(MinerRemoved(White, at(2, 4)))
+            assertThat(eventStream).containsOnlyOnce(MinerRemoved(Black, at(2, 4)))
         }
     }
 }
