@@ -11,6 +11,7 @@ import be.kunlabora.magnumsal.gamepieces.Salts
 import java.time.Instant.now
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatter.ofPattern
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -102,7 +103,7 @@ class MagnumSal(private val eventStream: EventStream,
     }
 
     private fun saltIsAvailableAt(saltToMine: Salts, at: PositionInMine): Boolean =
-            saltToMine.canBeMinedFrom(saltLeftInMineChamber(at))
+            saltToMine.canBeMinedFrom(saltLeftInMineChamber(at).debug { "Checking if $saltToMine can be mined... Salt left in $at: $it." })
 
     private fun saltLeftInMineChamber(at: PositionInMine): Salts {
         val saltsOnTile = Salts(revealedMineChambers.single { it.at == at }.tile.salt)
@@ -155,7 +156,7 @@ class MagnumSal(private val eventStream: EventStream,
 
     private inline fun <T> T.debug(block: (T) -> String): T {
         if (debugEnabled) {
-            val formattedTimestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))
+            val formattedTimestamp = LocalDateTime.now().format(ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))
             println("[debug ~ $formattedTimestamp] ${block(this)}")
         }
         return this
