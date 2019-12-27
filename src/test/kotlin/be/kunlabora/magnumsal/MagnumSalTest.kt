@@ -560,6 +560,7 @@ class MagnumSalTest {
             val magnumSal = TestMagnumSal(eventStream)
                     .withOnlyMineChamberTilesOf(MineChamberTile(Level.I, Salts(BROWN, BROWN, GREEN, GREEN, WHITE, WHITE), 0))
                     .withFourWhiteMinersAtFirstRightMineChamber()
+                    .withDebugger()
                     .build()
 
             magnumSal.mine(White, at(2, 1), Salts(BROWN, BROWN, GREEN, GREEN))

@@ -8,6 +8,11 @@ import be.kunlabora.magnumsal.gamepieces.AllMineChamberTiles
 import be.kunlabora.magnumsal.gamepieces.Level
 import be.kunlabora.magnumsal.gamepieces.MineChamberTile
 import be.kunlabora.magnumsal.gamepieces.Salts
+import java.time.Instant.now
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 sealed class MagnumSalEvent : Event {
     data class PlayerOrderDetermined(val player1: PlayerColor, val player2: PlayerColor, val player3: PlayerColor? = null, val player4: PlayerColor? = null) : MagnumSalEvent()
@@ -18,7 +23,9 @@ sealed class MagnumSalEvent : Event {
     data class SaltMined(val player: PlayerColor, val from: PositionInMine, val saltMined: Salts) : MagnumSalEvent()
 }
 
-class MagnumSal(private val eventStream: EventStream, private val allMineChamberTiles: List<MineChamberTile> = AllMineChamberTiles) {
+class MagnumSal(private val eventStream: EventStream,
+                private val allMineChamberTiles: List<MineChamberTile> = AllMineChamberTiles,
+                private val debugEnabled: Boolean = false) {
 
     private val turnOrderRule = TurnOrderRule(eventStream)
     private val chainRule = ChainRule(eventStream)
@@ -99,7 +106,7 @@ class MagnumSal(private val eventStream: EventStream, private val allMineChamber
 
     private fun saltLeftInMineChamber(at: PositionInMine): Salts {
         val saltsOnTile = Salts(revealedMineChambers.single { it.at == at }.tile.salt)
-        return eventStream.filterEvents<SaltMined>().filter { it.from == at }.fold(saltsOnTile){ acc, it -> acc - it.saltMined }
+        return eventStream.filterEvents<SaltMined>().filter { it.from == at }.fold(saltsOnTile) { acc, it -> acc - it.saltMined }
     }
 
     private fun strengthAt(player: PlayerColor, at: PositionInMine): Int {
@@ -107,6 +114,7 @@ class MagnumSal(private val eventStream: EventStream, private val allMineChamber
         val tiredWorkers: Int = tiredWorkersAt(player, at)
         val waterRemainingInChamber = waterRemainingInChamber(at)
         return (playerMiners - tiredWorkers - waterRemainingInChamber)
+                .debug { "Strength at $at = $it: $player has $playerMiners miners, of which $tiredWorkers are tired, and there are $waterRemainingInChamber water cubes still in the chamber." }
     }
 
     private fun waterRemainingInChamber(at: PositionInMine) =
@@ -145,8 +153,15 @@ class MagnumSal(private val eventStream: EventStream, private val allMineChamber
     private fun onlyInPlayersTurn(player: PlayerColor, block: () -> Unit): Any = turnOrderRule.onlyInPlayersTurn(player, block)
     private fun withoutBreakingTheChain(minerMovement: MinerMovement, block: () -> Unit): Any = chainRule.withoutBreakingTheChain(minerMovement, block)
 
-    companion object
+    private inline fun <T> T.debug(block: (T) -> String): T {
+        if (debugEnabled) {
+            val formattedTimestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))
+            println("[debug ~ $formattedTimestamp] ${block(this)}")
+        }
+        return this
+    }
 }
+
 
 sealed class PlayerColor {
     object Black : PlayerColor()

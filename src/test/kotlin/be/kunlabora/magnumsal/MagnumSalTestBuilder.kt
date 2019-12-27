@@ -19,8 +19,21 @@ typealias PlayerName = String
 class TestMagnumSal(val eventStream: EventStream) {
     var magnumSal = MagnumSal(eventStream)
 
+    var _debugEnabled: Boolean = false
+    var debugEnabled: Boolean = false
+        set(value) {
+            _debugEnabled = value
+            magnumSal = MagnumSal(eventStream, _tiles, value)
+        }
+    var _tiles: List<MineChamberTile> = AllMineChamberTiles
+    var tiles: List<MineChamberTile> = AllMineChamberTiles
+        set(value) {
+            _tiles = value
+            magnumSal = MagnumSal(eventStream, value, _debugEnabled)
+        }
+
     fun build(): MagnumSal {
-        return magnumSal
+        return MagnumSal(eventStream, _tiles, _debugEnabled)
     }
 }
 
@@ -137,14 +150,18 @@ fun TestMagnumSal.revealAllLevelIIIMineChambers(): TestMagnumSal {
 }
 
 fun TestMagnumSal.withOnlyMineChamberTilesOf(tile: MineChamberTile): TestMagnumSal {
-    val tiles = AllMineChamberTiles
+    this.tiles = AllMineChamberTiles
             .filter { it.level == tile.level }
             .map { it.copy(salt = tile.salt, waterCubes = tile.waterCubes) }
-    magnumSal = MagnumSal(this.eventStream, tiles)
     return this
 }
 
 // Util
+fun TestMagnumSal.withDebugger(): TestMagnumSal {
+    this.debugEnabled = true
+    return this
+}
+
 fun visualize(miners: Miners) {
     println("#".repeat(10) + " MineShaft Top " + "#".repeat(10))
     miners.groupBy { it.at }
