@@ -85,9 +85,6 @@ class MagnumSal(private val eventStream: EventStream, private val allMineChamber
         transitionRequires("you to mine from a MineChamber") {
             at.isInACorridor()
         }
-        transitionRequires("you to mine from a revealed MineChamber") {
-            at in revealedMineChambers.map { it.at }
-        }
         transitionRequires("you to have enough miners at $at") {
             strengthAt(player, at) >= saltToMine.size
         }
