@@ -45,10 +45,19 @@ data class Salts(private val _salts: List<Salt>) : List<Salt> by _salts {
         return true
     }
 
-    private fun cubesPerQuality() = _salts.groupBy { it }.mapValues { it.value.size }
+    private fun cubesPerQuality(): Map<Salt, Int> = _salts.groupBy { it }.mapValues { it.value.size }
 
-    override fun toString(): String =
-            cubesPerQuality().map { "${it.value} ${it.key} salt" }.joinToString()
+    operator fun minus(otherSalts: Salts): Salts {
+        if (otherSalts.isEmpty()) return this
+        val subtractedCubesPerQuality = this.cubesPerQuality().mapValues { (salt, cubes) ->
+            otherSalts.cubesPerQuality()[salt]?.let { cubes - it } ?: cubes
+        }
+        return Salts(subtractedCubesPerQuality.flatMap { (salt, cubes) -> (0 until cubes).map { salt } })
+    }
+
+    override fun toString(): String = if (_salts.isEmpty()) "No salts" else cubesPerQuality()
+            .map { "${it.value} ${it.key} salt" }
+            .joinToString()
 }
 
 data class MineChamberTile(val level: Level, val salt: List<Salt>, val waterCubes: WaterCubes = 0, val id: UUID = UUID.randomUUID()) {

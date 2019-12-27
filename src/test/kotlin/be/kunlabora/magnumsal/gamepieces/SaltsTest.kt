@@ -1,7 +1,6 @@
 package be.kunlabora.magnumsal.gamepieces
 
-import be.kunlabora.magnumsal.gamepieces.Salt.GREEN
-import be.kunlabora.magnumsal.gamepieces.Salt.WHITE
+import be.kunlabora.magnumsal.gamepieces.Salt.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -21,5 +20,14 @@ class SaltsTest {
         val saltsToBeMined = Salts(GREEN, GREEN, WHITE)
         assertThat(saltsToBeMined.canBeMinedFrom(saltInMineChamber)).isFalse()
         assertThat(saltsToBeMined.canBeMinedFrom(saltInOtherMineChamber)).isFalse()
+    }
+
+    @Test
+    fun `minus | delegates to Iterable's minus`() {
+        assertThat(Salts(GREEN, WHITE) - Salts(emptyList())).isEqualTo(Salts(GREEN, WHITE))
+        assertThat(Salts(emptyList()) - Salts(GREEN, WHITE)).isEqualTo(Salts(emptyList()))
+        assertThat(Salts(GREEN, GREEN, WHITE) - Salts(BROWN)).isEqualTo(Salts(GREEN, GREEN, WHITE))
+        assertThat(Salts(GREEN, GREEN, WHITE) - Salts(GREEN, GREEN, WHITE)).isEqualTo(Salts(emptyList()))
+        assertThat(Salts(GREEN, GREEN, WHITE) - Salts(GREEN, WHITE)).isEqualTo(Salts(GREEN))
     }
 }

@@ -15,7 +15,7 @@ sealed class MagnumSalEvent : Event {
     data class MinerPlaced(val player: PlayerColor, val at: PositionInMine) : MagnumSalEvent()
     data class MinerRemoved(val player: PlayerColor, val at: PositionInMine) : MagnumSalEvent()
     data class MineChamberRevealed(val at: PositionInMine, val tile: MineChamberTile) : MagnumSalEvent()
-    data class SaltMined(val player: PlayerColor, val from: PositionInMine, val saltsMined: Salts) : MagnumSalEvent()
+    data class SaltMined(val player: PlayerColor, val from: PositionInMine, val saltMined: Salts) : MagnumSalEvent()
 }
 
 class MagnumSal(private val eventStream: EventStream, private val allMineChamberTiles: List<MineChamberTile> = AllMineChamberTiles) {
@@ -95,8 +95,14 @@ class MagnumSal(private val eventStream: EventStream, private val allMineChamber
     }
 
     private fun saltIsAvailableAt(saltToMine: Salts, at: PositionInMine): Boolean {
-        val saltInMineChamber = Salts(revealedMineChambers.single { it.at == at }.tile.salt)
+        val saltInMineChamber = saltLeftInMineChamber(at)
         return saltToMine.canBeMinedFrom(saltInMineChamber)
+    }
+
+    private fun saltLeftInMineChamber(at: PositionInMine): Salts {
+        val saltsOnTile = Salts(revealedMineChambers.single { it.at == at }.tile.salt)
+        val saltsAlreadyMined = eventStream.filterEvents<SaltMined>().singleOrNull { it.from == at }?.saltMined
+        return saltsAlreadyMined?.let { saltsOnTile - it } ?: saltsOnTile
     }
 
     private fun strengthAt(player: PlayerColor, at: PositionInMine): Int {
