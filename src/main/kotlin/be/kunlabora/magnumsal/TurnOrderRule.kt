@@ -23,8 +23,16 @@ class TurnOrderRule(private val eventStream: EventStream) {
         get() = minersPlaced.map { it.player } + minersRemoved.map { it.player }
 
     private fun itIsTheTurnOf(player: PlayerColor): Boolean {
-        return playerActions.count() % amountOfPlayers == turnOrder.indexOf(player)
+        return if (inFirstRound()) {
+            playerActions.count() % amountOfPlayers == turnOrder.indexOf(player)
+        } else {
+            val playerActionsExcludingFirstRound = playerActions.count() - amountOfPlayers
+            val actionsPerTurn = 2
+            (playerActionsExcludingFirstRound % (amountOfPlayers * actionsPerTurn)).div(actionsPerTurn) == turnOrder.indexOf(player)
+        }
     }
+
+    private fun inFirstRound() = playerActions.count() <= amountOfPlayers
 
     fun onlyInPlayersTurn(player: PlayerColor, block: () -> Unit): Any {
         transitionRequires("it to be your turn") {

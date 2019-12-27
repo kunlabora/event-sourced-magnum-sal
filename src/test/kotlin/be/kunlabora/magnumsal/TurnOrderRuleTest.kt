@@ -124,7 +124,7 @@ class TurnOrderRuleTest {
     }
 
     @Test
-    fun `Legal case in a game with 4 players, third player goes twice after first round`() {
+    fun `Legal case in a game with 4 players, fourth player goes twice after first round`() {
         val magnumSal = MagnumSal(eventStream)
                 .withPlayersInOrder("Bruno" using White, "Tim" using Black, "Snarf" using Orange, "Azrael" using Purple)
 
@@ -136,9 +136,11 @@ class TurnOrderRuleTest {
         magnumSal.placeWorkerInMine(White, at(2, 0))
         magnumSal.placeWorkerInMine(Black, at(2, 0))
         magnumSal.placeWorkerInMine(Black, at(2, 0))
+        magnumSal.placeWorkerInMine(Orange, at(2, 0))
+        magnumSal.placeWorkerInMine(Orange, at(2, 0))
 
         var success = false
-        TurnOrderRule(eventStream).onlyInPlayersTurn(Orange) { success = true }
+        TurnOrderRule(eventStream).onlyInPlayersTurn(Purple) { success = true }
 
         assertThat(success).isTrue()
     }

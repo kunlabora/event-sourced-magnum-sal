@@ -236,16 +236,16 @@ class MagnumSalTest {
             magnumSal.placeWorkerInMine(White, at(1, 0))
             magnumSal.placeWorkerInMine(Black, at(2, 0))
             magnumSal.placeWorkerInMine(White, at(3, 0))
-            magnumSal.placeWorkerInMine(Black, at(4, 0))
-            magnumSal.placeWorkerInMine(White, at(5, 0))
+            magnumSal.placeWorkerInMine(White, at(4, 0))
+            magnumSal.placeWorkerInMine(Black, at(5, 0))
             magnumSal.placeWorkerInMine(Black, at(6, 0))
 
             assertThat(eventStream).contains(
                     MinerPlaced(White, at(1, 0)),
                     MinerPlaced(Black, at(2, 0)),
                     MinerPlaced(White, at(3, 0)),
-                    MinerPlaced(Black, at(4, 0)),
-                    MinerPlaced(White, at(5, 0)),
+                    MinerPlaced(White, at(4, 0)),
+                    MinerPlaced(Black, at(5, 0)),
                     MinerPlaced(Black, at(6, 0))
             )
         }
