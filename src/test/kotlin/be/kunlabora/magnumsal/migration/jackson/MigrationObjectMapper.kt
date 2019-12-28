@@ -1,4 +1,4 @@
-package be.kunlabora.magnumsal.migration
+package be.kunlabora.magnumsal.migration.jackson
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper

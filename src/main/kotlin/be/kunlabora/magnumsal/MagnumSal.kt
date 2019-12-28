@@ -27,6 +27,9 @@ sealed class MagnumSalEvent : Event {
     data class MineChamberRevealed(val at: PositionInMine, val tile: MineChamberTile) : MagnumSalEvent()
     @JsonTypeName("SaltMined")
     data class SaltMined(val player: PlayerColor, val from: PositionInMine, val saltMined: Salts) : MagnumSalEvent()
+    //TODO: introduce this event
+    //@JsonTypeName("MinersGotTired")
+    //data class MinersGotTired(val player: PlayerColor, val from: PositionInMine, val saltMined: Salts) : MagnumSalEvent()
 }
 
 class MagnumSal(private val eventStream: EventStream,
@@ -126,7 +129,7 @@ class MagnumSal(private val eventStream: EventStream,
     private fun waterRemainingInChamber(at: PositionInMine) =
             revealedMineChambers.single { it.at == at }.tile.waterCubes
 
-    //TODO: replace by firing a MinerGotTired event after successfully mining (and holding back water). Might be a good event migration exercise.
+    //TODO: replace by checking MinersGotTired events.
     private fun tiredWorkersAt(player: PlayerColor, at: PositionInMine): Int {
         val playersSaltMiningActions = eventStream.filterEvents<SaltMined>()
                 .filter { it.from == at && it.player == player }

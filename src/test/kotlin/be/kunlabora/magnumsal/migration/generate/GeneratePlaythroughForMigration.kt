@@ -5,7 +5,7 @@ import be.kunlabora.magnumsal.MagnumSalEvent.MineChamberRevealed
 import be.kunlabora.magnumsal.PlayerColor.*
 import be.kunlabora.magnumsal.PositionInMine.Companion.at
 import be.kunlabora.magnumsal.gamepieces.Salts
-import be.kunlabora.magnumsal.migration.MigrationObjectMapper
+import be.kunlabora.magnumsal.migration.jackson.MigrationObjectMapper
 import be.kunlabora.magnumsal.migration.read.eventLogFile
 import java.io.File
 

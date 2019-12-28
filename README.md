@@ -44,14 +44,23 @@ Forget about two players and the town and the corridors. Just focus on the mine 
 
 `MineShaftPosition` already contains some validation and util functions that'll prove useful, check out the tests to see how it works.
 
-# Learnings!
-Thin line between making data classes with specific rules, and not creating domain objects.  
-Value objects are ok to immediately write? Because they don't depend on that much state?
-
-Kotlin has a nice feature called _lazy getters_ that can just delegate to functions on the EventStream:
+## Event migration kata
+Current checking of tired miners is pretty convoluted:
 ```kotlin
-private val players
-        get() = eventStream.filterIsInstance<PlayerJoined>()
+    private fun tiredWorkersAt(player: PlayerColor, at: PositionInMine): Int {
+        val playersSaltMiningActions = eventStream.filterEvents<SaltMined>()
+                .filter { it.from == at && it.player == player }
+        val minersTiredFromMining = playersSaltMiningActions
+                .fold(0) { acc, it -> acc + it.saltMined.size }
+        val minersTiredFromHoldingBackWater = playersSaltMiningActions
+                .count() * waterRemainingInChamber(at)
+        return minersTiredFromMining + minersTiredFromHoldingBackWater
+    }
 ```
+We want to replace that with a simpler check for `MinersGotTiredEvent`s, but those don't exist yet.
 
-Depending on the use case you can postpone creating state for a veeeeery long time. We added a good use case to the kata's main page.
+1) First implement the migrate function that adds these events in the proper scenario's (as if the actual code in MagnumSal was already adding these events, like in the last step of this kata).
+1) (Optional) Then update `MagnumSal.tiredWorkersAt` to use these new events. Verify by writing tests.
+1) (Optional) Finally implement adding these events in `MagnumSal` when a Miner gets tired.
+
+GL HF!
