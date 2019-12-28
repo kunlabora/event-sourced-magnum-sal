@@ -29,7 +29,7 @@ sealed class MagnumSalEvent : Event {
     data class SaltMined(val player: PlayerColor, val from: PositionInMine, val saltMined: Salts) : MagnumSalEvent()
     //TODO: introduce this event
     //@JsonTypeName("MinersGotTired")
-    //data class MinersGotTired(val player: PlayerColor, val from: PositionInMine, val saltMined: Salts) : MagnumSalEvent()
+    //data class MinersGotTired(val player: PlayerColor, val from: PositionInMine) : MagnumSalEvent()
 }
 
 class MagnumSal(private val eventStream: EventStream,
