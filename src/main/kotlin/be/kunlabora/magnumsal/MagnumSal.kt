@@ -8,19 +8,24 @@ import be.kunlabora.magnumsal.gamepieces.AllMineChamberTiles
 import be.kunlabora.magnumsal.gamepieces.Level
 import be.kunlabora.magnumsal.gamepieces.MineChamberTile
 import be.kunlabora.magnumsal.gamepieces.Salts
-import java.time.Instant.now
+import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.fasterxml.jackson.annotation.JsonTypeName
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ofPattern
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 sealed class MagnumSalEvent : Event {
+    @JsonTypeName("PlayerOrderDetermined")
     data class PlayerOrderDetermined(val player1: PlayerColor, val player2: PlayerColor, val player3: PlayerColor? = null, val player4: PlayerColor? = null) : MagnumSalEvent()
+    @JsonTypeName("PlayerJoined")
     data class PlayerJoined(val name: String, val color: PlayerColor) : MagnumSalEvent()
+    @JsonTypeName("MinerPlaced")
     data class MinerPlaced(val player: PlayerColor, val at: PositionInMine) : MagnumSalEvent()
+    @JsonTypeName("MinerRemoved")
     data class MinerRemoved(val player: PlayerColor, val at: PositionInMine) : MagnumSalEvent()
+    @JsonTypeName("MineChamberRevealed")
     data class MineChamberRevealed(val at: PositionInMine, val tile: MineChamberTile) : MagnumSalEvent()
+    @JsonTypeName("SaltMined")
     data class SaltMined(val player: PlayerColor, val from: PositionInMine, val saltMined: Salts) : MagnumSalEvent()
 }
 
@@ -164,12 +169,10 @@ class MagnumSal(private val eventStream: EventStream,
 }
 
 
-sealed class PlayerColor {
-    object Black : PlayerColor()
-    object White : PlayerColor()
-    object Orange : PlayerColor()
-    object Purple : PlayerColor()
-
-    override fun toString(): String = this.javaClass.simpleName
+enum class PlayerColor {
+    Black,
+    White,
+    Orange,
+    Purple;
 }
 

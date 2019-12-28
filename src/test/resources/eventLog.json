@@ -1,0 +1,311 @@
+[ {
+  "type" : "PlayerJoined",
+  "name" : "Day[9]",
+  "color" : "White"
+}, {
+  "type" : "PlayerJoined",
+  "name" : "Tasteless",
+  "color" : "Black"
+}, {
+  "type" : "PlayerJoined",
+  "name" : "iNcontroL",
+  "color" : "Orange"
+}, {
+  "type" : "PlayerJoined",
+  "name" : "TotalBiscuit",
+  "color" : "Purple"
+}, {
+  "type" : "PlayerOrderDetermined",
+  "player1" : "White",
+  "player2" : "Black",
+  "player3" : "Orange",
+  "player4" : "Purple"
+}, {
+  "type" : "MinerPlaced",
+  "player" : "White",
+  "at" : {
+    "depth" : 1,
+    "width" : 0,
+    "inACorridor" : false,
+    "theTop" : true,
+    "anEnd" : false,
+    "crossSection" : false
+  }
+}, {
+  "type" : "MinerPlaced",
+  "player" : "Black",
+  "at" : {
+    "depth" : 2,
+    "width" : 0,
+    "inACorridor" : false,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : true
+  }
+}, {
+  "type" : "MinerPlaced",
+  "player" : "Orange",
+  "at" : {
+    "depth" : 2,
+    "width" : 1,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  }
+}, {
+  "type" : "MineChamberRevealed",
+  "at" : {
+    "depth" : 2,
+    "width" : 1,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  },
+  "tile" : {
+    "level" : "I",
+    "salt" : [ "BROWN", "BROWN", "BROWN" ],
+    "waterCubes" : 1,
+    "id" : "80232f97-6f01-4b1d-9ab1-12a6f51c30c1"
+  }
+}, {
+  "type" : "MinerPlaced",
+  "player" : "Purple",
+  "at" : {
+    "depth" : 2,
+    "width" : 2,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  }
+}, {
+  "type" : "MineChamberRevealed",
+  "at" : {
+    "depth" : 2,
+    "width" : 2,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  },
+  "tile" : {
+    "level" : "I",
+    "salt" : [ "BROWN", "BROWN" ],
+    "waterCubes" : 0,
+    "id" : "25506b68-370c-4a78-9e54-467b2d15dfeb"
+  }
+}, {
+  "type" : "MinerPlaced",
+  "player" : "White",
+  "at" : {
+    "depth" : 2,
+    "width" : -1,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  }
+}, {
+  "type" : "MineChamberRevealed",
+  "at" : {
+    "depth" : 2,
+    "width" : -1,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  },
+  "tile" : {
+    "level" : "I",
+    "salt" : [ "BROWN", "GREEN" ],
+    "waterCubes" : 1,
+    "id" : "17976be4-3477-47f1-8002-78009110cc20"
+  }
+}, {
+  "type" : "MinerPlaced",
+  "player" : "White",
+  "at" : {
+    "depth" : 2,
+    "width" : -1,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  }
+}, {
+  "type" : "MinerPlaced",
+  "player" : "Black",
+  "at" : {
+    "depth" : 2,
+    "width" : -2,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  }
+}, {
+  "type" : "MineChamberRevealed",
+  "at" : {
+    "depth" : 2,
+    "width" : -2,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  },
+  "tile" : {
+    "level" : "I",
+    "salt" : [ "BROWN", "BROWN", "GREEN" ],
+    "waterCubes" : 1,
+    "id" : "91fe441c-b938-4390-8006-ac074114ce3f"
+  }
+}, {
+  "type" : "MinerPlaced",
+  "player" : "Black",
+  "at" : {
+    "depth" : 2,
+    "width" : -2,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  }
+}, {
+  "type" : "MinerPlaced",
+  "player" : "Orange",
+  "at" : {
+    "depth" : 2,
+    "width" : 1,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  }
+}, {
+  "type" : "MinerPlaced",
+  "player" : "Orange",
+  "at" : {
+    "depth" : 2,
+    "width" : 1,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  }
+}, {
+  "type" : "MinerPlaced",
+  "player" : "Purple",
+  "at" : {
+    "depth" : 2,
+    "width" : 2,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  }
+}, {
+  "type" : "MinerPlaced",
+  "player" : "Purple",
+  "at" : {
+    "depth" : 2,
+    "width" : 2,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  }
+}, {
+  "type" : "MinerPlaced",
+  "player" : "White",
+  "at" : {
+    "depth" : 2,
+    "width" : -1,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  }
+}, {
+  "type" : "SaltMined",
+  "player" : "White",
+  "from" : {
+    "depth" : 2,
+    "width" : -1,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  },
+  "saltMined" : [ "BROWN", "GREEN" ]
+}, {
+  "type" : "MinerPlaced",
+  "player" : "Black",
+  "at" : {
+    "depth" : 2,
+    "width" : -2,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  }
+}, {
+  "type" : "SaltMined",
+  "player" : "Black",
+  "from" : {
+    "depth" : 2,
+    "width" : -2,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  },
+  "saltMined" : [ "BROWN", "BROWN" ]
+}, {
+  "type" : "SaltMined",
+  "player" : "Orange",
+  "from" : {
+    "depth" : 2,
+    "width" : 1,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  },
+  "saltMined" : [ "BROWN", "BROWN" ]
+}, {
+  "type" : "MinerRemoved",
+  "player" : "Orange",
+  "at" : {
+    "depth" : 2,
+    "width" : 1,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  }
+}, {
+  "type" : "SaltMined",
+  "player" : "Purple",
+  "from" : {
+    "depth" : 2,
+    "width" : 2,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  },
+  "saltMined" : [ "BROWN", "BROWN" ]
+}, {
+  "type" : "MinerRemoved",
+  "player" : "Purple",
+  "at" : {
+    "depth" : 2,
+    "width" : 2,
+    "inACorridor" : true,
+    "theTop" : false,
+    "anEnd" : false,
+    "crossSection" : false
+  }
+} ]

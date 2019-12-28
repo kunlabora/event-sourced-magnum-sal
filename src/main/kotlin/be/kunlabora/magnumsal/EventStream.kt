@@ -1,5 +1,10 @@
 package be.kunlabora.magnumsal
 
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
+
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+@JsonSubTypes(JsonSubTypes.Type(MagnumSalEvent::class))
 interface Event
 
 data class EventStream(private val _events: MutableList<Event> = emptyList<Event>().toMutableList())
