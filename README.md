@@ -56,3 +56,5 @@ This is a kata that starts from a somewhat implemented game of MagnumSal, and ha
 So your job is to first migrate an existing event stream to throw this new event at the correct order in the event stream, to then use it in your implementation.
 
 Don't worry, the code has been set up so that you can just focus on the migration itself.
+
+See the event-migration-kata branch's readme to read a more exhaustive kata exercise and find all the info you need.
