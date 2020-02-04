@@ -21,7 +21,8 @@ Forget about two players and the town and the corridors. Just focus on the mine 
 1) Player 1 places a miner in the mineshaft's second spot.
 1) Player 1 removes their miner in the first spot. <-- this should be an illegal move, because the first spot should be occupied according to the chain rule.
 
-**Note:** `MineShaftPosition` already contains some validation and util functions that'll prove useful, **check out the tests to see how it works**. This class actually represents the mine itself (in that you can only create places in the mine that exist).  
+**Note:** `PositionInMine` already contains some validation and util functions that'll prove useful, **check out the tests to see how it works**.  
+This class actually represents the mine itself (in that you can only create places in the mine that exist).  
 It also comes with some functions you might find handy in your exploration of this kata.  
 At this point in the explanation I'd also like to mention that I decided **not** to represent the board itself as events, but rather as a fixed model. For this kata this decision helps constrain you so you can focus on insights even more. Additionally the old adage still counts as well: _While one could, sometimes one should not_.
 
@@ -53,13 +54,13 @@ Here are some examples:
 
 
 ### Hint: Asserting exceptions
-If you want to write a test that asserts an exception is thrown when illegal code gets executed:
+If you want to write a test that asserts an exception is thrown when _illegal code_ gets executed, or illegal state would occur:
 
-Here's how I asserted that there can't be a MineShaftPosition at 0:
+Here's how I asserted that there is no corridor at depth 1:
 ```kotlin
-assertThatExceptionOfType(IllegalArgumentException::class.java)
-                .isThrownBy { MineShaftPosition(0) }
-                .withMessage("MineShaftPosition 0 does not exist.")
+assertThatExceptionOfType(java.lang.IllegalArgumentException::class.java)
+                .isThrownBy { at(1, 1) }
+                .withMessage("Position out of bounds: there is no corridor at depth 1")
 ```
 
 ### Hint: Filter Events of a specific type
