@@ -23,7 +23,6 @@ Forget about two players and the town and the corridors. Just focus on the mine 
 
 `MineShaftPosition` already contains some validation and util functions that'll prove useful, check out the tests to see how it works.
 
-
 ### Some functional knowledge required
 First, for the exercise to make sense you'll need to know some basic rules of the board game Magnum Sal that are relevant to the kata at hand.
 
@@ -47,6 +46,17 @@ Here are some examples:
 ![](imgs/chainrule-5.png)
 1) You also **can** remove a miner when there would still be another miner left after removal 
 ![](imgs/chainrule-6.png)
+
+
+### Hint: Asserting exceptions
+If you want to write a test that asserts an exception is thrown when illegal code gets executed:
+
+Here's how I asserted that there can't be a MineShaftPosition at 0:
+```kotlin
+assertThatExceptionOfType(IllegalArgumentException::class.java)
+                .isThrownBy { MineShaftPosition(0) }
+                .withMessage("MineShaftPosition 0 does not exist.")
+```
 
 
 ## Magnum Sal rules
