@@ -58,6 +58,13 @@ assertThatExceptionOfType(IllegalArgumentException::class.java)
                 .withMessage("MineShaftPosition 0 does not exist.")
 ```
 
+### Hint: Filter Events of a specific type
+If you want to only _query_ events of a specific type in the `EventStream`:
+
+This will return all `PlayerAdded` events in the `EventStream` for you to continue processing, filtering, counting, and what not.
+```kotlin
+eventStream.filterEvents<PlayerAdded>()
+```
 
 ## Magnum Sal rules
 It does!
