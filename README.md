@@ -21,7 +21,11 @@ Forget about two players and the town and the corridors. Just focus on the mine 
 1) Player 1 places a miner in the mineshaft's second spot.
 1) Player 1 removes their miner in the first spot. <-- this should be an illegal move, because the first spot should be occupied according to the chain rule.
 
-`MineShaftPosition` already contains some validation and util functions that'll prove useful, check out the tests to see how it works.
+**Note:** `MineShaftPosition` already contains some validation and util functions that'll prove useful, **check out the tests to see how it works**. This class actually represents the mine itself (in that you can only create places in the mine that exist).  
+It also comes with some functions you might find handy in your exploration of this kata.  
+At this point in the explanation I'd also like to mention that I decided **not** to represent the board itself as events, but rather as a fixed model. For this kata this decision helps constrain you so you can focus on insights even more. Additionally the old adage still counts as well: _While one could, sometimes one should not_.
+
+**Note:** `AddPlayer` is there just as an example, it represents a player being added (before the game starts). When you've successfully implemented the code so that the test succeeds, you should have gained the required knowledge to continue on with the rest of the kata. If not, see the hints below.
 
 ### Some functional knowledge required
 First, for the exercise to make sense you'll need to know some basic rules of the board game Magnum Sal that are relevant to the kata at hand.
