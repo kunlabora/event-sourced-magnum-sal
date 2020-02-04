@@ -6,6 +6,24 @@
 Play around with EventSourcing and try not to make any assumptions on what domain classes you need and only create one when multiple events have hinted at one.
 
 ## Quick-start (+- 60' Kata time)
+### The actual kata exercise
+Make sure no impossible states can occur according to the Magnum Sal rules, but only stick to implementing the Chain Rule.
+
+Postpone creating domain classes as long as possible, purely rely on the `EventStream` instead.
+
+Keep your events as fine-grained as possible, and **always** in past tense.
+
+Forget about two players and the town and the corridors. Just focus on the mine shaft and the chain rule 
+
+1) Player 1 places a miner in the mineshaft's first spot.
+1) Player 1 removes a miner in the mineshaft's first spot.
+1) Player 1 places a miner in the mineshaft's first spot again.
+1) Player 1 places a miner in the mineshaft's second spot.
+1) Player 1 removes their miner in the first spot. <-- this should be an illegal move, because the first spot should be occupied according to the chain rule.
+
+`MineShaftPosition` already contains some validation and util functions that'll prove useful, check out the tests to see how it works.
+
+
 ### Some functional knowledge required
 First, for the exercise to make sense you'll need to know some basic rules of the board game Magnum Sal that are relevant to the kata at hand.
 
@@ -30,22 +48,6 @@ Here are some examples:
 1) You also **can** remove a miner when there would still be another miner left after removal 
 ![](imgs/chainrule-6.png)
 
-### The actual kata exercise
-Make sure no impossible states can occur according to the Magnum Sal rules, but only stick to implementing the Chain Rule.
-
-Postpone creating domain classes as long as possible, purely rely on the `EventStream` instead.
-
-Keep your events as fine-grained as possible, and **always** in past tense.
-
-Forget about two players and the town and the corridors. Just focus on the mine shaft and the chain rule 
-
-1) Player 1 places a miner in the mineshaft's first spot.
-1) Player 1 removes a miner in the mineshaft's first spot.
-1) Player 1 places a miner in the mineshaft's first spot again.
-1) Player 1 places a miner in the mineshaft's second spot.
-1) Player 1 removes their miner in the first spot. <-- this should be an illegal move, because the first spot should be occupied according to the chain rule.
-
-`MineShaftPosition` already contains some validation and util functions that'll prove useful, check out the tests to see how it works.
 
 ## Magnum Sal rules
 It does!
